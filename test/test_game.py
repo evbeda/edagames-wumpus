@@ -1,7 +1,9 @@
 import unittest
 from game.game import WumpusGame
-from constans.constants_game import LARGE
+
 from constans.constans import PLAYER_1, PLAYER_2
+from constans.constants_game import LARGE, MIDDLE
+
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
@@ -64,3 +66,23 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game._board[0][16].character, character1)
         self.assertEqual(game._board[8][16].character, character2)
         self.assertEqual(game._board[16][16].character, character3)
+
+    def test_place_gold(self):
+
+        game = WumpusGame()
+        game.place_golds()
+
+        gold_quantity = sum([cell.gold
+                            for row_cell in game._board
+                            for cell in row_cell])
+
+        golds_first_half = sum([game._board[row][col].gold
+                                for col in range(MIDDLE)
+                                for row in range(LARGE)])
+        golds_second_half = sum([game._board[row][col].gold
+                                for col in range(MIDDLE + 1, LARGE)
+                                for row in range(LARGE)])
+
+        self.assertEqual(gold_quantity, 16)
+        self.assertEqual(golds_first_half, 8)
+        self.assertEqual(golds_second_half, 8)

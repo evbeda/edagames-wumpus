@@ -11,7 +11,7 @@ class TestCell(unittest.TestCase):
     def setUp(self):
         self.game = WumpusGame()
 
-    @parameterized.expand([
+    @parameterized.expand([  # cell_attributes
         ((0, 1), 1, 0, PLAYER_1, False, False, 2),
         ((15, 8), 0, 0, PLAYER_2, True, False, 0),
     ])
@@ -63,3 +63,28 @@ class TestCell(unittest.TestCase):
         cell.arrow = arrow
 
         self.assertEqual(cell.emty, expected)
+
+    @parameterized.expand([  # cell set_character
+        (PLAYER_1, 0, 2),
+        (PLAYER_2, 1, 0)
+    ])
+    def test_cell_set_character_initial_pos(self, player_name, diamond, gold):
+        cell = Cell()
+        character = Character(Player(player_name))
+        character.diamonds = diamond
+        character.golds = gold
+        cell.set_character_initial_pos(character)
+        self.assertEqual(cell.character, character)
+
+    @parameterized.expand([  # cell set_character_when_move
+        (PLAYER_1, 1, 3),
+        (PLAYER_2, 0, 4)
+    ])
+    def test_cell_set_character_when_move(self, player_name, diamond, gold):
+        cell = Cell()
+        character = Character(Player(player_name))
+        character.diamonds = diamond
+        character.golds = gold
+        cell.set_character_when_move(character)
+        self.assertEqual(cell.diamond, character.diamonds)
+        self.assertEqual(cell.gold, character.golds)

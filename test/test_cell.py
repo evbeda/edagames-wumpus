@@ -1,5 +1,5 @@
 import unittest
-from game.game import Wumpus
+from game.game import WumpusGame
 from parameterized import parameterized
 from game.cell import Cell
 from game.character import Character
@@ -9,7 +9,7 @@ from constans.constans import PLAYER_1, PLAYER_2
 
 class TestCell(unittest.TestCase):
     def setUp(self):
-        self.game = Wumpus()
+        self.game = WumpusGame()
 
     @parameterized.expand([
         ((0, 1), 1, 0, PLAYER_1, False, False, 2),

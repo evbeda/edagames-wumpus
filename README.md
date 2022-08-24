@@ -1,7 +1,6 @@
 # edagames-wumpus
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/27ad8f95b4e6989d3c25/maintainability)]
-(https://codeclimate.com/github/evbeda/edagames-wumpus/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/27ad8f95b4e6989d3c25/maintainability)](https://codeclimate.com/github/evbeda/edagames-wumpus/maintainability)
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/27ad8f95b4e6989d3c25/test_coverage)](https://codeclimate.com/github/evbeda/edagames-wumpus/test_coverage)
 

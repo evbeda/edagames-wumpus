@@ -1,9 +1,10 @@
 import unittest
 from game.game import WumpusGame
-from constans.constants_game import (LARGE)
-from constans.constans import (PLAYER_1)
+from constans.constants_game import LARGE
+from constans.constans import PLAYER_1, PLAYER_2
 from game.cell import Cell
 from game.character import Character
+from game.player import Player
 
 
 class TestGame(unittest.TestCase):
@@ -25,9 +26,41 @@ class TestGame(unittest.TestCase):
 
     def test_move_player_to_other_player_position(self):
         game = WumpusGame()
-        cel_player = Cell()
+        cel_player = Cell(0, 0)
         cel_character = Character(PLAYER_1)
         cel_player.character = cel_character
         game._board[5][5] = cel_player
         with self.assertRaises(Exception):
             game.move_to_own_character_position(PLAYER_1, 5, 5)
+
+    def test_place_character_initial_pos_player_1(self):
+        game = WumpusGame()
+        player = Player(PLAYER_1)
+        character1 = Character(player)
+        character2 = Character(player)
+        character3 = Character(player)
+        game.place_character_initial_pos(
+            player,
+            character1,
+            character2,
+            character3
+        )
+        self.assertEqual(game._board[0][0].character, character1)
+        self.assertEqual(game._board[8][0].character, character2)
+        self.assertEqual(game._board[16][0].character, character3)
+
+    def test_place_character_initial_pos_player_2(self):
+        game = WumpusGame()
+        player = Player(PLAYER_2)
+        character1 = Character(player)
+        character2 = Character(player)
+        character3 = Character(player)
+        game.place_character_initial_pos(
+            player,
+            character1,
+            character2,
+            character3
+        )
+        self.assertEqual(game._board[0][16].character, character1)
+        self.assertEqual(game._board[8][16].character, character2)
+        self.assertEqual(game._board[16][16].character, character3)

@@ -1,6 +1,6 @@
 class Cell():
-    def __init__(self):
-        self.position: tuple()
+    def __init__(self, row, col):
+        self.position: tuple(row, col)
         self.gold = 0
         self.diamond = 0
         self.character = None
@@ -13,9 +13,6 @@ class Cell():
         return not (self.gold or self.diamond
                     or self.character or self.has_hole
                     or self.arrow)
-
-    def set_character_initial_pos(self, character):
-        self.character = character
 
     def set_character_when_move(self, character):
         self.character = character

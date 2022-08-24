@@ -1,0 +1,9 @@
+class Cell():
+    def __init__(self):
+        self.position: tuple
+        self.gold: int
+        self.diamond: int
+        self.character: object
+        self.has_hole: bool
+        self.is_discover: bool
+        self.arrow: int

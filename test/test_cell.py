@@ -62,4 +62,4 @@ class TestCell(unittest.TestCase):
         cell.has_hole = has_hole
         cell.arrow = arrow
 
-        self.assertEqual(cell.emty, expected)
+        self.assertEqual(cell.empty, expected)

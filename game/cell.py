@@ -9,7 +9,7 @@ class Cell():
         self.arrow = 0
 
     @property
-    def emty(self) -> bool:
+    def empty(self) -> bool:
         return not (self.gold or self.diamond
                     or self.character or self.has_hole
                     or self.arrow)

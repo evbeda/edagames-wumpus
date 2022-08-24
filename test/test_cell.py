@@ -62,7 +62,7 @@ class TestCell(unittest.TestCase):
         cell.has_hole = has_hole
         cell.arrow = arrow
 
-        self.assertEqual(cell.emty, expected)
+        self.assertEqual(cell.empty, expected)
 
     @parameterized.expand([  # cell set_character
         (PLAYER_1, 0, 2),

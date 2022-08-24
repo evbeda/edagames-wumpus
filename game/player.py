@@ -6,6 +6,7 @@ from constans.constans import (
 
 class Player():
 
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.score = INITIAL_SCORE
         self.arrows = INITIAL_ARROWS

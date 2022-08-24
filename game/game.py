@@ -1,0 +1,2 @@
+class Wumpus():
+    pass

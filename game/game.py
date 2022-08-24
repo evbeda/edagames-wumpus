@@ -1,9 +1,12 @@
-from constans.constants_game import LARGE
+import random
+
 from constans.constans import (
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2
 )
+from constans.constants_game import GOLD_QUANTITY, LARGE, MIDDLE
+
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
@@ -41,3 +44,17 @@ class WumpusGame():
 
         for position, character in character_positions.items():
             self._board[position[0]][position[1]].character = character
+
+    def place_golds(self):
+        fisrt_half = (0, MIDDLE-1)
+        second_half = (MIDDLE + 1, LARGE - 1)
+
+        for start, end in [fisrt_half, second_half]:
+            for _ in range(GOLD_QUANTITY//2):
+                while True:  # busca hasta encontrar una posicion libre
+                    row = random.randint(0, LARGE - 1)
+                    col = random.randint(start, end)
+
+                    if self._board[row][col].empty:
+                        self._board[row][col].gold += 1
+                        break

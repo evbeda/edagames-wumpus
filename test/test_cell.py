@@ -41,3 +41,25 @@ class TestCell(unittest.TestCase):
         self.assertEqual(cell.has_hole, has_hole)
         self.assertEqual(cell.is_discover, is_discover)
         self.assertEqual(cell.arrow, arrow)
+
+    @parameterized.expand([
+        (0, 0, None, False, 0, True),
+        (1, 0, None, False, 0, False),
+        (4, 0, None, False, 0, False),
+        (0, 1, None, False, 0, False),
+        (0, 0, Player(PLAYER_1), False, 0, False),
+        (0, 1, None, True, 0, False),
+        (0, 1, None, False, 1, False),
+    ])
+    def test_cell_is_empty(self, gold, diamond,
+                           character, has_hole, arrow,
+                           expected):
+
+        cell = Cell()
+        cell.gold = gold
+        cell.diamond = diamond
+        cell.character = character
+        cell.has_hole = has_hole
+        cell.arrow = arrow
+
+        self.assertEqual(cell.emty, expected)

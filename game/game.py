@@ -63,3 +63,6 @@ class WumpusGame():
                 if item == GOLD:
                     self._board[row][col].gold += 1
                 break
+
+    def initial_diamond_position(self):
+        self._board[random.randint(0, LARGE - 1)][LARGE//2].diamond += 1

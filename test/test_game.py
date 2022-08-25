@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-
+from parameterized import parameterized
 from game.game import WumpusGame
 
 from constans.constans import PLAYER_1, PLAYER_2
@@ -105,6 +105,17 @@ class TestGame(unittest.TestCase):
                 for col, cell in enumerate(row_cell)
                 if cell.gold > 0]
             self.assertEqual(sorted(gold_places), sorted(golds))
+
+    @parameterized.expand([
+        (4, 1)
+    ])
+    def test_initial_diamond_position(self, row_random, expected_result):
+        game = WumpusGame()
+        mid_col = LARGE//2
+        with patch('random.randint', return_value=row_random):
+            game.initial_diamond_position()
+        self.assertEqual(game._board[row_random][mid_col].diamond,
+                         expected_result)
 
 
 if __name__ == '__main__':

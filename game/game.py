@@ -5,7 +5,7 @@ from constans.constans import (
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2
 )
-from constans.constants_game import GOLD_QUANTITY, LARGE, MIDDLE
+from constans.constants_game import GOLD, GOLD_QUANTITY, LARGE, MIDDLE
 
 from game.cell import Cell
 from game.character import Character
@@ -20,6 +20,7 @@ class WumpusGame():
         ]
         self.player_1 = None
         self.player_2 = None
+        self.place_golds()
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
         if self._board[row_to][col_to].character.player == player_game:
@@ -51,10 +52,14 @@ class WumpusGame():
 
         for start, end in [fisrt_half, second_half]:
             for _ in range(GOLD_QUANTITY//2):
-                while True:  # busca hasta encontrar una posicion libre
-                    row = random.randint(0, LARGE - 1)
-                    col = random.randint(start, end)
+                self.place_item(start, end, GOLD)
 
-                    if self._board[row][col].empty:
-                        self._board[row][col].gold += 1
-                        break
+    def place_item(self, start: int, end: int, item):
+
+        while True:  # busca hasta encontrar una posicion libre
+            row = random.randint(0, LARGE - 1)
+            col = random.randint(start, end)
+            if self._board[row][col].empty:
+                if item == GOLD:
+                    self._board[row][col].gold += 1
+                break

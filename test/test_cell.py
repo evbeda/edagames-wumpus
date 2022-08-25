@@ -62,7 +62,6 @@ class TestCell(unittest.TestCase):
         cell.arrow = arrow
 
         self.assertEqual(cell.empty, expected)
-<<<<<<< HEAD
 
     @parameterized.expand([  # cell set_character_when_move
         (PLAYER_1, 1, 3),
@@ -76,5 +75,3 @@ class TestCell(unittest.TestCase):
         cell.set_character_when_move(character)
         self.assertEqual(cell.diamond, character.diamonds)
         self.assertEqual(cell.gold, character.golds)
-=======
->>>>>>> place golds method

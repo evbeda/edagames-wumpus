@@ -66,3 +66,10 @@ class WumpusGame():
 
     def initial_diamond_position(self):
         self._board[random.randint(0, LARGE - 1)][LARGE//2].diamond += 1
+
+    def drop_items(self, row, col):
+        golds_player = self._board[row][col].character.golds
+        diamonds_player = self._board[row][col].character.diamonds
+        self._board[row][col].character = None
+        self._board[row][col].diamond = diamonds_player
+        self._board[row][col].gold = golds_player

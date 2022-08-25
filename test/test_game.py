@@ -1,16 +1,19 @@
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
+
 from game.game import WumpusGame
 from constans.constans import PLAYER_1, PLAYER_2
 from constans.constants_game import LARGE, MIDDLE
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
+
 from constans.scenarios import (
     BOARD_WITH_ITEMS,
     BOARD_WIOUT_ITEMS
 )
+from game.utils import posibles_positions
 
 
 class TestGame(unittest.TestCase):
@@ -132,6 +135,23 @@ class TestGame(unittest.TestCase):
         self.assertEqual(cel_board.gold, golds)
         self.assertEqual(cel_board.diamond, diamonds)
         self.assertIsNone(cel_board.character)
+
+    @parameterized.expand([
+
+        (0, 0, [(0, 1), (1, 0)]),
+        (16, 0, [(15, 0), (16, 1)]),
+        (0, 16, [(0, 15), (1, 16)]),
+        (16, 16, [(15, 16), (16, 15)]),
+        (8, 0, [(7, 0), (9, 0), (8, 1)]),
+        (0, 8, [(0, 7), (0, 9), (1, 8)]),
+        (16, 8, [(16, 7), (16, 9), (15, 8)]),
+        (8, 8, [(7, 8), (9, 8), (8, 7), (8, 9)]),
+
+    ])
+    def test_posibles_position(self, row, col, expected):
+
+        positions = posibles_positions(row, col)
+        self.assertEqual(sorted(positions), sorted(expected))
 
 
 if __name__ == '__main__':

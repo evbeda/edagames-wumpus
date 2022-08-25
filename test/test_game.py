@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
@@ -18,7 +19,13 @@ from game.player import Player
 
 from constans.scenarios import (
     BOARD_WITH_ITEMS,
-    BOARD_WIOUT_ITEMS
+    BOARD_WIOUT_ITEMS,
+    CLOSED_GOLD_BOARD,
+    INITIAL_BIG_FAIL_BOARD,
+    RECURSIVE,
+    RECURSIVE_SIDE,
+    RECURSIVE_SIDE_CORNER,
+    WAY_GOLD_TWO_PLAYERS
 )
 from game.utils import posibles_positions
 
@@ -210,6 +217,25 @@ class TestGame(unittest.TestCase):
         self.assertEqual(hole_quantity, HOLE_QUANTITY)
         self.assertEqual(holes_first_half, HOLE_QUANTITY // 2)
         self.assertEqual(holes_second_half, HOLE_QUANTITY // 2)
+
+    @parameterized.expand([
+        ((0, 0), (0, 1), RECURSIVE, True),
+        ((0, 0), (4, 4), CLOSED_GOLD_BOARD, False),
+        ((0, 0), (7, 7), INITIAL_BIG_FAIL_BOARD, False),
+        ((0, 0), (2, 16), RECURSIVE_SIDE, False),
+        ((0, 0), (16, 0), RECURSIVE_SIDE_CORNER, False),
+        ((16, 0), (7, 7), WAY_GOLD_TWO_PLAYERS, False),
+        ((0, 0), (7, 7), WAY_GOLD_TWO_PLAYERS, True),
+        ((16, 16), (7, 7), WAY_GOLD_TWO_PLAYERS, True),
+        ((16, 16), (16, 0), WAY_GOLD_TWO_PLAYERS, False),
+    ])
+    def test_can_find_gold(self, char_position, gold_position,
+                           board, expected):
+        game = WumpusGame()
+        game._board = deepcopy(board)
+        row, col = char_position
+        result = game._can_find_gold(row, col, gold_position, board, [])
+        self.assertEqual(result, expected)
 
 
 if __name__ == '__main__':

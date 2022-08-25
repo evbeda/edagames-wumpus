@@ -259,6 +259,21 @@ class TestGame(unittest.TestCase):
         self.assertEqual(character_1.diamonds, count_diamonts_char)
         self.assertEqual(character_1.golds, count_gold_char)
 
+    @parameterized.expand([
+        (PLAYER_1, 0, 1),
+        (PLAYER_2, 0, 15)
+    ])
+    def test_discover_cell_player_1(self, player, row, col):
+        game = WumpusGame()
+        character = Character(Player(player))
+        cell = game._board[row][col]
+        cell.character = character
+        game.discover_cell(character, row, col)
+        result = cell.is_discover_by_player_2 if (
+            player == PLAYER_2
+            ) else cell.is_discover_by_player_1
+        self.assertEqual(result, True)
+
 
 if __name__ == '__main__':
     unittest.main()

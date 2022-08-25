@@ -4,7 +4,14 @@ from parameterized import parameterized
 
 from game.game import WumpusGame
 from constans.constans import PLAYER_1, PLAYER_2
-from constans.constants_game import LARGE, MIDDLE
+from constans.constants_game import (
+    GOLD_QUANTITY,
+    HOLE,
+    HOLE_QUANTITY,
+    LARGE,
+    MIDDLE,
+    GOLD
+)
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
@@ -77,7 +84,10 @@ class TestGame(unittest.TestCase):
     def test_place_gold(self):
 
         game = WumpusGame()
-        # game.place_golds()
+        game._board = [
+                [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+            ]
+        game.place_items(GOLD, GOLD_QUANTITY)
 
         gold_quantity = sum([cell.gold
                             for row_cell in game._board
@@ -102,8 +112,12 @@ class TestGame(unittest.TestCase):
                        (6, 9)]
         gold_places_patch = sum(gold_places, ())
 
+        game = WumpusGame()
         with patch('random.randint', side_effect=list(gold_places_patch)):
-            game = WumpusGame()
+            game._board = [
+                [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+            ]
+            game.place_items(GOLD, GOLD_QUANTITY)
             golds = [
                 (row, col)
                 for row, row_cell in enumerate(game._board)
@@ -152,6 +166,50 @@ class TestGame(unittest.TestCase):
 
         positions = posibles_positions(row, col)
         self.assertEqual(sorted(positions), sorted(expected))
+
+    def test_place_holes(self):
+        holes_positions = [
+            (0, 3), (1, 2), (3, 4),
+            (7, 6), (10, 3), (12, 1),
+            (14, 1), (15, 11), (1, 13),
+            (4, 13), (7, 15), (9, 12),
+            (13, 15), (14, 9), (15, 15),
+            (3, 14)]
+
+        hole_places_patch = sum(holes_positions, ())
+        game = WumpusGame()
+        with patch('random.randint', side_effect=list(hole_places_patch)):
+            game._board = [
+                [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+            ]
+            game.place_items(HOLE, HOLE_QUANTITY)
+            holes = [
+                position for position in holes_positions if (
+                    game._board[position[0]][position[1]].has_hole > 0
+                    )
+            ]
+            self.assertEqual(sorted(holes_positions), sorted(holes))
+
+    def test_holes_quantity(self):
+        game = WumpusGame()
+        game._board = [
+                [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+            ]
+        game.place_items(HOLE, HOLE_QUANTITY)
+
+        hole_quantity = sum([cell.has_hole
+                            for row_cell in game._board
+                            for cell in row_cell])
+
+        holes_first_half = sum([game._board[row][col].has_hole
+                                for col in range(MIDDLE)
+                                for row in range(LARGE)])
+        holes_second_half = sum([game._board[row][col].has_hole
+                                for col in range(MIDDLE + 1, LARGE)
+                                for row in range(LARGE)])
+        self.assertEqual(hole_quantity, HOLE_QUANTITY)
+        self.assertEqual(holes_first_half, HOLE_QUANTITY // 2)
+        self.assertEqual(holes_second_half, HOLE_QUANTITY // 2)
 
 
 if __name__ == '__main__':

@@ -59,3 +59,20 @@ WAY_GOLD_TWO_PLAYERS = [
 WAY_GOLD_TWO_PLAYERS[15][0].has_hole = True
 WAY_GOLD_TWO_PLAYERS[16][1].has_hole = True
 WAY_GOLD_TWO_PLAYERS[7][7].gold += 1
+
+BOARD_GOLD_ITEMS = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_1 = Player(PLAYER_1)
+character_player_1 = Character(player_1)
+character_player_1.golds = 0
+character_player_1.diamonds = 0
+BOARD_GOLD_ITEMS[5][8].character = character_player_1
+BOARD_GOLD_ITEMS[5][8].gold = 1
+
+BOARD_DIAMOND_ITEMS = [[Cell(i, j) for j in range(LARGE)]
+                       for i in range(LARGE)]
+player_1 = Player(PLAYER_1)
+character_player_1 = Character(player_1)
+character_player_1.golds = 0
+character_player_1.diamonds = 0
+BOARD_DIAMOND_ITEMS[5][8].character = character_player_1
+BOARD_DIAMOND_ITEMS[5][8].diamond = 1

@@ -6,6 +6,7 @@ from constans.constans import (
     INITIAL_POSITION_PLAYER_2
 )
 from constans.constants_game import (
+    DIAMOND,
     GOLD,
     GOLD_QUANTITY,
     HOLE,
@@ -102,3 +103,12 @@ class WumpusGame():
             ):
                 return True
         return False
+
+    def find_teasure(self, row, col, teasure):
+        if teasure == GOLD and self._board[row][col].gold > 0:
+            self._board[row][col].character.golds += self._board[row][col].gold
+            self._board[row][col].gold = 0
+        elif teasure == DIAMOND and self._board[row][col].diamond > 0:
+            self._board[row][col].character.diamonds +=\
+                self._board[row][col].diamond
+            self._board[row][col].diamond = 0

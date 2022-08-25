@@ -6,6 +6,7 @@ from parameterized import parameterized
 from game.game import WumpusGame
 from constans.constans import PLAYER_1, PLAYER_2
 from constans.constants_game import (
+    DIAMOND,
     GOLD_QUANTITY,
     HOLE,
     HOLE_QUANTITY,
@@ -25,7 +26,9 @@ from constans.scenarios import (
     RECURSIVE,
     RECURSIVE_SIDE,
     RECURSIVE_SIDE_CORNER,
-    WAY_GOLD_TWO_PLAYERS
+    WAY_GOLD_TWO_PLAYERS,
+    BOARD_GOLD_ITEMS,
+    BOARD_DIAMOND_ITEMS
 )
 from game.utils import posibles_positions
 
@@ -236,6 +239,25 @@ class TestGame(unittest.TestCase):
         row, col = char_position
         result = game._can_find_gold(row, col, gold_position, board, [])
         self.assertEqual(result, expected)
+
+    @parameterized.expand([
+        (BOARD_GOLD_ITEMS, 5, 8, GOLD, 0, 0, 1, 0),
+        (BOARD_DIAMOND_ITEMS, 5, 8, DIAMOND, 0, 0, 0, 1)
+    ])
+    def test_find_teasure(self, initial_board, teasure_row,
+                          teasure_col, teasure, count_golds_cel,
+                          count_diamonts_cel, count_gold_char,
+                          count_diamonts_char):
+        game = WumpusGame()
+        game._board = initial_board
+        game.find_teasure(teasure_row, teasure_col, teasure)
+        character_1 = game._board[teasure_row][teasure_col].character
+        self.assertEqual(game._board[teasure_row][teasure_col].gold,
+                         count_golds_cel)
+        self.assertEqual(game._board[teasure_row][teasure_col].diamond,
+                         count_diamonts_cel)
+        self.assertEqual(character_1.diamonds, count_diamonts_char)
+        self.assertEqual(character_1.golds, count_gold_char)
 
 
 if __name__ == '__main__':

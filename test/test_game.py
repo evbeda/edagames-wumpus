@@ -2,13 +2,15 @@ import unittest
 from unittest.mock import patch
 from parameterized import parameterized
 from game.game import WumpusGame
-
 from constans.constans import PLAYER_1, PLAYER_2
 from constans.constants_game import LARGE, MIDDLE
-
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
+from constans.scenarios import (
+    BOARD_WITH_ITEMS,
+    BOARD_WIOUT_ITEMS
+)
 
 
 class TestGame(unittest.TestCase):
@@ -116,6 +118,20 @@ class TestGame(unittest.TestCase):
             game.initial_diamond_position()
         self.assertEqual(game._board[row_random][mid_col].diamond,
                          expected_result)
+
+    @parameterized.expand([  # there are two scenarios:
+        # player with items, player without items
+        (BOARD_WITH_ITEMS, 5, 5, 5, 1),
+        (BOARD_WIOUT_ITEMS, 5, 5, 0, 0)
+    ])
+    def test_drop_items(self, board, row, col, golds, diamonds):
+        game = WumpusGame()
+        game._board = board
+        game.drop_items(row, col)
+        cel_board = game._board[row][col]
+        self.assertEqual(cel_board.gold, golds)
+        self.assertEqual(cel_board.diamond, diamonds)
+        self.assertIsNone(cel_board.character)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,6 @@
 import unittest
+from unittest.mock import patch
+
 from game.game import WumpusGame
 
 from constans.constans import PLAYER_1, PLAYER_2
@@ -70,7 +72,7 @@ class TestGame(unittest.TestCase):
     def test_place_gold(self):
 
         game = WumpusGame()
-        game.place_golds()
+        # game.place_golds()
 
         gold_quantity = sum([cell.gold
                             for row_cell in game._board
@@ -86,3 +88,24 @@ class TestGame(unittest.TestCase):
         self.assertEqual(gold_quantity, 16)
         self.assertEqual(golds_first_half, 8)
         self.assertEqual(golds_second_half, 8)
+
+    def test_place_gold_position(self):
+
+        gold_places = [(1, 1), (5, 0), (11, 0), (14, 4), (11, 5),
+                       (10, 7), (5, 5), (1, 3), (16, 16), (15, 12),
+                       (10, 12), (7, 11), (4, 9), (0, 16), (1, 12),
+                       (6, 9)]
+        gold_places_patch = sum(gold_places, ())
+
+        with patch('random.randint', side_effect=list(gold_places_patch)):
+            game = WumpusGame()
+            golds = [
+                (row, col)
+                for row, row_cell in enumerate(game._board)
+                for col, cell in enumerate(row_cell)
+                if cell.gold > 0]
+            self.assertEqual(sorted(gold_places), sorted(golds))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,4 +1,5 @@
 
+from copy import deepcopy
 from constans.constants_game import LARGE
 from constans.constans import (
     PLAYER_1
@@ -37,7 +38,7 @@ INITIAL_BIG_FAIL_BOARD = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 for row in range(LARGE):
     INITIAL_BIG_FAIL_BOARD[row][4].has_hole = True
-INITIAL_BIG_FAIL_BOARD[7][7].has_hole = True
+INITIAL_BIG_FAIL_BOARD[7][7].gold += 1
 
 RECURSIVE_SIDE = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
@@ -59,7 +60,6 @@ WAY_GOLD_TWO_PLAYERS = [
 WAY_GOLD_TWO_PLAYERS[15][0].has_hole = True
 WAY_GOLD_TWO_PLAYERS[16][1].has_hole = True
 WAY_GOLD_TWO_PLAYERS[7][7].gold += 1
-
 
 BOARD_GOLD_ITEMS = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 player_1 = Player(PLAYER_1)
@@ -105,3 +105,11 @@ FIND_GOLD_POS_3[4][2].gold += 1
 
 FIND_GOLD_POS_4 = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+VALID_HOLE_SCENARIO = deepcopy(INITIAL_BIG_FAIL_BOARD)
+VALID_HOLE_SCENARIO[7][4].has_hole = False
+VALID_HOLE_SCENARIO[0][2].has_hole = True
+VALID_HOLE_SCENARIO[1][2].has_hole = True
+VALID_HOLE_SCENARIO[2][2].has_hole = True
+VALID_HOLE_SCENARIO[2][1].has_hole = True
+VALID_HOLE_SCENARIO[4][10].gold += 1

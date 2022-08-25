@@ -32,16 +32,24 @@ from constans.scenarios import (
     RECURSIVE_SIDE_CORNER,
     WAY_GOLD_TWO_PLAYERS,
     BOARD_GOLD_ITEMS,
-    BOARD_DIAMOND_ITEMS
+    BOARD_DIAMOND_ITEMS,
+    VALID_HOLE_SCENARIO,
+
 )
 from game.utils import posibles_positions
+
+
+def patched_game() -> WumpusGame:
+    with patch.object(WumpusGame, '_valid_hole', return_value=True):
+        game = WumpusGame()
+    return game
 
 
 class TestGame(unittest.TestCase):
 
     def test_create_game(self):
         # check game attributes creation
-        game = WumpusGame()
+        game = patched_game()
         self.assertIsNotNone(game._board)
         self.assertIsNotNone(game._board[0][0])
         self.assertIsInstance(game._board[0][0], Cell)
@@ -50,12 +58,12 @@ class TestGame(unittest.TestCase):
         self.assertTrue(game)
 
     def test_board_size(self):
-        game = WumpusGame()
+        game = patched_game()
         self.assertEqual(len(game._board), LARGE)
         self.assertEqual(len(game._board[0]), LARGE)
 
     def test_move_player_to_other_player_position(self):
-        game = WumpusGame()
+        game = patched_game()
         cel_player = Cell(0, 0)
         cel_character = Character(PLAYER_1)
         cel_player.character = cel_character
@@ -64,7 +72,7 @@ class TestGame(unittest.TestCase):
             game.move_to_own_character_position(PLAYER_1, 5, 5)
 
     def test_place_character_initial_pos_player_1(self):
-        game = WumpusGame()
+        game = patched_game()
         game._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
@@ -83,7 +91,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game._board[16][0].character, character3)
 
     def test_place_character_initial_pos_player_2(self):
-        game = WumpusGame()
+        game = patched_game()
         game._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
@@ -102,8 +110,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game._board[16][16].character, character3)
 
     def test_place_gold(self):
-
-        game = WumpusGame()
+        game = patched_game()
         game._board = [
                 [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
             ]
@@ -131,8 +138,7 @@ class TestGame(unittest.TestCase):
                        (10, 12), (7, 11), (4, 9), (0, 16), (1, 12),
                        (6, 9)]
         gold_places_patch = sum(gold_places, ())
-
-        game = WumpusGame()
+        game = patched_game()
         with patch('random.randint', side_effect=list(gold_places_patch)):
             game._board = [
                 [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
@@ -149,7 +155,7 @@ class TestGame(unittest.TestCase):
         (4, 1)
     ])
     def test_initial_diamond_position(self, row_random, expected_result):
-        game = WumpusGame()
+        game = patched_game()
         mid_col = LARGE//2
         with patch('random.randint', return_value=row_random):
             game.initial_diamond_position()
@@ -162,7 +168,7 @@ class TestGame(unittest.TestCase):
         (BOARD_WIOUT_ITEMS, 5, 5, 0, 0)
     ])
     def test_drop_items(self, board, row, col, golds, diamonds):
-        game = WumpusGame()
+        game = patched_game()
         game._board = board
         game.drop_items(row, col)
         cel_board = game._board[row][col]
@@ -197,7 +203,7 @@ class TestGame(unittest.TestCase):
             (3, 14)]
 
         hole_places_patch = sum(holes_positions, ())
-        game = WumpusGame()
+        game = patched_game()
         with patch('random.randint', side_effect=list(hole_places_patch)):
             game._board = [
                 [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
@@ -211,7 +217,8 @@ class TestGame(unittest.TestCase):
             self.assertEqual(sorted(holes_positions), sorted(holes))
 
     def test_holes_quantity(self):
-        game = WumpusGame()
+        game = patched_game()
+        print()
         game._board = [
                 [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
             ]
@@ -244,13 +251,14 @@ class TestGame(unittest.TestCase):
     ])
     def test_can_find_gold(self, char_position, gold_position,
                            board, expected):
-        game = WumpusGame()
+        game = patched_game()
         game._board = deepcopy(board)
         row, col = char_position
-        result = game._can_find_gold(row, col, gold_position, board, [])
+        result = game._can_find_gold(row, col, gold_position, [])
         self.assertEqual(result, expected)
 
     @parameterized.expand([
+
 
         (BOARD_GOLD_ITEMS, 5, 8, GOLD, 0, 0, 1, 0),
         (BOARD_DIAMOND_ITEMS, 5, 8, DIAMOND, 0, 0, 0, 1)
@@ -259,7 +267,7 @@ class TestGame(unittest.TestCase):
                           teasure_col, teasure, count_golds_cel,
                           count_diamonts_cel, count_gold_char,
                           count_diamonts_char):
-        game = WumpusGame()
+        game = patched_game()
         game._board = initial_board
         game.find_teasure(teasure_row, teasure_col, teasure)
         character_1 = game._board[teasure_row][teasure_col].character
@@ -275,7 +283,7 @@ class TestGame(unittest.TestCase):
         (PLAYER_2, 0, 15)
     ])
     def test_discover_cell_player_1(self, player, row, col):
-        game = WumpusGame()
+        game = patched_game()
         character = Character(Player(player))
         cell = game._board[row][col]
         cell.character = character
@@ -296,19 +304,35 @@ class TestGame(unittest.TestCase):
         (FIND_GOLD_POS_4, []),
     ])
     def test_gold_positions(self, board, expected):
-
-        game = WumpusGame()
+        game = patched_game()
         game._board = deepcopy(board)
         self.assertEqual(sorted(game._gold_positions()), sorted(expected))
 
     def test_current_player(self):
-        game = WumpusGame()
+        game = patched_game()
         self.assertEqual(game.current_player, game.player_1)
 
     def test_change_current_player(self):
-        game = WumpusGame()
+        game = patched_game()
         game.change_current_player()
         self.assertEqual(game.current_player, game.player_2)
+
+    @parameterized.expand([
+        (7, 10, VALID_HOLE_SCENARIO, True),
+        (7, 4, VALID_HOLE_SCENARIO, False),
+        (7, 5, VALID_HOLE_SCENARIO, False),
+        (7, 3, VALID_HOLE_SCENARIO, False),
+        (2, 0, VALID_HOLE_SCENARIO, False),
+        (1, 0, VALID_HOLE_SCENARIO, False),
+        (3, 0, VALID_HOLE_SCENARIO, False),
+        (4, 0, VALID_HOLE_SCENARIO, True),
+        (15, 0, VALID_HOLE_SCENARIO, False),
+        (16, 1, VALID_HOLE_SCENARIO, False),
+    ])
+    def test_valid_hole(self, row, col, board, expected):
+        game = patched_game()
+        game._board = deepcopy(board)
+        self.assertEqual(game._valid_hole(row, col), expected)
 
 
 if __name__ == '__main__':

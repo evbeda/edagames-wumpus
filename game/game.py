@@ -1,6 +1,8 @@
 import random
 
 from constans.constans import (
+    FORBIDDEN_HOLE_CELLS,
+    INITIAL_POSITIONS,
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
@@ -83,12 +85,18 @@ class WumpusGame():
         while True:  # busca hasta encontrar una posicion libre
             row = random.randint(0, LARGE - 1)
             col = random.randint(start, end)
-            if self._board[row][col].empty:
+            if self._is_valid(row, col, item):
                 if item == GOLD:
                     self._board[row][col].gold += 1
                 elif item == HOLE:
-                    self._board[row][col].has_hole += 1
+                    self._board[row][col].has_hole = True
                 break
+
+    def _is_valid(self, row, col, item) -> bool:
+        valid = self._board[row][col].empty
+        if item == HOLE and valid:
+            valid = self._valid_hole(row, col)
+        return valid
 
     def initial_diamond_position(self):
         self._board[random.randint(0, LARGE - 1)][LARGE//2].diamond += 1
@@ -100,7 +108,26 @@ class WumpusGame():
         self._board[row][col].diamond = diamonds_player
         self._board[row][col].gold = golds_player
 
-    def _can_find_gold(self, row, col, gold_position, board, visited):
+    def _valid_hole(self, row: int, col: int) -> bool:
+
+        if (row, col) not in FORBIDDEN_HOLE_CELLS:
+
+            self._board[row][col].has_hole = True
+            golds = self._gold_positions()
+            for row_player, col_player in INITIAL_POSITIONS:
+                return self._player_can_find_gold(row_player, col_player,
+                                                  golds)
+        else:
+            return False
+
+    def _player_can_find_gold(self, row, col, golds):
+        for gold_position in golds:
+            if not self._can_find_gold(row, col, gold_position, []):
+                self._board[row][col].has_hole = False
+                return False
+        return True
+
+    def _can_find_gold(self, row, col, gold_position, visited):
         visited.append((row, col,))
 
         if (row, col) == gold_position:
@@ -111,9 +138,9 @@ class WumpusGame():
 
             if (
                 (row_next, col_next) not in visited and
-                not board[row_next][col_next].has_hole and
+                not self._board[row_next][col_next].has_hole and
                 self._can_find_gold(row_next, col_next,
-                                    gold_position, board, visited)
+                                    gold_position, visited)
             ):
                 return True
         return False
@@ -129,7 +156,7 @@ class WumpusGame():
 
     def discover_cell(self, character: Character, row, col):
         cell = self._board[row][col]
-        # if cell.character == character:
+
         if character.player.name == PLAYER_1:
             cell.is_discover_by_player_1 = True
         else:

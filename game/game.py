@@ -5,7 +5,14 @@ from constans.constans import (
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2
 )
-from constans.constants_game import GOLD, GOLD_QUANTITY, LARGE, MIDDLE
+from constans.constants_game import (
+    GOLD,
+    GOLD_QUANTITY,
+    HOLE,
+    HOLE_QUANTITY,
+    LARGE,
+    MIDDLE
+    )
 
 from game.cell import Cell
 from game.character import Character
@@ -20,7 +27,8 @@ class WumpusGame():
         ]
         self.player_1 = None
         self.player_2 = None
-        self.place_golds()
+        self.place_items(GOLD, GOLD_QUANTITY)
+        self.place_items(HOLE, HOLE_QUANTITY)
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
         if self._board[row_to][col_to].character.player == player_game:
@@ -46,15 +54,15 @@ class WumpusGame():
         for position, character in character_positions.items():
             self._board[position[0]][position[1]].character = character
 
-    def place_golds(self):
+    def place_items(self, item, item_quantity):
         fisrt_half = (0, MIDDLE-1)
         second_half = (MIDDLE + 1, LARGE - 1)
 
         for start, end in [fisrt_half, second_half]:
-            for _ in range(GOLD_QUANTITY//2):
-                self.place_item(start, end, GOLD)
+            for _ in range(item_quantity//2):
+                self.place_items_in_free_position(start, end, item)
 
-    def place_item(self, start: int, end: int, item):
+    def place_items_in_free_position(self, start: int, end: int, item):
 
         while True:  # busca hasta encontrar una posicion libre
             row = random.randint(0, LARGE - 1)
@@ -62,6 +70,8 @@ class WumpusGame():
             if self._board[row][col].empty:
                 if item == GOLD:
                     self._board[row][col].gold += 1
+                elif item == HOLE:
+                    self._board[row][col].has_hole += 1
                 break
 
     def initial_diamond_position(self):

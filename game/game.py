@@ -17,6 +17,7 @@ from constans.constants_game import (
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
+from game.utils import posibles_positions
 
 
 class WumpusGame():
@@ -83,3 +84,21 @@ class WumpusGame():
         self._board[row][col].character = None
         self._board[row][col].diamond = diamonds_player
         self._board[row][col].gold = golds_player
+
+    def _can_find_gold(self, row, col, gold_position, board, visited):
+        visited.append((row, col,))
+
+        if (row, col) == gold_position:
+            return True
+        possible_moves = posibles_positions(row, col)
+
+        for row_next, col_next in possible_moves:
+
+            if (
+                (row_next, col_next) not in visited and
+                not board[row_next][col_next].has_hole and
+                self._can_find_gold(row_next, col_next,
+                                    gold_position, board, visited)
+            ):
+                return True
+        return False

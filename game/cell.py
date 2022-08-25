@@ -5,7 +5,8 @@ class Cell():
         self.diamond = 0
         self.character = None
         self.has_hole = False
-        self.is_discover = False
+        self.is_discover_by_player_1 = False
+        self.is_discover_by_player_2 = False
         self.arrow = 0
 
     @property

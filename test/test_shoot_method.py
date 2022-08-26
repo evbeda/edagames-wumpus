@@ -7,8 +7,9 @@ from game.player import Player
 from utils.shoot_utils import (shoot_arrow,
                                target_position,
                                kill_opp,
-                               shoot_miss
-                               )
+                               shoot_miss,
+                               shoot_hole)
+
 from constans.constans import PLAYER_1, INITIAL_ARROWS
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
 
@@ -102,10 +103,20 @@ class Test_shoot(unittest.TestCase):
         game = WumpusGame()
         row = 0
         col = 1
-        shoot_miss(row, col, game)
         target_cell = game._board[row][col]
         current_player = game.current_player
+        shoot_miss(row, col, game)
         self.assertEqual(target_cell.arrow, 1)
+        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+        self.assertTrue(target_cell.is_discover_by_player_1)
+
+    def test_shoot_into_hole(self):
+        game = WumpusGame()
+        row = 0
+        col = 1
+        target_cell = game._board[row][col]
+        current_player = game.current_player
+        shoot_hole(row, col, game)
         self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
         self.assertTrue(target_cell.is_discover_by_player_1)
 

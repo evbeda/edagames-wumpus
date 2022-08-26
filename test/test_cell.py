@@ -75,3 +75,14 @@ class TestCell(unittest.TestCase):
         cell.set_character_when_move(character)
         self.assertEqual(cell.diamond, character.diamonds)
         self.assertEqual(cell.gold, character.golds)
+
+    @parameterized.expand([
+    (0, 0, Player(PLAYER_1), True),
+    (0, 0, None, False),
+    ])
+    def test_cell_there_arent_player(self, row, col,
+                           character,
+                           expected):
+        cell = Cell(row, col)
+        cell.character = character
+        self.assertEqual(cell.empty, expected)

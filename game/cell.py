@@ -15,6 +15,10 @@ class Cell():
                     or self.character or self.has_hole
                     or self.arrow)
 
+    @property
+    def are_there_player(self) -> bool:
+        return self.character != None
+
     # TODO: refactor method
     def set_character_when_move(self, character):
         self.character = character

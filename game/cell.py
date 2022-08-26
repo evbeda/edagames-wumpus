@@ -19,12 +19,6 @@ class Cell():
     def are_there_player(self) -> bool:
         return self.character is not None
 
-    # TODO: refactor method
-    def set_character_when_move(self, character):
-        self.character = character
-        self.gold = character.golds
-        self.diamond = character.diamonds
-
     @property
     def has_player(self):
         return self.character.player.name if (

@@ -65,19 +65,6 @@ class TestCell(unittest.TestCase):
 
         self.assertEqual(cell.empty, expected)
 
-    @parameterized.expand([  # cell set_character_when_move
-        (PLAYER_1, 1, 3),
-        (PLAYER_2, 0, 4)
-    ])
-    def test_cell_set_character_when_move(self, player_name, diamond, gold):
-        cell = Cell(0, 0)
-        character = Character(Player(player_name))
-        character.diamonds = diamond
-        character.golds = gold
-        cell.set_character_when_move(character)
-        self.assertEqual(cell.diamond, character.diamonds)
-        self.assertEqual(cell.gold, character.golds)
-
     @parameterized.expand([
         (0, 0, Player(PLAYER_1), True),
         (0, 0, None, False),

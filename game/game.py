@@ -288,13 +288,12 @@ class WumpusGame():
         if self.current_player.arrows < 1:
             raise Exception("INVALID MOVE - no arrows available")
 
-        # self.current_player.arrows -= 1
-
         target_row, target_col = self.target_position(row, col, direction)
         target_cell = self._board[target_row][target_col]
 
         if (target_cell.character is not None and
            target_cell.character.player.name == self.current_player.name):
+            self.current_player.arrows -= 1
             raise Exception("INVALID MOVE - Friendly fire")
 
         if (target_cell.character is not None and
@@ -321,23 +320,23 @@ class WumpusGame():
         return (target_row, target_col)
 
     def kill_opp(self, row, col):
-        # leave opp items in the cell
-        # remove opp from the cell
         self.current_player.arrows -= 1
+        self.modify_score(DEATH,
+                          {"character": self._board[row][col].character})
         self.drop_items(row, col)
-        # TODO decrease opp score
-        # TODO increase player score
-        # reveal cell to the player
+        self.modify_score(KILL)
         self.discover_cell(row, col)
 
     def shoot_miss(self, row, col):
         self.discover_cell(row, col)
         self.current_player.arrows -= 1
         self._board[row][col].arrow += 1
+        self.modify_score(ARROW_MISS)
 
     def shoot_hole(self, row, col):
         self.discover_cell(row, col)
         self.current_player.arrows -= 1
+        self.modify_score(CORRECT_MOVE)
 
     def _parse_cell(self, row: int, col: int) -> str:
         parsed_cell = self._board[row][col].to_str(self.current_player.name)

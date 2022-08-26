@@ -24,6 +24,9 @@ def shoot_arrow(player: Player, row, col, direction, game: WumpusGame):
        target_cell.character.player.name != player.name):
         kill_opp(row, col, game)
 
+    if target_cell.character is None:
+        shoot_miss(row, col, game)
+
 
 def target_position(row, col, direction):
     directions = {EAST: (0, -1), SOUTH: (1, 0), WEST: (0, 1), NORTH: (-1, 0)}
@@ -52,3 +55,9 @@ def reveal_cell(row, col, game: WumpusGame):
 
     if game.current_player.name == PLAYER_2:
         game._board[row][col].is_discover_by_player_2 = True
+
+
+def shoot_miss(row, col, game: WumpusGame):
+    reveal_cell(row, col, game)
+    game.current_player.arrows -= 1
+    game._board[row][col].arrow += 1

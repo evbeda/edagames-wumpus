@@ -4,7 +4,10 @@ from game.character import Character
 
 from game.game import WumpusGame
 from game.player import Player
-from utils.shoot_utils import shoot_arrow, target_position
+from utils.shoot_utils import (shoot_arrow,
+                               target_position,
+                               reveal_cell,
+                               kill_opp)
 from constans.constans import PLAYER_1, INITIAL_ARROWS
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
 
@@ -61,6 +64,38 @@ class Test_shoot(unittest.TestCase):
 
         with self.assertRaises(Exception):
             shoot_arrow(player, 0, 0, WEST, game)
+
+    def test_reveal_cell_p1(self):
+        row = 1
+        col = 1
+        game = WumpusGame()
+        reveal_cell(row, row, game)
+        result = game._board[row][col].is_discover_by_player_1
+        self.assertEqual(result, True)
+
+    def test_reveal_cell_p2(self):
+        row = 1
+        col = 1
+        game = WumpusGame()
+        game.change_current_player()
+        reveal_cell(row, col, game)
+        result = game._board[row][col].is_discover_by_player_2
+        self.assertEqual(result, True)
+
+    def test_kill_opp(self):
+        row = 0
+        col = 1
+        game = WumpusGame()
+        opp_character = Character(game.player_2)
+        opp_character.diamonds = 1
+        opp_character.golds = 2
+        game._board[row][col].character = opp_character
+        opp_cell = game._board[row][col]
+        kill_opp(row, col, game)
+        self.assertEqual(opp_cell.diamond, 1)
+        self.assertEqual(opp_cell.gold, 2)
+        self.assertEqual(opp_cell.character, None)
+        self.assertTrue(opp_cell.is_discover_by_player_1)
 
 
 if __name__ == '__main__':

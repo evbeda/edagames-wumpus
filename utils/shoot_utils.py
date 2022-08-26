@@ -1,6 +1,7 @@
 from game.cell import Cell
 from game.game import WumpusGame
 from game.player import Player
+from constans.constans import PLAYER_1, PLAYER_2
 from constans.constants_game import LARGE
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
 
@@ -28,3 +29,22 @@ def target_position(row, col, direction):
        or target_col < 0 or target_col > LARGE - 1):
         raise Exception("INVALID MOVE - Shoot out of bounds")
     return (target_row, target_col)
+
+def kill_opp(row, col, game: WumpusGame):
+    # leave opp items in the cell
+    # remove opp from the cell
+    game._board[row][col].character = None
+    # decrease opp score
+    # increase player score
+    # reveal cell to the player
+    reveal_cell(row, col, game)
+    
+
+def reveal_cell(row, col, player: Player, game: WumpusGame):
+
+    if game.current_player().name == PLAYER_1:
+        game._board[row][col].is_discover_by_player_1 = True
+    
+    if game.current_player().name == PLAYER_2:
+        game._board[row][col].is_discover_by_player_2 = True
+

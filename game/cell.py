@@ -17,7 +17,7 @@ class Cell():
 
     @property
     def are_there_player(self) -> bool:
-        return self.character != None
+        return self.character is not None
 
     # TODO: refactor method
     def set_character_when_move(self, character):

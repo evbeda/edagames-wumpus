@@ -154,10 +154,9 @@ class WumpusGame():
                 self._board[row][col].diamond
             self._board[row][col].diamond = 0
 
-    def discover_cell(self, character: Character, row, col):
+    def discover_cell(self, row, col):
         cell = self._board[row][col]
-
-        if character.player.name == PLAYER_1:
+        if self.current_player == self.player_1:
             cell.is_discover_by_player_1 = True
         else:
             cell.is_discover_by_player_2 = True

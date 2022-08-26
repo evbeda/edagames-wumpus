@@ -1,7 +1,6 @@
 from game.cell import Cell
 from game.game import WumpusGame
 from game.player import Player
-from constans.constans import PLAYER_1, PLAYER_2
 from constans.constants_game import LARGE
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
 
@@ -45,19 +44,10 @@ def kill_opp(row, col, game: WumpusGame):
     # TODO decrease opp score
     # TODO increase player score
     # reveal cell to the player
-    reveal_cell(row, col, game)
-
-
-def reveal_cell(row, col, game: WumpusGame):
-
-    if game.current_player.name == PLAYER_1:
-        game._board[row][col].is_discover_by_player_1 = True
-
-    if game.current_player.name == PLAYER_2:
-        game._board[row][col].is_discover_by_player_2 = True
+    game.discover_cell(row, col)
 
 
 def shoot_miss(row, col, game: WumpusGame):
-    reveal_cell(row, col, game)
+    game.discover_cell(row, col)
     game.current_player.arrows -= 1
     game._board[row][col].arrow += 1

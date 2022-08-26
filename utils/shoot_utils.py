@@ -26,6 +26,9 @@ def shoot_arrow(player: Player, row, col, direction, game: WumpusGame):
     if target_cell.character is None:
         shoot_miss(row, col, game)
 
+    if target_cell.has_hole:
+        shoot_hole(target_row, target_col, game)
+
 
 def target_position(row, col, direction):
     directions = {EAST: (0, -1), SOUTH: (1, 0), WEST: (0, 1), NORTH: (-1, 0)}
@@ -51,3 +54,8 @@ def shoot_miss(row, col, game: WumpusGame):
     game.discover_cell(row, col)
     game.current_player.arrows -= 1
     game._board[row][col].arrow += 1
+
+
+def shoot_hole(row, col, game):
+    game.discover_cell(row, col)
+    game.current_player.arrows -= 1

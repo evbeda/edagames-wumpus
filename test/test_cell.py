@@ -1,15 +1,18 @@
 import unittest
+from constans.scenarios import (
+    TESTED_CELL_1, TESTED_CELL_10, TESTED_CELL_2,
+    TESTED_CELL_3, TESTED_CELL_4, TESTED_CELL_5,
+    TESTED_CELL_6, TESTED_CELL_7, TESTED_CELL_8, TESTED_CELL_9
+)
 from game.game import WumpusGame
 from parameterized import parameterized
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
-from constans.constans import PLAYER_1, PLAYER_2
+from constans.constans import EMPTY_CELL, HIDDEN_CELL, PLAYER_1, PLAYER_2
 
 
 class TestCell(unittest.TestCase):
-    def setUp(self):
-        self.game = WumpusGame()
 
     @parameterized.expand([  # cell_attributes
         (0, 1, 1, 0, PLAYER_1, False, False, 2),
@@ -88,3 +91,21 @@ class TestCell(unittest.TestCase):
         cell = game._board[row][col]
         result = cell.has_player
         self.assertEqual(result, expected)
+
+    @parameterized.expand([
+        (PLAYER_1, TESTED_CELL_1, HIDDEN_CELL),
+        (PLAYER_1, TESTED_CELL_2, EMPTY_CELL),
+        (PLAYER_2, TESTED_CELL_2, HIDDEN_CELL),
+        (PLAYER_1, TESTED_CELL_3, '  P  ',),
+        (PLAYER_2, TESTED_CELL_4, '  P  ',),
+        (PLAYER_2, TESTED_CELL_4, '  P  ',),
+        (PLAYER_2, TESTED_CELL_5, '  O  ',),
+        (PLAYER_2, TESTED_CELL_6, '  F  ',),
+        (PLAYER_2, TESTED_CELL_7, ' 2   ',),
+        (PLAYER_1, TESTED_CELL_8, '   D ',),
+        (PLAYER_1, TESTED_CELL_9, ' 1 D ',),
+        (PLAYER_1, TESTED_CELL_10, '##F##',),
+        (PLAYER_2, TESTED_CELL_10, '##F##',),
+    ])
+    def test_cell_representation(self, player, cell: Cell, expected):
+        self.assertEqual(cell.to_str(player), expected)

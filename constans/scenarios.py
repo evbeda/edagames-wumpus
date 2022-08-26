@@ -2,7 +2,8 @@
 from copy import deepcopy
 from constans.constants_game import LARGE
 from constans.constans import (
-    PLAYER_1
+    PLAYER_1,
+    PLAYER_2
 )
 from game.cell import Cell
 from game.character import Character
@@ -123,3 +124,41 @@ BOARD_WITH_TWO_CHARACTERS_SAME_PLAYER[0][1].character = Player(PLAYER_1)
 DANGER_SIGNAL_SCENARIO = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 DANGER_SIGNAL_SCENARIO[4][4].has_hole = True
+
+
+TESTED_CELL_1 = Cell(0, 0)
+
+TESTED_CELL_2 = Cell(0, 0)
+TESTED_CELL_2.is_discover_by_player_1 = True
+
+TESTED_CELL_3 = Cell(0, 0)
+TESTED_CELL_3.character = Character(Player(PLAYER_2))
+TESTED_CELL_3.is_discover_by_player_1 = True
+
+TESTED_CELL_4 = Cell(0, 0)
+TESTED_CELL_4.character = Character(Player(PLAYER_2))
+TESTED_CELL_4.is_discover_by_player_2 = True
+
+TESTED_CELL_5 = Cell(0, 0)
+TESTED_CELL_5.has_hole = True
+TESTED_CELL_5.is_discover_by_player_2 = True
+
+TESTED_CELL_6 = Cell(0, 0)
+TESTED_CELL_6.arrow = 1
+TESTED_CELL_6.is_discover_by_player_2 = True
+
+TESTED_CELL_7 = Cell(0, 0)
+TESTED_CELL_7.gold = 2
+TESTED_CELL_7.is_discover_by_player_2 = True
+
+TESTED_CELL_8 = Cell(0, 0)
+TESTED_CELL_8.diamond = 1
+TESTED_CELL_8.is_discover_by_player_1 = True
+
+TESTED_CELL_9 = Cell(0, 0)
+TESTED_CELL_9.gold = 1
+TESTED_CELL_9.diamond = 1
+TESTED_CELL_9.is_discover_by_player_1 = True
+
+TESTED_CELL_10 = Cell(0, 0)
+TESTED_CELL_10.arrow = 1

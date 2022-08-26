@@ -4,7 +4,7 @@ from unittest.mock import patch
 from parameterized import parameterized
 
 from game.game import WumpusGame
-from constans.constans import PLAYER_1, PLAYER_2
+from constans.constans import EMPTY_CELL, PLAYER_1, PLAYER_2
 from constans.constants_game import (
     DIAMOND,
     GOLD_QUANTITY,
@@ -22,6 +22,7 @@ from constans.scenarios import (
     BOARD_WITH_ITEMS,
     BOARD_WIOUT_ITEMS,
     CLOSED_GOLD_BOARD,
+    DANGER_SIGNAL_SCENARIO,
     FIND_GOLD_POS_1,
     FIND_GOLD_POS_2,
     FIND_GOLD_POS_3,
@@ -325,23 +326,24 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.current_player, game.player_2)
 
     @parameterized.expand([
-        (7, 10, VALID_HOLE_SCENARIO, True),
-        (7, 4, VALID_HOLE_SCENARIO, False),
-        (7, 5, VALID_HOLE_SCENARIO, False),
-        (7, 3, VALID_HOLE_SCENARIO, False),
-        (2, 0, VALID_HOLE_SCENARIO, False),
-        (1, 0, VALID_HOLE_SCENARIO, False),
-        (3, 0, VALID_HOLE_SCENARIO, False),
-        (4, 0, VALID_HOLE_SCENARIO, True),
-        (15, 0, VALID_HOLE_SCENARIO, False),
-        (16, 1, VALID_HOLE_SCENARIO, False),
+        (7, 10, True),
+        (7, 4, False),
+        (7, 5, False),
+        (7, 3, False),
+        (2, 0, False),
+        (1, 0, False),
+        (3, 0, False),
+        (4, 0, True),
+        (15, 0, False),
+        (16, 1, False),
     ])
-    def test_valid_hole(self, row, col, board, expected):
+    def test_valid_hole(self, row, col, expected):
         game = patched_game()
-        game._board = deepcopy(board)
+        game._board = deepcopy(VALID_HOLE_SCENARIO)
         self.assertEqual(game._valid_hole(row, col), expected)
 
     @parameterized.expand([
+
         (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_1, 'Bad Move'),
         (0, 0, 0, 1, 3, 0, PLAYER_1, PLAYER_1, 'Bad Move'),
     ])
@@ -378,6 +380,44 @@ class TestGame(unittest.TestCase):
         result = game.is_valid_move(from_row, from_col,
                                     to_row, to_col, p1)
         self.assertEqual(result, expected_result)
+
+    @parameterized.expand([
+        (PLAYER_1, 4, 3, EMPTY_CELL, '~    ', ),
+        (PLAYER_1, 4, 5, EMPTY_CELL, '~    ', ),
+        (PLAYER_1, 5, 4, EMPTY_CELL, '~    ', ),
+        (PLAYER_1, 9, 9, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_1, 2, 2, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_1, 2, 3, EMPTY_CELL, '    +', ),
+        (PLAYER_1, 2, 5, EMPTY_CELL, '    +', ),
+        (PLAYER_1, 1, 4, EMPTY_CELL, '    +', ),
+        (PLAYER_1, 3, 4, EMPTY_CELL, '~   +', ),
+        (PLAYER_1, 2, 4, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_2, 7, 0, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_2, 7, 1, EMPTY_CELL, '    +', ),
+        (PLAYER_2, 7, 3, EMPTY_CELL, '    +', ),
+        (PLAYER_2, 6, 2, EMPTY_CELL, '    +', ),
+        (PLAYER_2, 8, 2, EMPTY_CELL, '    +', ),
+    ])
+    def test_danger_signals(self, current_player, row, col,
+                            parsed_cell, expected):
+
+        game = patched_game()
+        game._board = deepcopy(DANGER_SIGNAL_SCENARIO)
+
+        game._board[2][2].character = Character(game.player_1)
+        game._board[2][3].character = Character(game.player_1)
+        game._board[2][4].character = Character(game.player_2)
+
+        game._board[7][0].character = Character(game.player_2)
+        game._board[7][1].character = Character(game.player_2)
+        game._board[7][2].character = Character(game.player_1)
+
+        if PLAYER_1 == current_player:
+            game.current_player = game.player_1
+        else:
+            game.current_player = game.player_2
+        result = game.put_danger_signal(parsed_cell, row, col)
+        self.assertEqual(result, expected)
 
 
 if __name__ == '__main__':

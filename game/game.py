@@ -185,3 +185,21 @@ class WumpusGame():
                 "to_col": to_col,
                 "player": player_game,
                 }
+
+    def put_danger_signal(self, parsed_cell: str, row, col):
+
+        parsed_cell = list(parsed_cell)
+        positions = posibles_positions(row, col)
+        for p_row, p_col in positions:
+
+            player_name = self._board[p_row][p_col].has_player
+            if (
+                player_name is not None
+                and player_name != self.current_player.name
+            ):
+                parsed_cell[-1] = "+"
+
+            if self._board[p_row][p_col].has_hole:
+                parsed_cell[0] = "~"
+
+        return "".join(parsed_cell)

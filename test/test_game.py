@@ -36,13 +36,13 @@ from game.utils import posibles_positions
 class TestGame(unittest.TestCase):
 
     def test_create_game(self):
-        # comprobe game attributes creation
+        # check game attributes creation
         game = WumpusGame()
         self.assertIsNotNone(game._board)
         self.assertIsNotNone(game._board[0][0])
         self.assertIsInstance(game._board[0][0], Cell)
-        self.assertEqual(game.player_1, None)
-        self.assertEqual(game.player_2, None)
+        self.assertEqual(game.player_1.name, PLAYER_1)
+        self.assertEqual(game.player_2.name, PLAYER_2)
         self.assertTrue(game)
 
     def test_board_size(self):
@@ -61,6 +61,9 @@ class TestGame(unittest.TestCase):
 
     def test_place_character_initial_pos_player_1(self):
         game = WumpusGame()
+        game._board = [
+            [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+        ]
         player = Player(PLAYER_1)
         character1 = Character(player)
         character2 = Character(player)
@@ -77,6 +80,9 @@ class TestGame(unittest.TestCase):
 
     def test_place_character_initial_pos_player_2(self):
         game = WumpusGame()
+        game._board = [
+            [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+        ]
         player = Player(PLAYER_2)
         character1 = Character(player)
         character2 = Character(player)

@@ -24,3 +24,9 @@ class Cell():
         self.character = character
         self.gold = character.golds
         self.diamond = character.diamonds
+
+    @property
+    def has_player(self):
+        return self.character.player.name if (
+            self.character is not None
+            ) else None

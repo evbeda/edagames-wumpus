@@ -32,13 +32,15 @@ class TestCell(unittest.TestCase):
         cell.diamond = diamond
         cell.character = character
         cell.has_hole = has_hole
-        cell.is_discover = is_discover
+        cell.is_discover_by_player_1 = is_discover
+        cell.is_discover_by_player_2 = is_discover
         cell.arrow = arrow
         self.assertEqual(cell.gold, gold)
         self.assertEqual(cell.diamond, diamond)
         self.assertEqual(cell.character, character)
         self.assertEqual(cell.has_hole, has_hole)
-        self.assertEqual(cell.is_discover, is_discover)
+        self.assertEqual(cell.is_discover_by_player_1, is_discover)
+        self.assertEqual(cell.is_discover_by_player_2, is_discover)
         self.assertEqual(cell.arrow, arrow)
 
     @parameterized.expand([
@@ -87,3 +89,15 @@ class TestCell(unittest.TestCase):
         character_1 = player
         cell.character = character_1
         self.assertEqual(cell.are_there_player, expected)
+
+    @parameterized.expand([
+        (0, 0, PLAYER_1),
+        (0, 1, None),
+        (0, 16, PLAYER_2),
+        (1, 15, None)
+    ])
+    def test_has_player_property(self, row, col, expected):
+        game = WumpusGame()
+        cell = game._board[row][col]
+        result = cell.has_player
+        self.assertEqual(result, expected)

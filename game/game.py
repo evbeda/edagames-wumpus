@@ -3,7 +3,8 @@ import random
 from constans.constans import (
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
-    INITIAL_POSITION_PLAYER_2
+    INITIAL_POSITION_PLAYER_2,
+    PLAYER_2
 )
 from constans.constants_game import (
     DIAMOND,
@@ -27,10 +28,28 @@ class WumpusGame():
         self._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
-        self.player_1 = None
-        self.player_2 = None
+        self.player_1 = Player(PLAYER_1)
+        self.player_2 = Player(PLAYER_2)
+        self.beto_1 = Character(self.player_1)
+        self.beto_2 = Character(self.player_1)
+        self.beto_3 = Character(self.player_1)
+        self.perri_1 = Character(self.player_2)
+        self.perri_2 = Character(self.player_2)
+        self.perri_3 = Character(self.player_2)
         self.place_items(GOLD, GOLD_QUANTITY)
         self.place_items(HOLE, HOLE_QUANTITY)
+        self.place_character_initial_pos(
+            self.player_1,
+            self.beto_1,
+            self.beto_2,
+            self.beto_3
+        )
+        self.place_character_initial_pos(
+            self.player_2,
+            self.perri_1,
+            self.perri_2,
+            self.perri_3
+        )
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
         if self._board[row_to][col_to].character.player == player_game:

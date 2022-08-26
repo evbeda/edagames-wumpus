@@ -26,14 +26,20 @@ from constans.constants_scores import (
     GET_ITEMS,
     TIMEOUT,
     DEATH
-
-    )
-from constans.constants_utils import NORTH, SOUTH, EAST, WEST
+)
+from constans.constants_utils import (
+    NORTH,
+    SHOOT,
+    SOUTH,
+    MOVE,
+    EAST,
+    WEST
+)
 
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
-from game.utils import posibles_positions
+from game.utils import posibles_positions, translate_direction
 
 
 class WumpusGame():
@@ -192,12 +198,14 @@ class WumpusGame():
         if (coordinates not in posibles_positions(from_row, from_col)):
             raise Exception('Bad Move')
         self.move_to_own_character_position(player_game, to_row, to_col)
-        return {"from_row": from_row,
-                "from_col": from_col,
-                "to_row": to_row,
-                "to_col": to_col,
-                "player": player_game,
-                }
+        dictionary = {
+            "from_row": from_row,
+            "from_col": from_col,
+            "to_row": to_row,
+            "to_col": to_col,
+            "player": player_game,
+        }
+        self.filter_move(dictionary)
 
     def put_danger_signal(self, parsed_cell: str, row, col):
 
@@ -310,8 +318,8 @@ class WumpusGame():
             return
 
     def target_position(self, row, col, direction):
-        directions = {EAST: (0, -1), SOUTH: (1, 0),
-                      WEST: (0, 1), NORTH: (-1, 0)}
+        directions = {EAST: (0, +1), SOUTH: (1, 0),
+                      WEST: (0, -1), NORTH: (-1, 0)}
         target_row = row + directions[direction][0]
         target_col = col + directions[direction][1]
         if (target_row < 0 or target_row > LARGE - 1
@@ -343,3 +351,17 @@ class WumpusGame():
         if '#' not in parsed_cell:
             parsed_cell = self.put_danger_signal(parsed_cell, row, col)
         return parsed_cell
+
+    def action_manager(self, action, from_row, from_col, direction):
+        to_row, to_col = translate_direction(from_row, from_col, direction)
+
+        if action == MOVE:
+            self.is_valid_move(
+                from_row,
+                from_col,
+                to_row,
+                to_col,
+                self.current_player
+            )
+        elif action == SHOOT:
+            return self.shoot_arrow(from_row, from_col, direction)

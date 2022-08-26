@@ -18,14 +18,14 @@ class Test_shoot(unittest.TestCase):
 
     def test_arrow_decrease(self):
         game = WumpusGame()
-        game.shoot_arrow(0, 0, WEST)
+        game.shoot_arrow(0, 0, EAST)
         self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
 
     @parameterized.expand(
         [
-            (0, 0, EAST),
+            (0, 0, WEST),
             (0, 0, NORTH),
-            (16, 16, WEST),
+            (16, 16, EAST),
             (16, 16, SOUTH)
         ]
     )
@@ -36,9 +36,9 @@ class Test_shoot(unittest.TestCase):
 
     @parameterized.expand(
         [
-            (0, 0, WEST, (0, 1)),
+            (0, 0, EAST, (0, 1)),
             (0, 0, SOUTH, (1, 0)),
-            (16, 16, EAST, (16, 15)),
+            (16, 16, WEST, (16, 15)),
             (16, 16, NORTH, (15, 16))
         ]
     )
@@ -52,7 +52,7 @@ class Test_shoot(unittest.TestCase):
         character = Character(game.current_player)
         game._board[0][1].character = character
         with self.assertRaises(Exception):
-            game.shoot_arrow(0, 0, WEST)
+            game.shoot_arrow(0, 0, EAST)
 
     def test_kill_opp(self):
         row = 0
@@ -96,7 +96,7 @@ class Test_shoot(unittest.TestCase):
         opp_character.diamonds = 1
         opp_character.golds = 2
         game._board[0][1].character = opp_character
-        game.shoot_arrow(0, 0, WEST)
+        game.shoot_arrow(0, 0, EAST)
         self.assertEqual(game._board[0][1].diamond, 1)
         self.assertEqual(game._board[0][1].gold, 2)
         self.assertEqual(game._board[0][1].character, None)
@@ -106,7 +106,7 @@ class Test_shoot(unittest.TestCase):
     def test_shoot_hole(self):
         game = WumpusGame()
         game._board[0][1].has_hole = True
-        game.shoot_arrow(0, 0, WEST)
+        game.shoot_arrow(0, 0, EAST)
         self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
         self.assertTrue(game._board[0][1].is_discover_by_player_1)
 

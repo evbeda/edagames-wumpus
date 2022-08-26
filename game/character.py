@@ -7,3 +7,7 @@ class Character:
         self.golds = 0
         self.diamonds = 0
         self.player = player
+
+    def __str__(self):
+        return (f"gold: {self.golds}, player: {self.player}, " +
+                f"diamonds: {self.diamonds}.")

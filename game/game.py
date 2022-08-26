@@ -16,7 +16,17 @@ from constans.constants_game import (
     HOLE_QUANTITY,
     LARGE,
     MIDDLE
-    )
+)
+from constans.constants_scores import (
+    scores,
+    KILL,
+    INVALID_MOVE,
+    CORRECT_MOVE,
+    ARROW_MISS,
+    GET_ITEMS,
+    TIMEOUT,
+    DEATH
+)
 
 from game.cell import Cell
 from game.character import Character
@@ -203,3 +213,38 @@ class WumpusGame():
                 parsed_cell[0] = "~"
 
         return "".join(parsed_cell)
+
+    def modify_score(self, event, payload={}):
+        '''
+        Functions that modifies the score correspondingly, for players
+        involved.
+        Events are DEATH, GET_ITEMS, KILL, CORRECT_MOVE, INVALID_MOVE,
+        TIMEOUT, ARROW_MISS. Payload is a dictionary,
+        which contents varies according to event.
+        For DEATH, Payload is {"character" = characterObject}, the character
+        that dies.
+        For GET_ITEMS, Payload is {"cell" = cellOject}, where cell is the cell
+        where the character is getting into.
+        For KILL, Payload is not needed, BUT, remember to call modify_score()
+        with a DEATH event later, for the killed character.
+        For CORRECT_MOVE or INVALID_MOVE or TIMEOUT, no payload is needed.
+        '''
+        if event == GET_ITEMS:
+            cell = payload["cell"]
+            score = cell.gold * scores[GOLD] + cell.diamond * scores[DIAMOND]
+            self.current_player.update_score(score)
+        elif event == DEATH:
+            char = payload["character"]
+            score = (char.golds * scores[GOLD] +
+                     char.diamonds * scores[DIAMOND]) * -1
+            char.player.update_score(score)
+        elif event == KILL:
+            self.current_player.update_score(scores[KILL])
+        elif event == CORRECT_MOVE:
+            self.current_player.update_score(scores[CORRECT_MOVE])
+        elif event == INVALID_MOVE:
+            self.current_player.update_score(scores[INVALID_MOVE])
+        elif event == TIMEOUT:
+            self.current_player.update_score(scores[TIMEOUT])
+        elif event == ARROW_MISS:
+            self.current_player.update_score(scores[ARROW_MISS])

@@ -34,7 +34,6 @@ from constans.scenarios import (
     BOARD_GOLD_ITEMS,
     BOARD_DIAMOND_ITEMS,
     VALID_HOLE_SCENARIO,
-
 )
 from game.utils import posibles_positions
 
@@ -258,8 +257,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(result, expected)
 
     @parameterized.expand([
-
-
         (BOARD_GOLD_ITEMS, 5, 8, GOLD, 0, 0, 1, 0),
         (BOARD_DIAMOND_ITEMS, 5, 8, DIAMOND, 0, 0, 0, 1)
     ])
@@ -333,6 +330,44 @@ class TestGame(unittest.TestCase):
         game = patched_game()
         game._board = deepcopy(board)
         self.assertEqual(game._valid_hole(row, col), expected)
+
+    @parameterized.expand([
+        (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_1, 'Bad Move'),
+        (0, 0, 0, 1, 3, 0, PLAYER_1, PLAYER_1, 'Bad Move'),
+    ])
+    def test_is_valid_move_raise_exep(self, from_row, from_col, c2_row, c2_col,
+                                      to_row, to_col, p1, p2, expected_result):
+        game = WumpusGame()
+        cel_one, cel_two = Cell(from_row, from_col), Cell(c2_row, c2_col)
+        cel_one.character = Character(p1)
+        cel_two.character = Character(p2)
+        game._board[from_row][from_col] = cel_one
+        game._board[c2_row][c2_col] = cel_two
+        with self.assertRaises(Exception):
+            result = game.is_valid_move(from_row, from_col,
+                                        to_row, to_col, p1)
+            self.assertEqual(result, expected_result)
+
+    @parameterized.expand([
+        (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_2,
+            {"from_row": 0,
+             "from_col": 0,
+             "to_row": 0,
+             "to_col": 1,
+             "player": PLAYER_1}),
+
+    ])
+    def test_is_valid_move_ret_coord(self, from_row, from_col, c2_row, c2_col,
+                                     to_row, to_col, p1, p2, expected_result):
+        game = WumpusGame()
+        cel_one, cel_two = Cell(from_row, from_col), Cell(c2_row, c2_col)
+        cel_one.character = Character(p1)
+        cel_two.character = Character(p2)
+        game._board[from_row][from_col] = cel_one
+        game._board[c2_row][c2_col] = cel_two
+        result = game.is_valid_move(from_row, from_col,
+                                    to_row, to_col, p1)
+        self.assertEqual(result, expected_result)
 
 
 if __name__ == '__main__':

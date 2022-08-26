@@ -113,3 +113,8 @@ VALID_HOLE_SCENARIO[1][2].has_hole = True
 VALID_HOLE_SCENARIO[2][2].has_hole = True
 VALID_HOLE_SCENARIO[2][1].has_hole = True
 VALID_HOLE_SCENARIO[4][10].gold += 1
+BOARD_WITH_TWO_CHARACTERS_SAME_PLAYER = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+BOARD_WITH_TWO_CHARACTERS_SAME_PLAYER[0][0].character = Player(PLAYER_1)
+BOARD_WITH_TWO_CHARACTERS_SAME_PLAYER[0][1].character = Player(PLAYER_1)

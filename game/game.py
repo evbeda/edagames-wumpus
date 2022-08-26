@@ -174,3 +174,15 @@ class WumpusGame():
         self.current_player = self.player_2 if (
             self.current_player == self.player_1
             ) else self.player_1
+
+    def is_valid_move(self, from_row, from_col, to_row, to_col, player_game):
+        coordinates = (to_row, to_col)
+        if (coordinates not in posibles_positions(from_row, from_col)):
+            raise Exception('Bad Move')
+        self.move_to_own_character_position(player_game, to_row, to_col)
+        return {"from_row": from_row,
+                "from_col": from_col,
+                "to_row": to_row,
+                "to_col": to_col,
+                "player": player_game,
+                }

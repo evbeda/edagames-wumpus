@@ -18,6 +18,16 @@ from game.cell import Cell
 from game.character import Character
 from game.player import Player
 
+from constans.constants_scores import (
+    CORRECT_MOVE,
+    DEATH,
+    INVALID_MOVE,
+    ARROW_MISS,
+    GET_ITEMS,
+    KILL,
+    TIMEOUT,
+    scores
+)
 from constans.scenarios import (
     BOARD_WITH_ITEMS,
     BOARD_WIOUT_ITEMS,
@@ -325,6 +335,39 @@ class TestGame(unittest.TestCase):
         game.change_current_player()
         self.assertEqual(game.current_player, game.player_2)
 
+    def test_modify_score_get_items(self):  # testing "Get_Items" event
+        game = WumpusGame()
+        cell = Cell(2, 4)
+        cell.gold = 3
+        cell.diamond = 1
+        payload = {"cell": cell}
+        game.modify_score(GET_ITEMS, payload)
+        self.assertEqual(game.current_player.score,
+                         (scores[GOLD]*3 + scores[DIAMOND]*1))
+
+    def test_modify_score_death(self):  # testing "Death" event
+        game = WumpusGame()
+        char = Character(Player(PLAYER_2))
+        game.current_player = char.player
+        char.golds = 4
+        char.diamonds = 0
+        payload = {"character": char}
+        game.modify_score(DEATH, payload)
+        self.assertEqual(char.player.score, (scores[GOLD]*4) * -1)
+
+    @parameterized.expand([  # test for modify_score() function
+        ("KILL", scores[KILL]),
+        ("CORRECT_MOVE", scores[CORRECT_MOVE]),
+        ("INVALID_MOVE", scores[INVALID_MOVE]),
+        ("ARROW_MISS", scores[ARROW_MISS]),
+        ("TIMEOUT", scores[TIMEOUT]),
+    ])
+    def test_modify_score(self, event, expected):
+
+        game = WumpusGame()
+        game.modify_score(event)
+        self.assertEqual(game.current_player.score, expected)
+
     @parameterized.expand([
         (7, 10, True),
         (7, 4, False),
@@ -418,6 +461,11 @@ class TestGame(unittest.TestCase):
             game.current_player = game.player_2
         result = game.put_danger_signal(parsed_cell, row, col)
         self.assertEqual(result, expected)
+
+    def test_char_str(self):
+        char = Character(Player(PLAYER_1))
+        expected = f"gold: 0, player: {char.player}, diamonds: 0."
+        self.assertEqual(str(char), expected)
 
 
 if __name__ == '__main__':

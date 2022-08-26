@@ -162,6 +162,7 @@ TESTED_CELL_9.is_discover_by_player_1 = True
 
 TESTED_CELL_10 = Cell(0, 0)
 TESTED_CELL_10.arrow = 1
+
 FILTER_MOVE_BOARD_H = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 FILTER_MOVE_BOARD_H[5][5].has_hole = True
@@ -281,3 +282,93 @@ character_player_2 = Character(player_2)
 character_player_2.golds = 2
 character_player_2.diamonds = 0
 FILTER_MOVE_MAKE_MOVE[5][5].character = character_player_2
+
+
+PARSE_CELL_SCENARIO = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+CELL_1 = Cell(0, 0)
+CELL_1.character = Character(Player(PLAYER_2))
+CELL_1.is_discover_by_player_2 = True
+
+CELL_2 = Cell(0, 16)
+CELL_2.character = Character(Player(PLAYER_1))
+CELL_2.is_discover_by_player_1 = True
+
+CELL_3 = Cell(8, 0)
+CELL_3.character = Character(Player(PLAYER_2))
+CELL_3.is_discover_by_player_2 = True
+
+CELL_4 = Cell(8, 1)
+CELL_4.character = Character(Player(PLAYER_1))
+CELL_4.is_discover_by_player_1 = True
+
+CELL_5 = Cell(10, 10)
+CELL_5.character = Character(Player(PLAYER_2))
+CELL_5.is_discover_by_player_2 = True
+
+CELL_6 = Cell(10, 11)
+CELL_6.character = Character(Player(PLAYER_1))
+CELL_6.is_discover_by_player_1 = True
+
+CELL_7 = Cell(10, 12)
+CELL_7.has_hole = True
+
+CELL_8 = Cell(10, 9)
+CELL_8.has_hole = True
+
+CELL_9 = Cell(4, 4)
+CELL_9.arrow = 1
+
+CELL_10 = Cell(4, 5)
+CELL_10.arrow = 1
+CELL_10.diamond = 1
+
+CELL_11 = Cell(4, 6)
+CELL_11.arrow = 1
+CELL_11.gold = 1
+
+CELL_12 = Cell(4, 7)
+CELL_12.has_hole = True
+CELL_12.is_discover_by_player_1 = True
+
+CELL_13 = Cell(4, 9)
+CELL_13.arrow = 1
+CELL_13.is_discover_by_player_2 = True
+
+CELL_14 = Cell(14, 5)
+CELL_14.arrow = 1
+CELL_14.gold = 3
+CELL_14.is_discover_by_player_2 = True
+
+CELL_15 = Cell(14, 6)
+CELL_15.arrow = 1
+CELL_15.gold = 3
+CELL_15.diamond = 1
+CELL_15.is_discover_by_player_2 = True
+
+CELL_16 = Cell(5, 8)
+CELL_16.character = Character(Player(PLAYER_1))
+
+CELL_17 = Cell(4, 8)
+CELL_17.is_discover_by_player_2 = True
+
+
+PARSE_CELL_SCENARIO[0][0] = CELL_1
+PARSE_CELL_SCENARIO[0][16] = CELL_2
+PARSE_CELL_SCENARIO[8][0] = CELL_3
+PARSE_CELL_SCENARIO[8][1] = CELL_4
+PARSE_CELL_SCENARIO[10][10] = CELL_5
+PARSE_CELL_SCENARIO[10][11] = CELL_6
+PARSE_CELL_SCENARIO[10][12] = CELL_7
+PARSE_CELL_SCENARIO[10][9] = CELL_8
+PARSE_CELL_SCENARIO[4][4] = CELL_9
+PARSE_CELL_SCENARIO[4][5] = CELL_10
+PARSE_CELL_SCENARIO[4][6] = CELL_11
+PARSE_CELL_SCENARIO[4][7] = CELL_12
+PARSE_CELL_SCENARIO[4][9] = CELL_13
+PARSE_CELL_SCENARIO[14][5] = CELL_14
+PARSE_CELL_SCENARIO[14][6] = CELL_15
+
+PARSE_CELL_SCENARIO[5][8] = CELL_16
+PARSE_CELL_SCENARIO[4][8] = CELL_17

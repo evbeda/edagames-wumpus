@@ -49,8 +49,12 @@ from constans.scenarios import (
     FIND_GOLD_POS_3,
     FIND_GOLD_POS_4,
     INITIAL_BIG_FAIL_BOARD,
+
     MAKE_MOVE_BOARD,
     MAKE_MOVE_BOARD_P2,
+
+    PARSE_CELL_SCENARIO,
+
     RECURSIVE,
     RECURSIVE_SIDE,
     RECURSIVE_SIDE_CORNER,
@@ -530,6 +534,34 @@ class TestGame(unittest.TestCase):
         self.assertEqual(player_character.golds, gold_new)
         self.assertEqual(player_character.diamonds, diamond_new)
         self.assertEqual(player_character.player.arrows, new_arrows)
+
+    @parameterized.expand([
+        (0, 0, PLAYER_2, '  P  '),
+        (0, 16, PLAYER_1, '  B  '),
+        (8, 0, PLAYER_2, '  P +'),
+        (8, 1, PLAYER_1, '  B +'),
+        (10, 11, PLAYER_1, '~ B +'),
+        (10, 10, PLAYER_2, '~ P +'),
+        (4, 8, PLAYER_2, '~   +'),
+        (7, 2, PLAYER_1, '#####'),
+        (7, 3, PLAYER_1, '#####'),
+        (7, 3, PLAYER_1, '#####'),
+        (4, 4, PLAYER_1, '##F##'),
+        (4, 5, PLAYER_1, '##F##'),
+        (4, 6, PLAYER_1, '##F##'),
+        (4, 7, PLAYER_1, '  O  '),
+        (4, 9, PLAYER_2, '  F  '),
+        (14, 5, PLAYER_2, ' 3F  '),
+        (14, 6, PLAYER_2, ' 3FD '),
+    ])
+    def test_parse_cell(self, row, col, player_name, expected):
+        game: WumpusGame = patched_game()
+        game._board = PARSE_CELL_SCENARIO
+        if PLAYER_1 == player_name:
+            game.current_player = game.player_1
+        else:
+            game.current_player = game.player_2
+        self.assertEqual(game._parse_cell(row, col), expected)
 
 
 if __name__ == '__main__':

@@ -20,6 +20,10 @@ def shoot_arrow(player: Player, row, col, direction, game: WumpusGame):
        target_cell.character.player.name == player.name):
         raise Exception("INVALID MOVE - Friendly fire")
 
+    if (target_cell.character is not None and
+       target_cell.character.player.name != player.name):
+        kill_opp(row, col, game)
+
 
 def target_position(row, col, direction):
     directions = {EAST: (0, -1), SOUTH: (1, 0), WEST: (0, 1), NORTH: (-1, 0)}
@@ -30,21 +34,21 @@ def target_position(row, col, direction):
         raise Exception("INVALID MOVE - Shoot out of bounds")
     return (target_row, target_col)
 
+
 def kill_opp(row, col, game: WumpusGame):
     # leave opp items in the cell
     # remove opp from the cell
-    game._board[row][col].character = None
-    # decrease opp score
-    # increase player score
+    game.drop_items(row, col)
+    # TODO decrease opp score
+    # TODO increase player score
     # reveal cell to the player
     reveal_cell(row, col, game)
-    
 
-def reveal_cell(row, col, player: Player, game: WumpusGame):
 
-    if game.current_player().name == PLAYER_1:
+def reveal_cell(row, col, game: WumpusGame):
+
+    if game.current_player.name == PLAYER_1:
         game._board[row][col].is_discover_by_player_1 = True
-    
-    if game.current_player().name == PLAYER_2:
-        game._board[row][col].is_discover_by_player_2 = True
 
+    if game.current_player.name == PLAYER_2:
+        game._board[row][col].is_discover_by_player_2 = True

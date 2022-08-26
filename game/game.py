@@ -338,3 +338,9 @@ class WumpusGame():
     def shoot_hole(self, row, col):
         self.discover_cell(row, col)
         self.current_player.arrows -= 1
+
+    def _parse_cell(self, row: int, col: int) -> str:
+        parsed_cell = self._board[row][col].to_str(self.current_player.name)
+        if '#' not in parsed_cell:
+            parsed_cell = self.put_danger_signal(parsed_cell, row, col)
+        return parsed_cell

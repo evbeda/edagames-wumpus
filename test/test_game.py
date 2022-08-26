@@ -301,6 +301,15 @@ class TestGame(unittest.TestCase):
         game._board = deepcopy(board)
         self.assertEqual(sorted(game._gold_positions()), sorted(expected))
 
+    def test_current_player(self):
+        game = WumpusGame()
+        self.assertEqual(game.current_player, game.player_1)
+
+    def test_change_current_player(self):
+        game = WumpusGame()
+        game.change_current_player()
+        self.assertEqual(game.current_player, game.player_2)
+
 
 if __name__ == '__main__':
     unittest.main()

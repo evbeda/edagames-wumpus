@@ -44,6 +44,7 @@ class WumpusGame():
             Character(self.player_2),
             Character(self.player_2)
         )
+        self.current_player = self.player_1
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
         if self._board[row_to][col_to].character.player == player_game:
@@ -141,3 +142,8 @@ class WumpusGame():
             for col in range(LARGE)
             if self._board[row][col].gold > 0
         ]
+
+    def change_current_player(self):
+        self.current_player = self.player_2 if (
+            self.current_player == self.player_1
+            ) else self.player_1

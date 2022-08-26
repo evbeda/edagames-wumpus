@@ -77,12 +77,13 @@ class TestCell(unittest.TestCase):
         self.assertEqual(cell.gold, character.golds)
 
     @parameterized.expand([
-    (0, 0, Player(PLAYER_1), True),
-    (0, 0, None, False),
+        (0, 0, Player(PLAYER_1), True),
+        (0, 0, None, False),
     ])
     def test_cell_there_arent_player(self, row, col,
-                           character,
-                           expected):
+                                     player,
+                                     expected):
         cell = Cell(row, col)
-        cell.character = character
-        self.assertEqual(cell.empty, expected)
+        character_1 = player
+        cell.character = character_1
+        self.assertEqual(cell.are_there_player, expected)

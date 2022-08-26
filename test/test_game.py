@@ -277,17 +277,27 @@ class TestGame(unittest.TestCase):
 
     @parameterized.expand([
         (PLAYER_1, 0, 1),
-        (PLAYER_2, 0, 15)
     ])
     def test_discover_cell_player_1(self, player, row, col):
         game = patched_game()
         character = Character(Player(player))
         cell = game._board[row][col]
         cell.character = character
-        game.discover_cell(character, row, col)
-        result = cell.is_discover_by_player_2 if (
-            player == PLAYER_2
-            ) else cell.is_discover_by_player_1
+        game.discover_cell(row, col)
+        result = cell.is_discover_by_player_1
+        self.assertEqual(result, True)
+
+    @parameterized.expand([
+        (PLAYER_2, 0, 15)
+    ])
+    def test_discover_cell_player_2(self, player, row, col):
+        game = patched_game()
+        game.change_current_player()
+        character = Character(Player(player))
+        cell = game._board[row][col]
+        cell.character = character
+        game.discover_cell(row, col)
+        result = cell.is_discover_by_player_2
         self.assertEqual(result, True)
 
     @parameterized.expand([

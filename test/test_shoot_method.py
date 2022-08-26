@@ -6,10 +6,9 @@ from game.game import WumpusGame
 from game.player import Player
 from utils.shoot_utils import (shoot_arrow,
                                target_position,
-                               reveal_cell,
                                kill_opp,
-                               shoot_miss)
-
+                               shoot_miss
+                               )
 from constans.constans import PLAYER_1, INITIAL_ARROWS
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
 
@@ -71,7 +70,7 @@ class Test_shoot(unittest.TestCase):
         row = 1
         col = 1
         game = WumpusGame()
-        reveal_cell(row, row, game)
+        game.discover_cell(row, row)
         result = game._board[row][col].is_discover_by_player_1
         self.assertEqual(result, True)
 
@@ -80,7 +79,7 @@ class Test_shoot(unittest.TestCase):
         col = 1
         game = WumpusGame()
         game.change_current_player()
-        reveal_cell(row, col, game)
+        game.discover_cell(row, col)
         result = game._board[row][col].is_discover_by_player_2
         self.assertEqual(result, True)
 

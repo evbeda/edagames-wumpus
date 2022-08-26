@@ -211,7 +211,7 @@ class TestGame(unittest.TestCase):
             game.place_items(HOLE, HOLE_QUANTITY)
             holes = [
                 position for position in holes_positions if (
-                    game._board[position[0]][position[1]].has_hole > 0
+                    game._board[position[0]][position[1]].has_hole is True
                     )
             ]
             self.assertEqual(sorted(holes_positions), sorted(holes))

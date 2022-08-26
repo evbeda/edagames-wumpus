@@ -33,11 +33,24 @@ from constans.scenarios import (
     BOARD_WIOUT_ITEMS,
     CLOSED_GOLD_BOARD,
     DANGER_SIGNAL_SCENARIO,
+    DICT_FILTER_MOVE_MK,
+    DICTIONARY_ENE,
+    DICTIONARY_H,
+    DICTIONARY_MAK_MOV,
+    DICTIONARY_MAK_MOV_P2,
+    FILTER_MOVE_BOARD_ENE,
+    FILTER_MOVE_BOARD_H,
+    FILTER_MOVE_MAKE_MOVE,
+    FIN_FILTER_MOVE_BOARD_ENE,
+    FIN_FILTER_MOVE_BOARD_H,
+    FIN_FILTER_MOVE_MAKE_MOVE,
     FIND_GOLD_POS_1,
     FIND_GOLD_POS_2,
     FIND_GOLD_POS_3,
     FIND_GOLD_POS_4,
     INITIAL_BIG_FAIL_BOARD,
+    MAKE_MOVE_BOARD,
+    MAKE_MOVE_BOARD_P2,
     RECURSIVE,
     RECURSIVE_SIDE,
     RECURSIVE_SIDE_CORNER,
@@ -74,7 +87,7 @@ class TestGame(unittest.TestCase):
 
     def test_move_player_to_other_player_position(self):
         game = patched_game()
-        cel_player = Cell(0, 0)
+        cel_player = Cell(5, 5)
         cel_character = Character(PLAYER_1)
         cel_player.character = cel_character
         game._board[5][5] = cel_player
@@ -386,7 +399,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game._valid_hole(row, col), expected)
 
     @parameterized.expand([
-
         (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_1, 'Bad Move'),
         (0, 0, 0, 1, 3, 0, PLAYER_1, PLAYER_1, 'Bad Move'),
     ])
@@ -416,8 +428,10 @@ class TestGame(unittest.TestCase):
                                      to_row, to_col, p1, p2, expected_result):
         game = WumpusGame()
         cel_one, cel_two = Cell(from_row, from_col), Cell(c2_row, c2_col)
-        cel_one.character = Character(p1)
-        cel_two.character = Character(p2)
+        player_1 = Player(p1)
+        player_2 = Player(p2)
+        cel_one.character = Character(player_1)
+        cel_two.character = Character(player_2)
         game._board[from_row][from_col] = cel_one
         game._board[c2_row][c2_col] = cel_two
         result = game.is_valid_move(from_row, from_col,
@@ -466,6 +480,56 @@ class TestGame(unittest.TestCase):
         char = Character(Player(PLAYER_1))
         expected = f"gold: 0, player: {char.player}, diamonds: 0."
         self.assertEqual(str(char), expected)
+
+    @parameterized.expand([  # case for filter event
+        (DICTIONARY_H, FILTER_MOVE_BOARD_H,
+         FIN_FILTER_MOVE_BOARD_H, 5, 1),
+        (DICTIONARY_ENE, FILTER_MOVE_BOARD_ENE,
+         FIN_FILTER_MOVE_BOARD_ENE, 5, 1),
+        (DICT_FILTER_MOVE_MK, FILTER_MOVE_MAKE_MOVE,
+         FIN_FILTER_MOVE_MAKE_MOVE, 0, 0)
+    ])
+    def test_filter_move(self, dictionary, initial_board,
+                         finalboard, count_gold, count_diam):
+        game = WumpusGame()
+        game._board = initial_board
+        game.filter_move(dictionary)
+        cell = finalboard[dictionary["from_row"]][dictionary["from_col"]]
+        gold_cel = cell.gold
+        diam_cel = cell.diamond
+        diam_char = cell.character
+        self.assertEqual(gold_cel, count_gold)
+        self.assertEqual(diam_cel, count_diam)
+        self.assertIsNone(diam_char)
+
+    @parameterized.expand([  # after verify all posibilities make move
+         (DICTIONARY_MAK_MOV, MAKE_MOVE_BOARD, 3, 0, 0, 0, True, False, 2, 0),
+         (DICTIONARY_MAK_MOV_P2, MAKE_MOVE_BOARD_P2,
+          5, 0, 1, 0, False, True, 3, 0)
+    ])
+    def test_make_move(self, dictionary, initial_board,
+                       gold_new, gold_old, diamond_new,
+                       diamond_old, is_visited_p1,
+                       is_visited_p2, new_arrows, old_arrow):
+        game = WumpusGame()
+        game._board = initial_board
+        game.make_move(dictionary)
+        new_cell = game._board[dictionary["to_row"]][dictionary["to_col"]]
+        player_character = game.\
+            _board[dictionary["to_row"]][dictionary["to_col"]].character
+        old_cell = game._board[dictionary["from_row"]][dictionary["from_col"]]
+        self.assertEqual(new_cell.is_discover_by_player_1, is_visited_p1)
+        self.assertEqual(new_cell.is_discover_by_player_2, is_visited_p2)
+        self.assertEqual(new_cell.arrow, old_arrow)
+        self.assertEqual(new_cell.gold, gold_old)
+        self.assertEqual(new_cell.diamond, diamond_old)
+        self.assertEqual(old_cell.arrow, old_arrow)
+        self.assertEqual(old_cell.gold, gold_old)
+        self.assertEqual(old_cell.diamond, diamond_old)
+        self.assertIsNotNone(player_character)
+        self.assertEqual(player_character.golds, gold_new)
+        self.assertEqual(player_character.diamonds, diamond_new)
+        self.assertEqual(player_character.player.arrows, new_arrows)
 
 
 if __name__ == '__main__':

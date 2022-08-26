@@ -59,7 +59,8 @@ class WumpusGame():
         self.current_player = self.player_1
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
-        if self._board[row_to][col_to].character.player == player_game:
+        ch = self._board[row_to][col_to].character
+        if ch and ch.player == player_game:
             raise Exception("Bad Move")
 
     def place_character_initial_pos(
@@ -248,3 +249,34 @@ class WumpusGame():
             self.current_player.update_score(scores[TIMEOUT])
         elif event == ARROW_MISS:
             self.current_player.update_score(scores[ARROW_MISS])
+
+    def make_move(self, dictionary):
+        from_row = dictionary["from_row"]
+        from_col = dictionary["from_col"]
+        to_row = dictionary["to_row"]
+        to_col = dictionary["to_col"]
+        new_cel = self._board[to_row][to_col]
+        old_cel = self._board[from_row][from_col]
+        character = self._board[from_row][from_col].character
+        character.golds += new_cel.gold
+        character.diamonds += new_cel.diamond
+        character.player.arrows += new_cel.arrow
+        new_cel.arrow = 0
+        new_cel.gold = 0
+        new_cel.diamond = 0
+        new_cel.character = character
+        old_cel.character = None
+        if dictionary["player"] == PLAYER_1:
+            new_cel.is_discover_by_player_1 = True
+        else:
+            new_cel.is_discover_by_player_2 = True
+
+    def filter_move(self, dictionary):
+        cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
+        player_dic = dictionary["player"]
+        character_cel = cell_to.character
+        if cell_to.has_hole or (character_cel and
+                                character_cel.player.name != player_dic):
+            self.drop_items(dictionary["from_row"], dictionary["from_col"])
+        else:
+            self.make_move(dictionary)

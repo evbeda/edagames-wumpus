@@ -3,6 +3,7 @@ import random
 from constans.constans import (
     FORBIDDEN_HOLE_CELLS,
     INITIAL_POSITIONS,
+    JOIN_ROW_BOARD,
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
@@ -82,8 +83,12 @@ class WumpusGame():
             list_positions[2]: character3
         }
 
-        for position, character in character_positions.items():
-            self._board[position[0]][position[1]].character = character
+        for (row, col), character in character_positions.items():
+            self._board[row][col].character = character
+            if player.name == PLAYER_1:
+                self._board[row][col].is_discover_by_player_1 = True
+            else:
+                self._board[row][col].is_discover_by_player_2 = True
 
     def place_items(self, item, item_quantity):
         fisrt_half = (0, MIDDLE-1)
@@ -106,7 +111,8 @@ class WumpusGame():
                 break
 
     def _is_valid(self, row, col, item) -> bool:
-        valid = self._board[row][col].empty
+        valid = ((row, col) not in INITIAL_POSITIONS
+                 and self._board[row][col].empty)
         if item == HOLE and valid:
             valid = self._valid_hole(row, col)
         return valid
@@ -345,3 +351,15 @@ class WumpusGame():
         if '#' not in parsed_cell:
             parsed_cell = self.put_danger_signal(parsed_cell, row, col)
         return parsed_cell
+
+    @property
+    def board(self):
+        user_board = list()
+
+        for row in range(LARGE):
+            buf = ''
+            for col in range(LARGE):
+                buf += self._parse_cell(row, col)
+            user_board.append(buf)
+
+        return JOIN_ROW_BOARD.join(user_board)

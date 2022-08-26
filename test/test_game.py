@@ -55,10 +55,14 @@ from constans.scenarios import (
     MAKE_MOVE_BOARD_P2,
 
     PARSE_CELL_SCENARIO,
+    PARSE_CELL_SCENARIO_STR_PLAYER_1,
+    PARSE_CELL_SCENARIO_STR_PLAYER_2,
 
     RECURSIVE,
     RECURSIVE_SIDE,
     RECURSIVE_SIDE_CORNER,
+    TEST_BOARD_INIT_PLAYER_1,
+    TEST_BOARD_INIT_PLAYER_2,
     WAY_GOLD_TWO_PLAYERS,
     BOARD_GOLD_ITEMS,
     BOARD_DIAMOND_ITEMS,
@@ -162,8 +166,8 @@ class TestGame(unittest.TestCase):
     def test_place_gold_position(self):
 
         gold_places = [(1, 1), (5, 0), (11, 0), (14, 4), (11, 5),
-                       (10, 7), (5, 5), (1, 3), (16, 16), (15, 12),
-                       (10, 12), (7, 11), (4, 9), (0, 16), (1, 12),
+                       (10, 7), (5, 5), (1, 3), (15, 15), (15, 12),
+                       (10, 12), (7, 11), (4, 9), (0, 15), (1, 12),
                        (6, 9)]
         gold_places_patch = sum(gold_places, ())
         game = patched_game()
@@ -578,6 +582,33 @@ class TestGame(unittest.TestCase):
         game.make_move(dict_move)
         expected = scores[GOLD] * 2 + scores[DIAMOND]
         self.assertEqual(game.player_1.score, expected)
+
+    @parameterized.expand([
+        (PLAYER_2, TEST_BOARD_INIT_PLAYER_2),
+        (PLAYER_1, TEST_BOARD_INIT_PLAYER_1)
+    ])
+    def test_init_board(self, current_player, expected_board):
+        game = WumpusGame()
+
+        if PLAYER_1 == current_player:
+            game.current_player = game.player_1
+        else:
+            game.current_player = game.player_2
+        self.assertEqual(game.board, expected_board)
+
+    @parameterized.expand([
+        (PLAYER_2, PARSE_CELL_SCENARIO_STR_PLAYER_2),
+        (PLAYER_1, PARSE_CELL_SCENARIO_STR_PLAYER_1)
+    ])
+    def test_board(self, curent_player, expected_board):
+        game = patched_game()
+        if PLAYER_1 == curent_player:
+            game.current_player = game.player_1
+        else:
+            game.current_player = game.player_2
+        self.maxDiff = None
+        game._board = deepcopy(PARSE_CELL_SCENARIO)
+        self.assertEqual(game.board, expected_board)
 
 
 if __name__ == '__main__':

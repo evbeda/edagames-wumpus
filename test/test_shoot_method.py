@@ -3,14 +3,8 @@ from parameterized import parameterized
 from game.character import Character
 
 from game.game import WumpusGame
-from game.player import Player
-from utils.shoot_utils import (shoot_arrow,
-                               target_position,
-                               kill_opp,
-                               shoot_miss,
-                               shoot_hole)
 
-from constans.constans import PLAYER_1, INITIAL_ARROWS
+from constans.constans import INITIAL_ARROWS
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
 
 
@@ -18,20 +12,14 @@ class Test_shoot(unittest.TestCase):
 
     def test_no_arrows_to_shoot(self):
         game = WumpusGame()
-        player = Player(PLAYER_1)
-        player.arrows = 0
-        game.player_1 = player
+        game.current_player.arrows = 0
         with self.assertRaises(Exception):
-            shoot_arrow(game.player_1, 0, 0, EAST, game)
+            game.shoot_arrow(0, 0, EAST)
 
     def test_arrow_decrease(self):
         game = WumpusGame()
-        player = Player(PLAYER_1)
-        game.player_1 = player
-        character = Character(player)
-        game._board[0][0].character = character
-        shoot_arrow(player, 0, 0, WEST, game)
-        self.assertEqual(player.arrows, INITIAL_ARROWS - 1)
+        game.shoot_arrow(0, 0, WEST)
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
 
     @parameterized.expand(
         [
@@ -42,8 +30,9 @@ class Test_shoot(unittest.TestCase):
         ]
     )
     def test_target_out_of_bounds(self, row, col, direction):
+        game = WumpusGame()
         with self.assertRaises(Exception):
-            target_position(row, col, direction)
+            game.target_position(row, col, direction)
 
     @parameterized.expand(
         [
@@ -54,35 +43,16 @@ class Test_shoot(unittest.TestCase):
         ]
     )
     def test_target_in_bounds(self, row, col, direction, expected):
-        result = target_position(row, col, direction)
+        game = WumpusGame()
+        result = game.target_position(row, col, direction)
         self.assertEqual(result, expected)
 
     def test_shoot_own_character(self):
         game = WumpusGame()
-        player = Player(PLAYER_1)
-        game.player_1 = player
-        character = Character(player)
+        character = Character(game.current_player)
         game._board[0][1].character = character
-
         with self.assertRaises(Exception):
-            shoot_arrow(player, 0, 0, WEST, game)
-
-    def test_reveal_cell_p1(self):
-        row = 1
-        col = 1
-        game = WumpusGame()
-        game.discover_cell(row, row)
-        result = game._board[row][col].is_discover_by_player_1
-        self.assertEqual(result, True)
-
-    def test_reveal_cell_p2(self):
-        row = 1
-        col = 1
-        game = WumpusGame()
-        game.change_current_player()
-        game.discover_cell(row, col)
-        result = game._board[row][col].is_discover_by_player_2
-        self.assertEqual(result, True)
+            game.shoot_arrow(0, 0, WEST)
 
     def test_kill_opp(self):
         row = 0
@@ -93,7 +63,7 @@ class Test_shoot(unittest.TestCase):
         opp_character.golds = 2
         game._board[row][col].character = opp_character
         opp_cell = game._board[row][col]
-        kill_opp(row, col, game)
+        game.kill_opp(row, col)
         self.assertEqual(opp_cell.diamond, 1)
         self.assertEqual(opp_cell.gold, 2)
         self.assertEqual(opp_cell.character, None)
@@ -105,7 +75,7 @@ class Test_shoot(unittest.TestCase):
         col = 1
         target_cell = game._board[row][col]
         current_player = game.current_player
-        shoot_miss(row, col, game)
+        game.shoot_miss(row, col)
         self.assertEqual(target_cell.arrow, 1)
         self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
         self.assertTrue(target_cell.is_discover_by_player_1)
@@ -116,9 +86,29 @@ class Test_shoot(unittest.TestCase):
         col = 1
         target_cell = game._board[row][col]
         current_player = game.current_player
-        shoot_hole(row, col, game)
+        game.shoot_hole(row, col)
         self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
         self.assertTrue(target_cell.is_discover_by_player_1)
+
+    def test_shoot_n_kill(self):
+        game = WumpusGame()
+        opp_character = Character(game.player_2)
+        opp_character.diamonds = 1
+        opp_character.golds = 2
+        game._board[0][1].character = opp_character
+        game.shoot_arrow(0, 0, WEST)
+        self.assertEqual(game._board[0][1].diamond, 1)
+        self.assertEqual(game._board[0][1].gold, 2)
+        self.assertEqual(game._board[0][1].character, None)
+        self.assertTrue(game._board[0][1].is_discover_by_player_1)
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
+
+    def test_shoot_hole(self):
+        game = WumpusGame()
+        game._board[0][1].has_hole = True
+        game.shoot_arrow(0, 0, WEST)
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
+        self.assertTrue(game._board[0][1].is_discover_by_player_1)
 
 
 if __name__ == '__main__':

@@ -30,25 +30,19 @@ class WumpusGame():
         ]
         self.player_1 = Player(PLAYER_1)
         self.player_2 = Player(PLAYER_2)
-        self.beto_1 = Character(self.player_1)
-        self.beto_2 = Character(self.player_1)
-        self.beto_3 = Character(self.player_1)
-        self.perri_1 = Character(self.player_2)
-        self.perri_2 = Character(self.player_2)
-        self.perri_3 = Character(self.player_2)
         self.place_items(GOLD, GOLD_QUANTITY)
         self.place_items(HOLE, HOLE_QUANTITY)
         self.place_character_initial_pos(
             self.player_1,
-            self.beto_1,
-            self.beto_2,
-            self.beto_3
+            Character(self.player_1),
+            Character(self.player_1),
+            Character(self.player_1)
         )
         self.place_character_initial_pos(
             self.player_2,
-            self.perri_1,
-            self.perri_2,
-            self.perri_3
+            Character(self.player_2),
+            Character(self.player_2),
+            Character(self.player_2)
         )
 
     def move_to_own_character_position(self, player_game, row_to, col_to):

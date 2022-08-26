@@ -139,3 +139,11 @@ class WumpusGame():
             cell.is_discover_by_player_1 = True
         else:
             cell.is_discover_by_player_2 = True
+
+    def _gold_positions(self) -> 'list[tuple]':
+        return [
+            (row, col)
+            for row in range(LARGE)
+            for col in range(LARGE)
+            if self._board[row][col].gold > 0
+        ]

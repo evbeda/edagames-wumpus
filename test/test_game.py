@@ -22,6 +22,10 @@ from constans.scenarios import (
     BOARD_WITH_ITEMS,
     BOARD_WIOUT_ITEMS,
     CLOSED_GOLD_BOARD,
+    FIND_GOLD_POS_1,
+    FIND_GOLD_POS_2,
+    FIND_GOLD_POS_3,
+    FIND_GOLD_POS_4,
     INITIAL_BIG_FAIL_BOARD,
     RECURSIVE,
     RECURSIVE_SIDE,
@@ -247,6 +251,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(result, expected)
 
     @parameterized.expand([
+
         (BOARD_GOLD_ITEMS, 5, 8, GOLD, 0, 0, 1, 0),
         (BOARD_DIAMOND_ITEMS, 5, 8, DIAMOND, 0, 0, 0, 1)
     ])
@@ -279,6 +284,22 @@ class TestGame(unittest.TestCase):
             player == PLAYER_2
             ) else cell.is_discover_by_player_1
         self.assertEqual(result, True)
+
+    @parameterized.expand([
+        (FIND_GOLD_POS_1, [
+                            (5, 7), (2, 7), (1, 7), (7, 4),
+                            (7, 1), (3, 6), (2, 9), (10, 7),
+                            (9, 7), ]),
+
+        (FIND_GOLD_POS_2, [(4, 2), (2, 5), (3, 7), (7, 4), ]),
+        (FIND_GOLD_POS_3, [(4, 2), ]),
+        (FIND_GOLD_POS_4, []),
+    ])
+    def test_gold_positions(self, board, expected):
+
+        game = WumpusGame()
+        game._board = deepcopy(board)
+        self.assertEqual(sorted(game._gold_positions()), sorted(expected))
 
 
 if __name__ == '__main__':

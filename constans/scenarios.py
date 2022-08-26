@@ -162,3 +162,122 @@ TESTED_CELL_9.is_discover_by_player_1 = True
 
 TESTED_CELL_10 = Cell(0, 0)
 TESTED_CELL_10.arrow = 1
+FILTER_MOVE_BOARD_H = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+FILTER_MOVE_BOARD_H[5][5].has_hole = True
+player_1 = Player(PLAYER_1)
+character_player_1 = Character(player_1)
+character_player_1.golds = 5
+character_player_1.diamonds = 1
+FILTER_MOVE_BOARD_H[5][4].character = character_player_1
+
+FIN_FILTER_MOVE_BOARD_H = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+FIN_FILTER_MOVE_BOARD_H[5][5].has_hole = True
+FIN_FILTER_MOVE_BOARD_H[5][4].gold = 5
+FIN_FILTER_MOVE_BOARD_H[5][4].diamond = 1
+
+DICTIONARY_H = {"from_row": 5,
+                "from_col": 4,
+                "to_row": 5,
+                "to_col": 5,
+                "player": PLAYER_1}
+
+FILTER_MOVE_SAME_P = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_1 = Player(PLAYER_1)
+character_player_1 = Character(player_1)
+character_player_1.golds = 5
+character_player_1.diamonds = 1
+FILTER_MOVE_SAME_P[5][5].character = character_player_1
+FILTER_MOVE_SAME_P[5][4].character = character_player_1
+
+DICTIONARY_SM = {"from_row": 5,
+                 "from_col": 4,
+                 "to_row": 5,
+                 "to_col": 5,
+                 "player": PLAYER_1}
+
+FILTER_MOVE_BOARD_ENE = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_2 = Player(PLAYER_2)
+character_player_2 = Character(player_2)
+FILTER_MOVE_BOARD_ENE[5][5].character = character_player_2
+player_1 = Player(PLAYER_1)
+character_player_1 = Character(player_1)
+character_player_1.golds = 5
+character_player_1.diamonds = 5
+FILTER_MOVE_BOARD_ENE[5][4].character = character_player_1
+
+FIN_FILTER_MOVE_BOARD_ENE = deepcopy(FILTER_MOVE_BOARD_ENE)
+FIN_FILTER_MOVE_BOARD_ENE[5][4].character = None
+FIN_FILTER_MOVE_BOARD_ENE[5][4].gold = 5
+FIN_FILTER_MOVE_BOARD_ENE[5][4].diamond = 1
+
+DICTIONARY_ENE = {"from_row": 5,
+                  "from_col": 4,
+                  "to_row": 5,
+                  "to_col": 5,
+                  "player": PLAYER_1}
+
+DICTIONARY_MAK_MOV = {"from_row": 5,
+                      "from_col": 4,
+                      "to_row": 5,
+                      "to_col": 5,
+                      "player": PLAYER_1}
+
+MAKE_MOVE_BOARD = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_1 = Player(PLAYER_1)
+player_1.arrows = 1
+character_player_1 = Character(player_1)
+character_player_1.golds = 2
+character_player_1.diamonds = 0
+MAKE_MOVE_BOARD[5][4].character = character_player_1
+MAKE_MOVE_BOARD[5][5].arrow = 1
+MAKE_MOVE_BOARD[5][5].gold = 1
+
+DICTIONARY_MAK_MOV_P2 = {"from_row": 5,
+                         "from_col": 4,
+                         "to_row": 5,
+                         "to_col": 5,
+                         "player": PLAYER_2}
+
+MAKE_MOVE_BOARD_P2 = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_2 = Player(PLAYER_2)
+player_2.arrows = 3
+character_player_2 = Character(player_2)
+character_player_2.golds = 2
+character_player_2.diamonds = 0
+MAKE_MOVE_BOARD_P2[5][4].character = character_player_2
+MAKE_MOVE_BOARD_P2[5][5].arrow = 0
+MAKE_MOVE_BOARD_P2[5][5].gold = 3
+MAKE_MOVE_BOARD_P2[5][5].diamond = 1
+
+DICT_FILTER_MOVE_MK = {"from_row": 5,
+                       "from_col": 4,
+                       "to_row": 5,
+                       "to_col": 5,
+                       "player": PLAYER_2}
+
+FILTER_MOVE_MAKE_MOVE = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_2 = Player(PLAYER_2)
+player_2.arrows = 3
+character_player_2 = Character(player_2)
+character_player_2.golds = 2
+character_player_2.diamonds = 0
+FILTER_MOVE_MAKE_MOVE[5][4].character = character_player_2
+FILTER_MOVE_MAKE_MOVE[5][5].arrow = 0
+FILTER_MOVE_MAKE_MOVE[5][5].gold = 3
+FILTER_MOVE_MAKE_MOVE[5][5].diamond = 1
+
+FIN_FILTER_MOVE_MAKE_MOVE = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+player_2 = Player(PLAYER_2)
+player_2.arrows = 3
+character_player_2 = Character(player_2)
+character_player_2.golds = 2
+character_player_2.diamonds = 0
+FILTER_MOVE_MAKE_MOVE[5][5].character = character_player_2

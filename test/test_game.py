@@ -1,10 +1,11 @@
 from copy import deepcopy
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from parameterized import parameterized
 
 from game.game import WumpusGame
 from constans.constans import EMPTY_CELL, PLAYER_1, PLAYER_2
+from constans.constants_utils import MOVE, SHOOT, WEST, EAST, SOUTH, NORTH
 from constans.constants_game import (
     DIAMOND,
     GOLD_QUANTITY,
@@ -12,7 +13,7 @@ from constans.constants_game import (
     HOLE_QUANTITY,
     LARGE,
     MIDDLE,
-    GOLD
+    GOLD,
 )
 from game.cell import Cell
 from game.character import Character
@@ -426,15 +427,16 @@ class TestGame(unittest.TestCase):
 
     @parameterized.expand([
         (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_2,
-            {"from_row": 0,
-             "from_col": 0,
-             "to_row": 0,
-             "to_col": 1,
-             "player": PLAYER_1}),
-
+            {
+                'from_row': 0,
+                'from_col': 0,
+                'to_row': 0,
+                'to_col': 1,
+                'player': 'B'
+            })
     ])
     def test_is_valid_move_ret_coord(self, from_row, from_col, c2_row, c2_col,
-                                     to_row, to_col, p1, p2, expected_result):
+                                     to_row, to_col, p1, p2, expected_mock):
         game = WumpusGame()
         cel_one, cel_two = Cell(from_row, from_col), Cell(c2_row, c2_col)
         player_1 = Player(p1)
@@ -443,9 +445,10 @@ class TestGame(unittest.TestCase):
         cel_two.character = Character(player_2)
         game._board[from_row][from_col] = cel_one
         game._board[c2_row][c2_col] = cel_two
-        result = game.is_valid_move(from_row, from_col,
-                                    to_row, to_col, p1)
-        self.assertEqual(result, expected_result)
+        game.filter_move = MagicMock()
+        game.is_valid_move(from_row, from_col, to_row, to_col, p1)
+        game.filter_move.assert_called_once()
+        game.filter_move.assert_called_once_with(expected_mock)
 
     @parameterized.expand([
         (PLAYER_1, 4, 3, EMPTY_CELL, '~    ', ),
@@ -609,6 +612,67 @@ class TestGame(unittest.TestCase):
         self.maxDiff = None
         game._board = deepcopy(PARSE_CELL_SCENARIO)
         self.assertEqual(game.board, expected_board)
+
+    @parameterized.expand([  # test raise exception
+        (0, 0, MOVE, WEST),
+        (0, 16, MOVE, EAST),
+        (0, 0, MOVE, NORTH),
+        (16, 0, MOVE, SOUTH),
+        (0, 0, SHOOT, WEST),
+        (0, 16, SHOOT, EAST),
+        (0, 0, SHOOT, NORTH),
+        (16, 0, SHOOT, SOUTH),
+    ])
+    def test_action_manager_raise_exception(
+        self,
+        initial_row,
+        initial_col,
+        action,
+        direction
+    ):
+        game = WumpusGame()
+        with self.assertRaises(Exception):
+            game.action_manager(action, initial_row, initial_col, direction)
+
+    @parameterized.expand([  # test action manager
+        (0, 0, MOVE, EAST),
+        (8, 0, MOVE, EAST),
+        (16, 0, MOVE, NORTH),
+    ])
+    def test_action_manager_move(
+        self,
+        initial_row,
+        initial_col,
+        action,
+        direction
+    ):
+        game = WumpusGame()
+        game.is_valid_move = MagicMock()
+        game.action_manager(action, initial_row, initial_col, direction)
+        game.is_valid_move.assert_called_once()
+
+    @parameterized.expand([  # test action manager
+        (0, 16, SHOOT, WEST),
+        (8, 16, SHOOT, SOUTH),
+        (16, 16, SHOOT, NORTH),
+    ])
+    def test_action_manager_shoot(
+        self,
+        initial_row,
+        initial_col,
+        action,
+        direction
+    ):
+        game = WumpusGame()
+        game.change_current_player()
+        game.shoot_arrow = MagicMock()
+        game.action_manager(action, initial_row, initial_col, direction)
+        game.shoot_arrow.assert_called_once()
+        game.shoot_arrow.assert_called_once_with(
+            initial_row,
+            initial_col,
+            direction
+        )
 
 
 if __name__ == '__main__':

@@ -563,7 +563,7 @@ class TestGame(unittest.TestCase):
         else:
             game.current_player = game.player_2
         self.assertEqual(game._parse_cell(row, col), expected)
-        
+
     def test_make_move_and_modify_score(self):
         game = WumpusGame()
         game._board = BOARD_FOR_MOVE_AND_MODIFY_SCORE

@@ -445,6 +445,7 @@ class TestGame(unittest.TestCase):
         cel_two.character = Character(player_2)
         game._board[from_row][from_col] = cel_one
         game._board[c2_row][c2_col] = cel_two
+        game.current_player = player_1
         game.filter_move = MagicMock()
         game.is_valid_move(from_row, from_col, to_row, to_col, p1)
         game.filter_move.assert_called_once()

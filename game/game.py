@@ -194,6 +194,8 @@ class WumpusGame():
             ) else self.player_1
 
     def is_valid_move(self, from_row, from_col, to_row, to_col, player_game):
+        if not self.is_a_player_character(from_row, from_col):
+            raise Exception("Not YOUR character")
         coordinates = (to_row, to_col)
         if (coordinates not in posibles_positions(from_row, from_col)):
             raise Exception('Bad Move')
@@ -353,6 +355,9 @@ class WumpusGame():
         if '#' not in parsed_cell:
             parsed_cell = self.put_danger_signal(parsed_cell, row, col)
         return parsed_cell
+
+    def is_a_player_character(self, row, col):
+        return self._board[row][col].character.player == self.current_player
 
     @property
     def board(self):

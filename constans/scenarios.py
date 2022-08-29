@@ -283,7 +283,6 @@ character_player_2.golds = 2
 character_player_2.diamonds = 0
 FILTER_MOVE_MAKE_MOVE[5][5].character = character_player_2
 
-
 PARSE_CELL_SCENARIO = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 
@@ -372,3 +371,10 @@ PARSE_CELL_SCENARIO[14][6] = CELL_15
 
 PARSE_CELL_SCENARIO[5][8] = CELL_16
 PARSE_CELL_SCENARIO[4][8] = CELL_17
+BOARD_FOR_MOVE_AND_MODIFY_SCORE = [
+    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
+]
+player_1 = Player(PLAYER_1)
+character_player_1 = Character(player_1)
+BOARD_FOR_MOVE_AND_MODIFY_SCORE[5][5].gold = 2
+BOARD_FOR_MOVE_AND_MODIFY_SCORE[5][5].diamond = 1

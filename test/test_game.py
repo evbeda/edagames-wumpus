@@ -29,6 +29,7 @@ from constans.constants_scores import (
     scores
 )
 from constans.scenarios import (
+    BOARD_FOR_MOVE_AND_MODIFY_SCORE,
     BOARD_WITH_ITEMS,
     BOARD_WIOUT_ITEMS,
     CLOSED_GOLD_BOARD,
@@ -625,6 +626,21 @@ class TestGame(unittest.TestCase):
             initial_col,
             direction
         )
+       
+    def test_make_move_and_modify_score(self):
+        game = WumpusGame()
+        game._board = BOARD_FOR_MOVE_AND_MODIFY_SCORE
+        game._board[4][5].character = Character(game.player_1)
+        dict_move = {
+            "from_col": 5,
+            "from_row": 4,
+            "to_col": 5,
+            "to_row": 5,
+            "player": game.current_player
+        }
+        game.make_move(dict_move)
+        expected = scores[GOLD] * 2 + scores[DIAMOND]
+        self.assertEqual(game.player_1.score, expected)
 
 
 if __name__ == '__main__':

@@ -267,6 +267,7 @@ class WumpusGame():
         to_col = dictionary["to_col"]
         new_cel = self._board[to_row][to_col]
         old_cel = self._board[from_row][from_col]
+        self.modify_score(GET_ITEMS, {"cell": new_cel})
         character = self._board[from_row][from_col].character
         character.golds += new_cel.gold
         character.diamonds += new_cel.diamond
@@ -285,6 +286,7 @@ class WumpusGame():
         cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
         player_dic = dictionary["player"]
         character_cel = cell_to.character
+        self.modify_score(CORRECT_MOVE)  # Awards score for moving correctly.
         if cell_to.has_hole or (character_cel and
                                 character_cel.player.name != player_dic):
             self.drop_items(dictionary["from_row"], dictionary["from_col"])

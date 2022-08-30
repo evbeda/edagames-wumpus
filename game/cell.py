@@ -6,20 +6,20 @@ from game.TresaureHolder import TreasureHolder
 class Cell(TreasureHolder):
 
     def __init__(self, row, col):
-
         super().__init__()
         self.position: tuple(row, col)
-        self.gold = 0
-        self.diamond = 0
         self.character = None
         self.has_hole = False
-        self.is_discover_by_player_1 = False
-        self.is_discover_by_player_2 = False
+        # self.is_discover_by_player_1 = False
+        # self.is_discover_by_player_2 = False
+        self.is_discover = [False, False]
+        # self.gold = 0
+        # self.diamond = 0
         self.arrow = 0
 
     @property
     def empty(self) -> bool:
-        return not (self.gold or self.diamond
+        return not (self.treasures
                     or self.character or self.has_hole
                     or self.arrow)
 
@@ -36,9 +36,9 @@ class Cell(TreasureHolder):
     def to_str(self, player_name):
 
         if player_name == PLAYER_1:
-            discovered = self.is_discover_by_player_1
+            discovered = self.is_discover[0]
         else:
-            discovered = self.is_discover_by_player_2
+            discovered = self.is_discover[1]
 
         if not discovered:
             representation = ['#']*5

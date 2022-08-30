@@ -29,9 +29,9 @@ class Player():
 
     @property
     def score(self):
-        gold_score = sum([chracter.golds
+        gold_score = sum([chracter.gold
                           for chracter in self.characters]) * SCORES[GOLD]
-        diamond_score = sum([chracter.diamonds
+        diamond_score = sum([chracter.diamond
                              for chracter in self.characters]
                             ) * SCORES[DIAMOND]
         return self._score + gold_score + diamond_score

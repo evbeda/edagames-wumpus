@@ -15,8 +15,8 @@ class TestCharacter(unittest.TestCase):
     ])
     def test_initial_character(self, player_name):
         char = Character(Player(player_name))
-        self.assertEqual(char.golds, 0)
-        self.assertEqual(char.golds, 0)
+        self.assertEqual(char.gold, 0)
+        self.assertEqual(char.gold, 0)
         self.assertEqual(char.player.name, player_name)
 
 

@@ -4,6 +4,8 @@ from constans.scenarios import (
     TESTED_CELL_3, TESTED_CELL_4, TESTED_CELL_5,
     TESTED_CELL_6, TESTED_CELL_7, TESTED_CELL_8, TESTED_CELL_9
 )
+from game.diamond import Diamond
+from game.gold import Gold
 from game.game import WumpusGame
 from parameterized import parameterized
 from game.cell import Cell
@@ -15,53 +17,51 @@ from constans.constans import EMPTY_CELL, HIDDEN_CELL, PLAYER_1, PLAYER_2
 class TestCell(unittest.TestCase):
 
     @parameterized.expand([  # cell_attributes
-        (0, 1, 1, 0, PLAYER_1, False, False, 2),
-        (15, 8, 0, 0, PLAYER_2, True, False, 0),
+        (0, 1, PLAYER_1, False, [False, False], 2, Gold(), Diamond()),
+        (15, 8, PLAYER_2, True, [False, False], 0, "", ""),
     ])
     def test_cell_attributes(
         self,
         row,
         col,
-        gold,
-        diamond,
         player_name,
         has_hole,
         is_discover,
         arrow,
+        treasure1,
+        treasure2
     ):
         cell = Cell(row, col)
         character = Character(Player(player_name))
-        cell.gold = gold
-        cell.diamond = diamond
+        cell.treasures.append(treasure1)
+        cell.treasures.append(treasure2)
         cell.character = character
         cell.has_hole = has_hole
-        cell.is_discover_by_player_1 = is_discover
-        cell.is_discover_by_player_2 = is_discover
+        cell.is_discover = is_discover
         cell.arrow = arrow
-        self.assertEqual(cell.gold, gold)
-        self.assertEqual(cell.diamond, diamond)
+        self.assertEqual(cell.treasures[0], treasure1)
+        self.assertEqual(cell.treasures[1], treasure2)
         self.assertEqual(cell.character, character)
         self.assertEqual(cell.has_hole, has_hole)
-        self.assertEqual(cell.is_discover_by_player_1, is_discover)
-        self.assertEqual(cell.is_discover_by_player_2, is_discover)
+        self.assertEqual(cell.is_discover[0], is_discover[0])
+        self.assertEqual(cell.is_discover[1], is_discover[1])
         self.assertEqual(cell.arrow, arrow)
 
     @parameterized.expand([
-        (0, 0, None, False, 0, True),
-        (1, 0, None, False, 0, False),
-        (4, 0, None, False, 0, False),
-        (0, 1, None, False, 0, False),
-        (0, 0, Player(PLAYER_1), False, 0, False),
-        (0, 1, None, True, 0, False),
-        (0, 1, None, False, 1, False),
+        ([], None, False, 0, True),
+        ([Gold()], None, False, 0, False),
+        ([Gold(), Gold(), Gold(), Gold(), Gold()], None, False, 0, False),
+        ([Diamond()], None, False, 0, False),
+        ([], Player(PLAYER_1), False, 0, False),
+        ([Diamond()], None, True, 0, False),
+        ([Diamond()], None, False, 1, False),
     ])
-    def test_cell_is_empty(self, gold, diamond,
+    def test_cell_is_empty(self, treasure,
                            character, has_hole, arrow,
                            expected):
 
         cell = Cell(0, 0)
-        cell.gold = gold
-        cell.diamond = diamond
+        cell.treasures = treasure
         cell.character = character
         cell.has_hole = has_hole
         cell.arrow = arrow

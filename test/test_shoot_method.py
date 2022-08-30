@@ -1,6 +1,7 @@
 import unittest
 from parameterized import parameterized
 from game.character import Character
+from game.diamond import Diamond
 
 from game.game import WumpusGame
 
@@ -10,6 +11,8 @@ from exceptions.personal_exceptios import (
                                            noArrowsAvailableException,
                                            friendlyFireException,
                                            shootOutOfBoundsException)
+
+from game.gold import Gold
 
 
 class Test_shoot(unittest.TestCase):
@@ -63,15 +66,17 @@ class Test_shoot(unittest.TestCase):
         col = 1
         game = WumpusGame()
         opp_character = Character(game.player_2)
-        opp_character.diamonds = 1
-        opp_character.golds = 2
+        opp_character.treasures.append(Diamond())
+        opp_character.treasures.append(Gold())
+        opp_character.treasures.append(Gold())
+        game._board[row][col].treasures = []
         game._board[row][col].character = opp_character
         opp_cell = game._board[row][col]
         game.kill_opp(row, col)
         self.assertEqual(opp_cell.diamond, 1)
         self.assertEqual(opp_cell.gold, 2)
         self.assertEqual(opp_cell.character, None)
-        self.assertTrue(opp_cell.is_discover_by_player_1)
+        self.assertTrue(opp_cell.is_discover[0])
 
     def test_shoot_miss(self):
         game = WumpusGame()
@@ -82,7 +87,7 @@ class Test_shoot(unittest.TestCase):
         game.shoot_miss(row, col)
         self.assertEqual(target_cell.arrow, 1)
         self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
-        self.assertTrue(target_cell.is_discover_by_player_1)
+        self.assertTrue(target_cell.is_discover[0])
 
     def test_shoot_into_hole(self):
         game = WumpusGame()
@@ -92,19 +97,20 @@ class Test_shoot(unittest.TestCase):
         current_player = game.current_player
         game.shoot_hole(row, col)
         self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
-        self.assertTrue(target_cell.is_discover_by_player_1)
+        self.assertTrue(target_cell.is_discover[0])
 
     def test_shoot_n_kill(self):
         game = WumpusGame()
         opp_character = Character(game.player_2)
-        opp_character.diamonds = 1
-        opp_character.golds = 2
+        opp_character.treasures.append(Diamond())
+        opp_character.treasures.append(Gold())
+        opp_character.treasures.append(Gold())
+        game._board[0][1].treasures = []
         game._board[0][1].character = opp_character
         game.shoot_arrow(0, 0, EAST)
-        self.assertEqual(game._board[0][1].diamond, 1)
-        self.assertEqual(game._board[0][1].gold, 2)
+        self.assertEqual(len(game._board[0][1].treasures), 3)
         self.assertEqual(game._board[0][1].character, None)
-        self.assertTrue(game._board[0][1].is_discover_by_player_1)
+        self.assertTrue(game._board[0][1].is_discover[0])
         self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
 
     def test_shoot_hole(self):
@@ -112,7 +118,7 @@ class Test_shoot(unittest.TestCase):
         game._board[0][1].has_hole = True
         game.shoot_arrow(0, 0, EAST)
         self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
-        self.assertTrue(game._board[0][1].is_discover_by_player_1)
+        self.assertTrue(game._board[0][1].is_discover[0])
 
 
 if __name__ == '__main__':

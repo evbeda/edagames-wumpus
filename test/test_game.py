@@ -2,6 +2,7 @@ from copy import deepcopy
 import unittest
 from unittest.mock import MagicMock, patch
 from parameterized import parameterized
+from game.diamond import Diamond
 
 from game.game import WumpusGame
 from constans.constans import EMPTY_CELL, PLAYER_1, PLAYER_2
@@ -17,6 +18,7 @@ from constans.constants_game import (
 )
 from game.cell import Cell
 from game.character import Character
+from game.gold import Gold
 from game.player import Player
 
 from constans.constants_scores import (
@@ -31,8 +33,6 @@ from constans.constants_scores import (
 )
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
-    BOARD_WITH_ITEMS,
-    BOARD_WIOUT_ITEMS,
     CLOSED_GOLD_BOARD,
     DANGER_SIGNAL_SCENARIO,
     DICT_FILTER_MOVE_MK,
@@ -65,8 +65,6 @@ from constans.scenarios import (
     TEST_BOARD_INIT_PLAYER_1,
     TEST_BOARD_INIT_PLAYER_2,
     WAY_GOLD_TWO_PLAYERS,
-    BOARD_GOLD_ITEMS,
-    BOARD_DIAMOND_ITEMS,
     VALID_HOLE_SCENARIO,
 )
 from game.utils import posibles_positions
@@ -197,20 +195,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game._board[row_random][mid_col].diamond,
                          expected_result)
 
-    @parameterized.expand([  # there are two scenarios:
-        # player with items, player without items
-        (BOARD_WITH_ITEMS, 5, 5, 5, 1),
-        (BOARD_WIOUT_ITEMS, 5, 5, 0, 0)
-    ])
-    def test_drop_items(self, board, row, col, golds, diamonds):
-        game = patched_game()
-        game._board = board
-        game.drop_items(row, col)
-        cel_board = game._board[row][col]
-        self.assertEqual(cel_board.gold, golds)
-        self.assertEqual(cel_board.diamond, diamonds)
-        self.assertIsNone(cel_board.character)
-
     @parameterized.expand([
 
         (0, 0, [(0, 1), (1, 0)]),
@@ -293,25 +277,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(result, expected)
 
     @parameterized.expand([
-        (BOARD_GOLD_ITEMS, 5, 8, GOLD, 0, 0, 1, 0),
-        (BOARD_DIAMOND_ITEMS, 5, 8, DIAMOND, 0, 0, 0, 1)
-    ])
-    def test_find_teasure(self, initial_board, teasure_row,
-                          teasure_col, teasure, count_golds_cel,
-                          count_diamonts_cel, count_gold_char,
-                          count_diamonts_char):
-        game = patched_game()
-        game._board = initial_board
-        game.find_teasure(teasure_row, teasure_col, teasure)
-        character_1 = game._board[teasure_row][teasure_col].character
-        self.assertEqual(game._board[teasure_row][teasure_col].gold,
-                         count_golds_cel)
-        self.assertEqual(game._board[teasure_row][teasure_col].diamond,
-                         count_diamonts_cel)
-        self.assertEqual(character_1.diamonds, count_diamonts_char)
-        self.assertEqual(character_1.golds, count_gold_char)
-
-    @parameterized.expand([
         (PLAYER_1, 0, 1),
     ])
     def test_discover_cell_player_1(self, player, row, col):
@@ -320,7 +285,7 @@ class TestGame(unittest.TestCase):
         cell = game._board[row][col]
         cell.character = character
         game.discover_cell(row, col)
-        result = cell.is_discover_by_player_1
+        result = cell.is_discover[0]
         self.assertEqual(result, True)
 
     @parameterized.expand([
@@ -333,7 +298,7 @@ class TestGame(unittest.TestCase):
         cell = game._board[row][col]
         cell.character = character
         game.discover_cell(row, col)
-        result = cell.is_discover_by_player_2
+        result = cell.is_discover[1]
         self.assertEqual(result, True)
 
     @parameterized.expand([
@@ -363,8 +328,10 @@ class TestGame(unittest.TestCase):
     def test_modify_score_get_items(self):  # testing "Get_Items" event
         game = WumpusGame()
         cell = Cell(2, 4)
-        cell.gold = 3
-        cell.diamond = 1
+        cell.treasures.append(Gold())
+        cell.treasures.append(Gold())
+        cell.treasures.append(Gold())
+        cell.treasures.append(Diamond())
         payload = {"cell": cell}
         game.modify_score(GET_ITEMS, payload)
         self.assertEqual(game.current_player.score,
@@ -374,8 +341,10 @@ class TestGame(unittest.TestCase):
         game = WumpusGame()
         char = Character(Player(PLAYER_2))
         game.current_player = char.player
-        char.golds = 4
-        char.diamonds = 0
+        char.treasures.append(Gold())
+        char.treasures.append(Gold())
+        char.treasures.append(Gold())
+        char.treasures.append(Gold())
         payload = {"character": char}
         game.modify_score(DEATH, payload)
         self.assertEqual(char.player.score, (SCORES[GOLD]*4) * -1)
@@ -497,18 +466,23 @@ class TestGame(unittest.TestCase):
 
     @parameterized.expand([  # case for filter event
         (DICTIONARY_H, FILTER_MOVE_BOARD_H,
-         FIN_FILTER_MOVE_BOARD_H, 5, 1),
+         FIN_FILTER_MOVE_BOARD_H, [
+            Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
+            ], 5, 1),
         (DICTIONARY_ENE, FILTER_MOVE_BOARD_ENE,
-         FIN_FILTER_MOVE_BOARD_ENE, 5, 1),
+         FIN_FILTER_MOVE_BOARD_ENE, [
+            Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
+            ], 5, 1),
         (DICT_FILTER_MOVE_MK, FILTER_MOVE_MAKE_MOVE,
-         FIN_FILTER_MOVE_MAKE_MOVE, 0, 0)
+         FIN_FILTER_MOVE_MAKE_MOVE, [], 0, 0)
     ])
     def test_filter_move(self, dictionary, initial_board,
-                         finalboard, count_gold, count_diam):
+                         finalboard, treasure, count_gold, count_diam):
         game = WumpusGame()
         game._board = initial_board
         game.filter_move(dictionary)
         cell = finalboard[dictionary["from_row"]][dictionary["from_col"]]
+        cell.treasures = treasure
         gold_cel = cell.gold
         diam_cel = cell.diamond
         diam_char = cell.character
@@ -517,17 +491,15 @@ class TestGame(unittest.TestCase):
         self.assertIsNone(diam_char)
 
     @parameterized.expand([  # after verify all posibilities make move
-         (DICTIONARY_MAK_MOV, MAKE_MOVE_BOARD, 3, 0, 0, 0, True, False, 2, 0),
-         (DICTIONARY_MAK_MOV_P2, MAKE_MOVE_BOARD_P2,
-          5, 0, 1, 0, False, True, 3, 0)
+         (DICTIONARY_MAK_MOV, MAKE_MOVE_BOARD,
+          3, 0, 0, 0, True, False, 2, 0),
     ])
-    def test_make_move(self, dictionary, initial_board,
-                       gold_new, gold_old, diamond_new,
-                       diamond_old, is_visited_p1,
-                       is_visited_p2, new_arrows, old_arrow):
+    def test_make_move_P1(self, dictionary, initial_board,
+                          gold_new, gold_old, diamond_new,
+                          diamond_old, is_visited_p1,
+                          is_visited_p2, new_arrows, old_arrow):
         game = WumpusGame()
         game._board = initial_board
-
         game.make_move(dictionary)
 
         new_cell: Cell = game._board[
@@ -537,8 +509,8 @@ class TestGame(unittest.TestCase):
         old_cell: Cell = game._board[
             dictionary["from_row"]][dictionary["from_col"]]
 
-        self.assertEqual(new_cell.is_discover_by_player_1, is_visited_p1)
-        self.assertEqual(new_cell.is_discover_by_player_2, is_visited_p2)
+        self.assertEqual(new_cell.is_discover[0], is_visited_p1)
+        self.assertEqual(new_cell.is_discover[1], is_visited_p2)
         self.assertEqual(new_cell.arrow, old_arrow)
         self.assertEqual(new_cell.gold, gold_old)
         self.assertEqual(new_cell.diamond, diamond_old)
@@ -546,9 +518,41 @@ class TestGame(unittest.TestCase):
         self.assertEqual(old_cell.gold, gold_old)
         self.assertEqual(old_cell.diamond, diamond_old)
         self.assertIsNotNone(player_character)
+        self.assertEqual(player_character.gold, gold_new)
+        self.assertEqual(player_character.diamond, diamond_new)
+        self.assertEqual(player_character.player.arrows, new_arrows)
 
-        self.assertEqual(player_character.golds, gold_new)
-        self.assertEqual(player_character.diamonds, diamond_new)
+    @parameterized.expand([  # after verify all posibilities make move
+         (DICTIONARY_MAK_MOV_P2, MAKE_MOVE_BOARD_P2,
+          5, 0, 1, 0, False, True, 3, 0)
+    ])
+    def test_make_move_P2(self, dictionary, initial_board,
+                          gold_new, gold_old, diamond_new,
+                          diamond_old, is_visited_p1,
+                          is_visited_p2, new_arrows, old_arrow):
+        game = WumpusGame()
+        game._board = initial_board
+        game.change_current_player()
+        game.make_move(dictionary)
+
+        new_cell: Cell = game._board[
+            dictionary["to_row"]][dictionary["to_col"]]
+        player_character: Character = game.\
+            _board[dictionary["to_row"]][dictionary["to_col"]].character
+        old_cell: Cell = game._board[
+            dictionary["from_row"]][dictionary["from_col"]]
+
+        self.assertEqual(new_cell.is_discover[0], is_visited_p1)
+        self.assertEqual(new_cell.is_discover[1], is_visited_p2)
+        self.assertEqual(new_cell.arrow, old_arrow)
+        self.assertEqual(new_cell.gold, gold_old)
+        self.assertEqual(new_cell.diamond, diamond_old)
+        self.assertEqual(old_cell.arrow, old_arrow)
+        self.assertEqual(old_cell.gold, gold_old)
+        self.assertEqual(old_cell.diamond, diamond_old)
+        self.assertIsNotNone(player_character)
+        self.assertEqual(player_character.gold, gold_new)
+        self.assertEqual(player_character.diamond, diamond_new)
         self.assertEqual(player_character.player.arrows, new_arrows)
 
     @parameterized.expand([
@@ -593,13 +597,13 @@ class TestGame(unittest.TestCase):
             "to_row": 5,
             "player": game.current_player
         }
-        gold_before_move = character.golds
-        diamonds_before_move = character.diamonds
+        gold_before_move = character.gold
+        diamonds_before_move = character.diamond
 
         game.make_move(dict_move)
 
-        golds_after_move = character.golds
-        diamonds_after_move = character.diamonds
+        golds_after_move = character.gold
+        diamonds_after_move = character.diamond
 
         expected_score = (SCORES[GOLD] * 2 + SCORES[DIAMOND] +
                           SCORES[CORRECT_MOVE])

@@ -1,5 +1,4 @@
 import random
-
 from constans.constans import (
     FORBIDDEN_HOLE_CELLS,
     INITIAL_POSITIONS,
@@ -33,6 +32,8 @@ from constans.constants_utils import MOVE, NORTH, SHOOT, SOUTH, EAST, WEST
 
 from game.cell import Cell
 from game.character import Character
+from game.diamond import Diamond
+from game.gold import Gold
 from game.player import Player
 from game.utils import posibles_positions, translate_position
 from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
@@ -93,9 +94,9 @@ class WumpusGame():
         for (row, col), character in character_positions.items():
             self._board[row][col].character = character
             if player.name == PLAYER_1:
-                self._board[row][col].is_discover_by_player_1 = True
+                self._board[row][col].is_discover[0] = True
             else:
-                self._board[row][col].is_discover_by_player_2 = True
+                self._board[row][col].is_discover[1] = True
 
     def place_items(self, item, item_quantity):
         fisrt_half = (0, MIDDLE-1)
@@ -112,7 +113,7 @@ class WumpusGame():
             col = random.randint(start, end)
             if self._is_valid(row, col, item):
                 if item == GOLD:
-                    self._board[row][col].gold += 1
+                    self._board[row][col].treasures.append(Gold())
                 elif item == HOLE:
                     self._board[row][col].has_hole = True
                 break
@@ -125,14 +126,8 @@ class WumpusGame():
         return valid
 
     def initial_diamond_position(self):
-        self._board[random.randint(0, LARGE - 1)][LARGE//2].diamond += 1
-
-    def drop_items(self, row, col):
-        golds_player = self._board[row][col].character.golds
-        diamonds_player = self._board[row][col].character.diamonds
-        self._board[row][col].character = None
-        self._board[row][col].diamond = diamonds_player
-        self._board[row][col].gold = golds_player
+        self._board[random.randint(0, LARGE - 1)][LARGE//2].treasures.append(
+            Diamond())
 
     def _valid_hole(self, row: int, col: int) -> bool:
 
@@ -171,26 +166,12 @@ class WumpusGame():
                 return True
         return False
 
-    def find_teasure(self, row, col, teasure):
-        # TODO
-        # add this method and replace all the if else behinf#
-        # self._board[row][col].transfer_tresaure(
-        #                         self._board[row] [col].character)
-
-        if teasure == GOLD and self._board[row][col].gold > 0:
-            self._board[row][col].character.golds += self._board[row][col].gold
-            self._board[row][col].gold = 0
-        elif teasure == DIAMOND and self._board[row][col].diamond > 0:
-            self._board[row][col].character.diamonds +=\
-                self._board[row][col].diamond
-            self._board[row][col].diamond = 0
-
     def discover_cell(self, row, col):
         cell = self._board[row][col]
         if self.current_player == self.player_1:
-            cell.is_discover_by_player_1 = True
+            cell.is_discover[0] = True
         else:
-            cell.is_discover_by_player_2 = True
+            cell.is_discover[1] = True
 
     def _gold_positions(self) -> 'list[tuple]':
         return [
@@ -260,8 +241,8 @@ class WumpusGame():
             self.current_player.update_score(score)
         elif event == DEATH:
             char = payload["character"]
-            score = (char.golds * SCORES[GOLD] +
-                     char.diamonds * SCORES[DIAMOND]) * -1
+            score = (char.gold * SCORES[GOLD] +
+                     char.diamond * SCORES[DIAMOND]) * -1
             char.player.update_score(score)
         elif event == KILL:
             self.current_player.update_score(SCORES[KILL])
@@ -283,24 +264,12 @@ class WumpusGame():
         old_cel = self._board[from_row][from_col]
         self.modify_score(CORRECT_MOVE)
         character: Character = self._board[from_row][from_col].character
-
-        # TODO
-        # add this method and replace
-        # new_cell.transfer_tresaure(character)
-        # replace this lines
-        character.golds += new_cell.gold
-        character.diamonds += new_cell.diamond
         character.player.arrows += new_cell.arrow
-
+        new_cell.transfer_tresaure(character)
         new_cell.arrow = 0
-        new_cell.gold = 0
-        new_cell.diamond = 0
         new_cell.character = character
         old_cel.character = None
-        if dictionary["player"] == PLAYER_1:
-            new_cell.is_discover_by_player_1 = True
-        else:
-            new_cell.is_discover_by_player_2 = True
+        self.discover_cell(to_row, to_col)
 
     def filter_move(self, dictionary):
         cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
@@ -309,7 +278,9 @@ class WumpusGame():
         self.modify_score(CORRECT_MOVE)  # Awards score for moving correctly.
         if cell_to.has_hole or (character_cel and
                                 character_cel.player.name != player_dic):
-            self.drop_items(dictionary["from_row"], dictionary["from_col"])
+            cell = self._board[dictionary["from_row"]][dictionary["from_col"]]
+            char = cell.character
+            char.transfer_tresaure(cell)
         else:
             self.make_move(dictionary)
 
@@ -352,10 +323,13 @@ class WumpusGame():
 
     def kill_opp(self, row, col):
         self.current_player.arrows -= 1
+        cell = self._board[row][col]
+        character_to_kill = cell.character
+        character_to_kill.transfer_tresaure(cell)
         self.modify_score(DEATH,
-                          {"character": self._board[row][col].character})
-        self.drop_items(row, col)
+                          {"character": character_to_kill})
         self.modify_score(KILL)
+        cell.character = None
         self.discover_cell(row, col)
 
     def shoot_miss(self, row, col):

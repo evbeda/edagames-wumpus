@@ -43,16 +43,6 @@ class TestPlayer(unittest.TestCase):
         self.player.update_arrows(arrows_mod)
         self.assertEqual(self.player.arrows, expected_result)
 
-    @parameterized.expand([
-        (PLAYER_1, 1, 2),
-    ])
-    def test_strike_counter_increment(self, player_name,
-                                      actual, expected_result):
-        player = Player(player_name)
-        player.strike_counter = actual
-        player.strike_counter_increment()
-        self.assertEqual(player.strike_counter, expected_result)
-
 
 if __name__ == '__main__':
     unittest.main()

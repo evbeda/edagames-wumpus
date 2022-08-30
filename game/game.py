@@ -165,6 +165,11 @@ class WumpusGame():
         return False
 
     def find_teasure(self, row, col, teasure):
+        # TODO
+        # add this method and replace all the if else behinf#
+        # self._board[row][col].transfer_tresaure(
+        #                         self._board[row] [col].character)
+
         if teasure == GOLD and self._board[row][col].gold > 0:
             self._board[row][col].character.golds += self._board[row][col].gold
             self._board[row][col].gold = 0
@@ -267,22 +272,28 @@ class WumpusGame():
         from_col = dictionary["from_col"]
         to_row = dictionary["to_row"]
         to_col = dictionary["to_col"]
-        new_cel = self._board[to_row][to_col]
+        new_cell: Cell = self._board[to_row][to_col]
         old_cel = self._board[from_row][from_col]
-        self.modify_score(GET_ITEMS, {"cell": new_cel})
-        character = self._board[from_row][from_col].character
-        character.golds += new_cel.gold
-        character.diamonds += new_cel.diamond
-        character.player.arrows += new_cel.arrow
-        new_cel.arrow = 0
-        new_cel.gold = 0
-        new_cel.diamond = 0
-        new_cel.character = character
+        self.modify_score(GET_ITEMS, {"cell": new_cell})
+        character: Character = self._board[from_row][from_col].character
+
+        # TODO
+        # add this method and replace
+        # new_cell.transfer_tresaure(character)
+        # replace this lines
+        character.golds += new_cell.gold
+        character.diamonds += new_cell.diamond
+        character.player.arrows += new_cell.arrow
+
+        new_cell.arrow = 0
+        new_cell.gold = 0
+        new_cell.diamond = 0
+        new_cell.character = character
         old_cel.character = None
         if dictionary["player"] == PLAYER_1:
-            new_cel.is_discover_by_player_1 = True
+            new_cell.is_discover_by_player_1 = True
         else:
-            new_cel.is_discover_by_player_2 = True
+            new_cell.is_discover_by_player_2 = True
 
     def filter_move(self, dictionary):
         cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]

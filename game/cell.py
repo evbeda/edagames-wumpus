@@ -1,9 +1,13 @@
 from constans.constans import PLAYER_1
 from constans.constants_game import HOLE
+from game.TresaureHolder import TreasureHolder
 
 
-class Cell():
+class Cell(TreasureHolder):
+
     def __init__(self, row, col):
+
+        super().__init__()
         self.position: tuple(row, col)
         self.gold = 0
         self.diamond = 0

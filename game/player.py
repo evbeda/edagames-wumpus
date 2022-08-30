@@ -1,7 +1,9 @@
 from constans.constans import (
     INITIAL_ARROWS,
     INITIAL_SCORE,
+    CHARACTER_AMOUNT_PER_PLAYER,
 )
+from game.character import Character
 
 
 class Player():
@@ -10,7 +12,8 @@ class Player():
         self.name = name
         self.score = INITIAL_SCORE
         self.arrows = INITIAL_ARROWS
-        self.strike_counter = 0
+        self.characters = []
+        self.instance_characters()
 
     def update_score(self, new_score):
         self.score += new_score
@@ -18,5 +21,6 @@ class Player():
     def update_arrows(self, new_arrow_amt):
         self.arrows += new_arrow_amt
 
-    def strike_counter_increment(self):
-        self.strike_counter += 1
+    def instance_characters(self):
+        for _ in range(CHARACTER_AMOUNT_PER_PLAYER):
+            self.characters.append(Character(self.name))

@@ -526,11 +526,16 @@ class TestGame(unittest.TestCase):
                        is_visited_p2, new_arrows, old_arrow):
         game = WumpusGame()
         game._board = initial_board
+
         game.make_move(dictionary)
-        new_cell = game._board[dictionary["to_row"]][dictionary["to_col"]]
-        player_character = game.\
+
+        new_cell: Cell = game._board[
+            dictionary["to_row"]][dictionary["to_col"]]
+        player_character: Character = game.\
             _board[dictionary["to_row"]][dictionary["to_col"]].character
-        old_cell = game._board[dictionary["from_row"]][dictionary["from_col"]]
+        old_cell: Cell = game._board[
+            dictionary["from_row"]][dictionary["from_col"]]
+
         self.assertEqual(new_cell.is_discover_by_player_1, is_visited_p1)
         self.assertEqual(new_cell.is_discover_by_player_2, is_visited_p2)
         self.assertEqual(new_cell.arrow, old_arrow)
@@ -540,6 +545,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(old_cell.gold, gold_old)
         self.assertEqual(old_cell.diamond, diamond_old)
         self.assertIsNotNone(player_character)
+
         self.assertEqual(player_character.golds, gold_new)
         self.assertEqual(player_character.diamonds, diamond_new)
         self.assertEqual(player_character.player.arrows, new_arrows)

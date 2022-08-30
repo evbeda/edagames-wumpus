@@ -103,6 +103,7 @@ class TestGame(unittest.TestCase):
         game._board[5][5] = cel_player
         with self.assertRaises(Exception):
             game.move_to_own_character_position(PLAYER_1, 5, 5)
+        self.assertEqual(game.current_player.score, -1000)
 
     def test_place_character_initial_pos_player_1(self):
         game = patched_game()
@@ -578,7 +579,7 @@ class TestGame(unittest.TestCase):
             game.current_player = game.player_2
         self.assertEqual(game._parse_cell(row, col), expected)
 
-    def test_make_move_and_modify_score(self):
+    def test_correct_move_and_modify_score(self):
         game = WumpusGame()
         game._board = BOARD_FOR_MOVE_AND_MODIFY_SCORE
         game._board[4][5].character = Character(game.player_1)
@@ -590,7 +591,7 @@ class TestGame(unittest.TestCase):
             "player": game.current_player
         }
         game.make_move(dict_move)
-        expected = scores[GOLD] * 2 + scores[DIAMOND]
+        expected = 100
         self.assertEqual(game.player_1.score, expected)
 
     @parameterized.expand([

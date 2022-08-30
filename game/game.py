@@ -64,6 +64,7 @@ class WumpusGame():
     def move_to_own_character_position(self, player_game, row_to, col_to):
         ch = self._board[row_to][col_to].character
         if ch and ch.player == player_game:
+            self.modify_score(INVALID_MOVE)
             raise Exception("Bad Move")
 
     def place_character_initial_pos(
@@ -274,7 +275,7 @@ class WumpusGame():
         to_col = dictionary["to_col"]
         new_cell: Cell = self._board[to_row][to_col]
         old_cel = self._board[from_row][from_col]
-        self.modify_score(GET_ITEMS, {"cell": new_cell})
+        self.modify_score(CORRECT_MOVE)
         character: Character = self._board[from_row][from_col].character
 
         # TODO
@@ -339,6 +340,7 @@ class WumpusGame():
         target_col = col + directions[direction][1]
         if (target_row < 0 or target_row > LARGE - 1
            or target_col < 0 or target_col > LARGE - 1):
+            self.modify_score(INVALID_MOVE)
             raise Exception("INVALID MOVE - Shoot out of bounds")
         return (target_row, target_col)
 

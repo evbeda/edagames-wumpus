@@ -35,6 +35,12 @@ from game.cell import Cell
 from game.character import Character
 from game.player import Player
 from game.utils import posibles_positions, translate_position
+from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
+                                           notYourCharacterException,
+                                           noPossibleMoveException,
+                                           noArrowsAvailableException,
+                                           friendlyFireException,
+                                           shootOutOfBoundsException)
 
 
 class WumpusGame():
@@ -65,7 +71,7 @@ class WumpusGame():
         ch = self._board[row_to][col_to].character
         if ch and ch.player == player_game:
             self.modify_score(INVALID_MOVE)
-            raise Exception("Bad Move")
+            raise moveToYourOwnCharPositionException()
 
     def place_character_initial_pos(
         self,
@@ -201,10 +207,10 @@ class WumpusGame():
 
     def is_valid_move(self, from_row, from_col, to_row, to_col, player_game):
         if not self.is_a_player_character(from_row, from_col):
-            raise Exception("Not YOUR character")
+            raise notYourCharacterException()
         coordinates = (to_row, to_col)
         if (coordinates not in posibles_positions(from_row, from_col)):
-            raise Exception('Bad Move')
+            raise noPossibleMoveException()
         self.move_to_own_character_position(player_game, to_row, to_col)
         dictionary = {
             "from_row": from_row,
@@ -310,7 +316,7 @@ class WumpusGame():
     def shoot_arrow(self, row, col, direction):
 
         if self.current_player.arrows < 1:
-            raise Exception("INVALID MOVE - no arrows available")
+            raise noArrowsAvailableException()
 
         target_row, target_col = self.target_position(row, col, direction)
         target_cell = self._board[target_row][target_col]
@@ -318,7 +324,7 @@ class WumpusGame():
         if (target_cell.character is not None and
            target_cell.character.player.name == self.current_player.name):
             self.current_player.arrows -= 1
-            raise Exception("INVALID MOVE - Friendly fire")
+            raise friendlyFireException()
 
         if (target_cell.character is not None and
            target_cell.character.player.name != self.current_player.name):
@@ -341,7 +347,7 @@ class WumpusGame():
         if (target_row < 0 or target_row > LARGE - 1
            or target_col < 0 or target_col > LARGE - 1):
             self.modify_score(INVALID_MOVE)
-            raise Exception("INVALID MOVE - Shoot out of bounds")
+            raise shootOutOfBoundsException()
         return (target_row, target_col)
 
     def kill_opp(self, row, col):

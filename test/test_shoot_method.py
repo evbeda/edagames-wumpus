@@ -6,6 +6,10 @@ from game.game import WumpusGame
 
 from constans.constans import INITIAL_ARROWS
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
+from exceptions.personal_exceptios import (
+                                           noArrowsAvailableException,
+                                           friendlyFireException,
+                                           shootOutOfBoundsException)
 
 
 class Test_shoot(unittest.TestCase):
@@ -13,7 +17,7 @@ class Test_shoot(unittest.TestCase):
     def test_no_arrows_to_shoot(self):
         game = WumpusGame()
         game.current_player.arrows = 0
-        with self.assertRaises(Exception):
+        with self.assertRaises(noArrowsAvailableException):
             game.shoot_arrow(0, 0, EAST)
 
     def test_arrow_decrease(self):
@@ -31,7 +35,7 @@ class Test_shoot(unittest.TestCase):
     )
     def test_target_out_of_bounds(self, row, col, direction):
         game = WumpusGame()
-        with self.assertRaises(Exception):
+        with self.assertRaises(shootOutOfBoundsException):
             game.target_position(row, col, direction)
 
     @parameterized.expand(
@@ -51,7 +55,7 @@ class Test_shoot(unittest.TestCase):
         game = WumpusGame()
         character = Character(game.current_player)
         game._board[0][1].character = character
-        with self.assertRaises(Exception):
+        with self.assertRaises(friendlyFireException):
             game.shoot_arrow(0, 0, EAST)
 
     def test_kill_opp(self):

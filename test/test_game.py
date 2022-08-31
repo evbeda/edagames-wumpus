@@ -69,7 +69,8 @@ from constans.scenarios import (
 )
 from game.utils import posibles_positions
 from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
-                                           notYourCharacterException)
+                                           notYourCharacterException,
+                                           noPossibleMoveException,)
 
 
 def patched_game() -> WumpusGame:
@@ -237,7 +238,6 @@ class TestGame(unittest.TestCase):
 
     def test_holes_quantity(self):
         game = patched_game()
-        print()
         game._board = [
                 [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
             ]
@@ -380,46 +380,79 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game._valid_hole(row, col), expected)
 
     @parameterized.expand([
-        (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_1, 'Bad Move'),
-        (0, 0, 0, 1, 3, 0, PLAYER_1, PLAYER_1, 'Bad Move'),
+        (PLAYER_1, PLAYER_2, 0, 0, 0, 1)
     ])
-    def test_is_valid_move_raise_exep(self, from_row, from_col, c2_row, c2_col,
-                                      to_row, to_col, p1, p2, expected_result):
+    def test_is_valid_move_not_your_character(self, p1, p2,
+                                              from_row, from_col,
+                                              to_row, to_col):
         game = WumpusGame()
-        cel_one, cel_two = Cell(from_row, from_col), Cell(c2_row, c2_col)
-        cel_one.character = Character(p1)
-        cel_two.character = Character(p2)
-        game._board[from_row][from_col] = cel_one
-        game._board[c2_row][c2_col] = cel_two
+        player_1 = Player(p1)
+        player_2 = Player(p2)
+        character_1_of_player_1 = player_1.characters[0]
+        game._board[from_row][from_col].character = character_1_of_player_1
+        game.current_player = player_1
         with self.assertRaises(notYourCharacterException):
             game.is_valid_move(from_row, from_col,
-                               to_row, to_col, p1)
+                               to_row, to_col, player_2)
 
     @parameterized.expand([
-        (0, 0, 0, 1, 0, 1, PLAYER_1, PLAYER_2,
-            {
+        (PLAYER_1, 0, 0, -1, 0),
+        (PLAYER_1, 0, 0, 3, 0),
+        (PLAYER_1, 0, 0, 0, 0),
+    ])
+    def test_is_valid_move_not_possible_move(self, p1,
+                                             from_row, from_col,
+                                             to_row, to_col):
+        game = WumpusGame()
+        player_1 = Player(p1)
+        character_1_of_player_1 = player_1.characters[0]
+        game._board[from_row][from_col].character = character_1_of_player_1
+        game.current_player = player_1
+        with self.assertRaises(noPossibleMoveException):
+            game.is_valid_move(from_row, from_col,
+                               to_row, to_col, player_1)
+
+    @parameterized.expand([
+        (PLAYER_1, 0, 0, 0, 1),
+    ])
+    def test_is_valid_move_to_a_same_character(self, P1, from_row, from_col,
+                                               to_row, to_col):
+        game = WumpusGame()
+        player_1 = Player(P1)
+        character_1_of_player_1 = player_1.characters[0]
+        character_2_of_player_1 = player_1.characters[1]
+        game._board[from_row][from_col].character = character_1_of_player_1
+        game._board[to_row][to_col].character = character_2_of_player_1
+        game.current_player = player_1
+        with self.assertRaises(moveToYourOwnCharPositionException):
+            game.is_valid_move(from_row, from_col,
+                               to_row, to_col, player_1)
+
+    @parameterized.expand([
+        (PLAYER_1, 0, 0, PLAYER_2, 0, 1, 0, 1, {
                 'from_row': 0,
                 'from_col': 0,
                 'to_row': 0,
                 'to_col': 1,
-                'player': 'B'
-            })
+            }),
     ])
-    def test_is_valid_move_ret_coord(self, from_row, from_col, c2_row, c2_col,
-                                     to_row, to_col, p1, p2, expected_mock):
+    def test_is_valid_move_good_move(self, P1, c1_row, c1_col, P2, c2_row,
+                                     c2_col, to_row, to_col, _expected_result):
+        expected_result = _expected_result
         game = WumpusGame()
-        cel_one, cel_two = Cell(from_row, from_col), Cell(c2_row, c2_col)
-        player_1 = Player(p1)
-        player_2 = Player(p2)
-        cel_one.character = Character(player_1)
-        cel_two.character = Character(player_2)
-        game._board[from_row][from_col] = cel_one
-        game._board[c2_row][c2_col] = cel_two
+        player_1 = Player(P1)
+        player_2 = Player(P2)
+        character_1_of_player_1 = player_1.characters[0]
+        character_1_of_player_2 = player_2.characters[0]
+        game._board[c1_row][c1_col].character = character_1_of_player_1
+        game._board[c2_row][c2_col].character = character_1_of_player_2
+        expected_result['player'] = player_1
         game.current_player = player_1
         game.filter_move = MagicMock()
-        game.is_valid_move(from_row, from_col, to_row, to_col, p1)
+        game.is_valid_move(c1_row, c1_col,
+                           to_row, to_col, player_1)
         game.filter_move.assert_called_once()
-        game.filter_move.assert_called_once_with(expected_mock)
+        game.filter_move.assert_called_once_with(expected_result)
 
     @parameterized.expand([
         (PLAYER_1, 4, 3, EMPTY_CELL, '~    ', ),

@@ -18,19 +18,6 @@ class Character(TreasureHolder):
         self.diamonds = 0
         self.player = player
 
-    # @property
-    # def goldss(self):
-    #     return len([tresaure
-    #                 for tresaure in self.tresaures
-    #                 if type(tresaure) == Gold])
-
-    # @property
-    # def diamondss(self):
-    #     return len([tresaure
-    #                 for tresaure in self.tresaures
-    #                 if type(tresaure) == Diamond
-    #                 ])
-
     def __str__(self):
         return (f"gold: {self.golds}, player: {self.player}, " +
                 f"diamonds: {self.diamonds}.")

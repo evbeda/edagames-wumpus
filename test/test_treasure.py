@@ -1,7 +1,7 @@
 import unittest
 from game.treasure import Treasure
 from parameterized import parameterized
-from constans.constants_scores import scores
+from constans.constants_scores import SCORES
 from game.gold import Gold
 from game.diamond import Diamond
 
@@ -19,8 +19,8 @@ class TestTreasure(unittest.TestCase):
 
     def test_gold(self):
         gold = Gold()
-        self.assertEqual(gold.value, scores["GOLD"])
+        self.assertEqual(gold.value, SCORES["GOLD"])
 
     def test_diamond(self):
         gold = Diamond()
-        self.assertEqual(gold.value, scores["DIAMOND"])
+        self.assertEqual(gold.value, SCORES["DIAMOND"])

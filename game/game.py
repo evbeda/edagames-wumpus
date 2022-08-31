@@ -19,7 +19,7 @@ from constans.constants_game import (
     MIDDLE
 )
 from constans.constants_scores import (
-    scores,
+    SCORES,
     KILL,
     INVALID_MOVE,
     CORRECT_MOVE,
@@ -250,23 +250,23 @@ class WumpusGame():
         '''
         if event == GET_ITEMS:
             cell = payload["cell"]
-            score = cell.gold * scores[GOLD] + cell.diamond * scores[DIAMOND]
+            score = cell.gold * SCORES[GOLD] + cell.diamond * SCORES[DIAMOND]
             self.current_player.update_score(score)
         elif event == DEATH:
             char = payload["character"]
-            score = (char.golds * scores[GOLD] +
-                     char.diamonds * scores[DIAMOND]) * -1
+            score = (char.golds * SCORES[GOLD] +
+                     char.diamonds * SCORES[DIAMOND]) * -1
             char.player.update_score(score)
         elif event == KILL:
-            self.current_player.update_score(scores[KILL])
+            self.current_player.update_score(SCORES[KILL])
         elif event == CORRECT_MOVE:
-            self.current_player.update_score(scores[CORRECT_MOVE])
+            self.current_player.update_score(SCORES[CORRECT_MOVE])
         elif event == INVALID_MOVE:
-            self.current_player.update_score(scores[INVALID_MOVE])
+            self.current_player.update_score(SCORES[INVALID_MOVE])
         elif event == TIMEOUT:
-            self.current_player.update_score(scores[TIMEOUT])
+            self.current_player.update_score(SCORES[TIMEOUT])
         elif event == ARROW_MISS:
-            self.current_player.update_score(scores[ARROW_MISS])
+            self.current_player.update_score(SCORES[ARROW_MISS])
 
     def make_move(self, dictionary):
         from_row = dictionary["from_row"]

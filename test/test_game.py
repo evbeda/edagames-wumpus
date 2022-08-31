@@ -27,7 +27,7 @@ from constans.constants_scores import (
     GET_ITEMS,
     KILL,
     TIMEOUT,
-    scores
+    SCORES,
 )
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
@@ -103,7 +103,6 @@ class TestGame(unittest.TestCase):
         game._board[5][5] = cel_player
         with self.assertRaises(Exception):
             game.move_to_own_character_position(PLAYER_1, 5, 5)
-        self.assertEqual(game.current_player.score, -1000)
 
     def test_place_character_initial_pos_player_1(self):
         game = patched_game()
@@ -367,7 +366,7 @@ class TestGame(unittest.TestCase):
         payload = {"cell": cell}
         game.modify_score(GET_ITEMS, payload)
         self.assertEqual(game.current_player.score,
-                         (scores[GOLD]*3 + scores[DIAMOND]*1))
+                         (SCORES[GOLD]*3 + SCORES[DIAMOND]*1))
 
     def test_modify_score_death(self):  # testing "Death" event
         game = WumpusGame()
@@ -377,14 +376,14 @@ class TestGame(unittest.TestCase):
         char.diamonds = 0
         payload = {"character": char}
         game.modify_score(DEATH, payload)
-        self.assertEqual(char.player.score, (scores[GOLD]*4) * -1)
+        self.assertEqual(char.player.score, (SCORES[GOLD]*4) * -1)
 
     @parameterized.expand([  # test for modify_score() function
-        ("KILL", scores[KILL]),
-        ("CORRECT_MOVE", scores[CORRECT_MOVE]),
-        ("INVALID_MOVE", scores[INVALID_MOVE]),
-        ("ARROW_MISS", scores[ARROW_MISS]),
-        ("TIMEOUT", scores[TIMEOUT]),
+        ("KILL", SCORES[KILL]),
+        ("CORRECT_MOVE", SCORES[CORRECT_MOVE]),
+        ("INVALID_MOVE", SCORES[INVALID_MOVE]),
+        ("ARROW_MISS", SCORES[ARROW_MISS]),
+        ("TIMEOUT", SCORES[TIMEOUT]),
     ])
     def test_modify_score(self, event, expected):
 
@@ -579,10 +578,13 @@ class TestGame(unittest.TestCase):
             game.current_player = game.player_2
         self.assertEqual(game._parse_cell(row, col), expected)
 
-    def test_correct_move_and_modify_score(self):
+    def test_make_move_and_modify_score(self):
         game = WumpusGame()
         game._board = BOARD_FOR_MOVE_AND_MODIFY_SCORE
-        game._board[4][5].character = Character(game.player_1)
+
+        character = Character(game.player_1)
+        game.player_1.characters.append(character)
+        game._board[4][5].character = character
         dict_move = {
             "from_col": 5,
             "from_row": 4,
@@ -590,9 +592,22 @@ class TestGame(unittest.TestCase):
             "to_row": 5,
             "player": game.current_player
         }
+        gold_before_move = character.golds
+        diamonds_before_move = character.diamonds
+
         game.make_move(dict_move)
-        expected = 100
-        self.assertEqual(game.player_1.score, expected)
+
+        golds_after_move = character.golds
+        diamonds_after_move = character.diamonds
+
+        expected_score = (SCORES[GOLD] * 2 + SCORES[DIAMOND] +
+                          SCORES[CORRECT_MOVE])
+
+        self.assertEqual(gold_before_move, 0)
+        self.assertEqual(diamonds_before_move, 0)
+        self.assertEqual(golds_after_move, 2)
+        self.assertEqual(diamonds_after_move, 1)
+        self.assertEqual(game.player_1.score, expected_score)
 
     @parameterized.expand([
         (PLAYER_2, TEST_BOARD_INIT_PLAYER_2),

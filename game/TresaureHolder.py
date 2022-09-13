@@ -10,6 +10,9 @@ class TreasureHolder:
 
     def transfer_tresaure(self, other: TreasureHolder) -> None:
         other.treasures.extend(self.treasures)
+        self.drop_treasures()
+
+    def drop_treasures(self):
         self.treasures = []
 
     @property

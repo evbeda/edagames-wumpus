@@ -11,7 +11,8 @@ from constans.constans import (
     PLAYER_2,
     INITIAL_ARROWS,
     INITIAL_SCORE,
-    )
+    INVALID_MOVES_SCORE,
+)
 from constans.constants_utils import MOVE, SHOOT, WEST, EAST, SOUTH, NORTH
 from constans.constants_game import (
     DIAMOND,
@@ -69,6 +70,9 @@ from constans.scenarios import (
     RECURSIVE_SIDE_CORNER,
     TEST_BOARD_INIT_PLAYER_1,
     TEST_BOARD_INIT_PLAYER_2,
+    TEST_PLAYERS_CHARACTER_0,
+    TEST_PLAYERS_CHARACTER_1,
+    TEST_PLAYERS_CHARACTER_2,
     WAY_GOLD_TWO_PLAYERS,
     VALID_HOLE_SCENARIO,
     SCENARIO_STR_PLAYER_1,
@@ -676,7 +680,7 @@ class TestGame(unittest.TestCase):
             game.current_player = game.player_1
         else:
             game.current_player = game.player_2
-        self.maxDiff = None
+        # self.maxDiff = None
         game._board = deepcopy(PARSE_CELL_SCENARIO)
         self.assertEqual(game.board, expected_board)
 
@@ -764,6 +768,28 @@ class TestGame(unittest.TestCase):
             }
         }
         self.assertEqual(game.generate_response(), expected_response)
+
+    @parameterized.expand([
+        (TEST_PLAYERS_CHARACTER_0, 5, INVALID_MOVES_SCORE, False),
+        (TEST_PLAYERS_CHARACTER_0, 4, 80_000, True),
+        (TEST_PLAYERS_CHARACTER_1, 5, INVALID_MOVES_SCORE, False),
+        (TEST_PLAYERS_CHARACTER_1, 2, 130_000, True),
+        (TEST_PLAYERS_CHARACTER_2, 5, INVALID_MOVES_SCORE, False),
+        (TEST_PLAYERS_CHARACTER_2, 2, 1_000, True),
+    ])
+    def test_penalization_after_invalid_moves(
+        self, current_player: Player, invalid_moves: int,
+        expected_score: int, game_active: bool
+    ):
+
+        game = patched_game()
+        game.current_player = deepcopy(current_player)
+        game.current_player.invalid_moves_count = invalid_moves
+
+        game.check_the_limit_of_invalid()
+
+        self.assertEqual(game.current_player.score, expected_score)
+        self.assertEqual(game.game_is_active, game_active)
 
 
 if __name__ == '__main__':

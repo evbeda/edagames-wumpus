@@ -563,3 +563,17 @@ SCENARIO_STR_PLAYER_1 = (
     "  B  ###################################################################"
     "#############"
 )
+TEST_PLAYERS_CHARACTER_0 = Player(PLAYER_1)
+TEST_PLAYERS_CHARACTER_0.characters[0].treasures.extend([Gold()])
+TEST_PLAYERS_CHARACTER_0.characters[1].treasures.extend([Gold()])
+TEST_PLAYERS_CHARACTER_0.characters[2].treasures.extend([Diamond()])
+
+TEST_PLAYERS_CHARACTER_1 = Player(PLAYER_1)
+TEST_PLAYERS_CHARACTER_1.characters[0].treasures.extend([Gold(), Gold(),
+                                                         Gold(), Gold(),
+                                                         Gold()])
+TEST_PLAYERS_CHARACTER_1.characters[1].treasures.extend([Diamond(), Gold()])
+TEST_PLAYERS_CHARACTER_1.characters[2].treasures.extend([Gold()])
+
+TEST_PLAYERS_CHARACTER_2 = Player(PLAYER_1)
+TEST_PLAYERS_CHARACTER_2.score = 1000

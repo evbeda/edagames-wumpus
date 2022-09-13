@@ -16,6 +16,7 @@ class Player():
         self.arrows = INITIAL_ARROWS
         self.characters = []
         self.instance_characters()
+        self.invalid_moves_count = 0
 
     def update_score(self, new_score):
         self.score += new_score

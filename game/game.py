@@ -47,9 +47,11 @@ from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
 class WumpusGame():
 
     def __init__(self) -> None:
+
         self._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
+
         self.player_1 = Player(PLAYER_1)
         self.player_2 = Player(PLAYER_2)
         self.place_items(GOLD, GOLD_QUANTITY)

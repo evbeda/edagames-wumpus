@@ -5,7 +5,13 @@ from parameterized import parameterized
 from game.diamond import Diamond
 
 from game.game import WumpusGame
-from constans.constans import EMPTY_CELL, PLAYER_1, PLAYER_2
+from constans.constans import (
+    EMPTY_CELL,
+    PLAYER_1,
+    PLAYER_2,
+    INITIAL_ARROWS,
+    INITIAL_SCORE,
+    )
 from constans.constants_utils import MOVE, SHOOT, WEST, EAST, SOUTH, NORTH
 from constans.constants_game import (
     DIAMOND,
@@ -20,7 +26,6 @@ from game.cell import Cell
 from game.character import Character
 from game.gold import Gold
 from game.player import Player
-
 from constans.constants_scores import (
     CORRECT_MOVE,
     DEATH,
@@ -66,6 +71,7 @@ from constans.scenarios import (
     TEST_BOARD_INIT_PLAYER_2,
     WAY_GOLD_TWO_PLAYERS,
     VALID_HOLE_SCENARIO,
+    SCENARIO_STR_PLAYER_1,
 )
 from game.utils import posibles_positions
 from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
@@ -734,6 +740,30 @@ class TestGame(unittest.TestCase):
             initial_col,
             direction
         )
+
+    def test_generate_response(self):
+        game = WumpusGame()
+        game.current_player = game.player_1
+        game.player_1.name = "B"
+        game.player_2.name = "P"
+        expected_response = {
+            "board": SCENARIO_STR_PLAYER_1,
+            # "game_status": "active", # Add property when ready
+            # "turn": "0" # Add property when ready
+            "player1": {
+                "name": PLAYER_1,
+                "score": INITIAL_SCORE,
+                "arrows": INITIAL_ARROWS,
+                "characters_alive": 3,
+            },
+            "player2": {
+                "name": PLAYER_2,
+                "score": INITIAL_SCORE,
+                "arrows": INITIAL_ARROWS,
+                "characters_alive": 3,
+            }
+        }
+        self.assertEqual(game.generate_response(), expected_response)
 
 
 if __name__ == '__main__':

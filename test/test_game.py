@@ -815,7 +815,7 @@ class TestGame(unittest.TestCase):
         game.player_2._score = score_p2
         result = game.game_over_final_message()
         self.assertEqual(result, expected_result)
-        
+
     @parameterized.expand([
         (TEST_PLAYERS_CHARACTER_0, 5, INVALID_MOVES_SCORE, False),
         (TEST_PLAYERS_CHARACTER_0, 4, 80_000, True),

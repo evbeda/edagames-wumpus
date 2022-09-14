@@ -24,3 +24,7 @@ class TestTreasure(unittest.TestCase):
     def test_diamond(self):
         gold = Diamond()
         self.assertEqual(gold.value, SCORES["DIAMOND"])
+
+
+if __name__ == "__main__":
+    unittest.main()

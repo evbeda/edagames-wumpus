@@ -28,14 +28,14 @@ from game.character import Character
 from game.gold import Gold
 from game.player import Player
 from constans.constants_scores import (
+    ARROW_MISS,
     CORRECT_MOVE,
     DEATH,
-    INVALID_MOVE,
-    ARROW_MISS,
     GET_ITEMS,
+    INVALID_MOVE,
     KILL,
-    TIMEOUT,
     SCORES,
+    TIMEOUT,
 )
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
@@ -47,27 +47,25 @@ from constans.scenarios import (
     DICTIONARY_MAK_MOV,
     DICTIONARY_MAK_MOV_P2,
     FILTER_MOVE_BOARD_ENE,
-    FILTER_MOVE_BOARD_H,
-    FILTER_MOVE_MAKE_MOVE,
+    filter_move_board_h,
+    filter_move_make_move,
     FIN_FILTER_MOVE_BOARD_ENE,
-    FIN_FILTER_MOVE_BOARD_H,
-    FIN_FILTER_MOVE_MAKE_MOVE,
+    fin_filter_move_board_h,
+    fin_filter_move_make_move,
     FIND_GOLD_POS_1,
     FIND_GOLD_POS_2,
     FIND_GOLD_POS_3,
     FIND_GOLD_POS_4,
     INITIAL_BIG_FAIL_BOARD,
-
-    MAKE_MOVE_BOARD,
-    MAKE_MOVE_BOARD_P2,
-
+    make_move_board,
+    make_move_board_p2,
     PARSE_CELL_SCENARIO,
     PARSE_CELL_SCENARIO_STR_PLAYER_1,
     PARSE_CELL_SCENARIO_STR_PLAYER_2,
-
     RECURSIVE,
     RECURSIVE_SIDE,
     RECURSIVE_SIDE_CORNER,
+    SCENARIO_STR_PLAYER_1,
     TEST_BOARD_INIT_PLAYER_1,
     TEST_BOARD_INIT_PLAYER_2,
     TEST_PLAYERS_CHARACTER_0,
@@ -75,7 +73,6 @@ from constans.scenarios import (
     TEST_PLAYERS_CHARACTER_2,
     WAY_GOLD_TWO_PLAYERS,
     VALID_HOLE_SCENARIO,
-    SCENARIO_STR_PLAYER_1,
 )
 from game.utils import posibles_positions
 from exceptions.personal_exceptions import (moveToYourOwnCharPositionException,
@@ -400,7 +397,7 @@ class TestGame(unittest.TestCase):
         player_2 = Player(p2)
         character_1_of_player_1 = player_1.characters[0]
         game._board[from_row][from_col].character = character_1_of_player_1
-        game.current_player = player_1
+        game.current_player = player_2
         with self.assertRaises(notYourCharacterException):
             game.is_valid_move(from_row, from_col,
                                to_row, to_col, player_2)
@@ -508,16 +505,16 @@ class TestGame(unittest.TestCase):
         self.assertEqual(str(char), expected)
 
     @parameterized.expand([  # case for filter event
-        (DICTIONARY_H, FILTER_MOVE_BOARD_H,
-         FIN_FILTER_MOVE_BOARD_H, [
+        (DICTIONARY_H, filter_move_board_h(),
+         fin_filter_move_board_h(), [
             Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
             ], 5, 1),
         (DICTIONARY_ENE, FILTER_MOVE_BOARD_ENE,
          FIN_FILTER_MOVE_BOARD_ENE, [
             Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
             ], 5, 1),
-        (DICT_FILTER_MOVE_MK, FILTER_MOVE_MAKE_MOVE,
-         FIN_FILTER_MOVE_MAKE_MOVE, [], 0, 0)
+        (DICT_FILTER_MOVE_MK, filter_move_make_move(),
+         fin_filter_move_make_move(), [], 0, 0)
     ])
     def test_filter_move(self, dictionary, initial_board,
                          finalboard, treasure, count_gold, count_diam):
@@ -534,7 +531,7 @@ class TestGame(unittest.TestCase):
         self.assertIsNone(diam_char)
 
     @parameterized.expand([  # after verify all posibilities make move
-         (DICTIONARY_MAK_MOV, MAKE_MOVE_BOARD,
+         (DICTIONARY_MAK_MOV, make_move_board(),
           3, 0, 0, 0, True, False, 2, 0),
     ])
     def test_make_move_P1(self, dictionary, initial_board,
@@ -566,7 +563,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(player_character.player.arrows, new_arrows)
 
     @parameterized.expand([  # after verify all posibilities make move
-         (DICTIONARY_MAK_MOV_P2, MAKE_MOVE_BOARD_P2,
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(),
           5, 0, 1, 0, False, True, 3, 0)
     ])
     def test_make_move_P2(self, dictionary, initial_board,

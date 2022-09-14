@@ -1,6 +1,6 @@
 from copy import deepcopy
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from parameterized import parameterized
 
@@ -21,11 +21,24 @@ from constans.constants_game import (
 )
 from constans.scenarios import (
     CLOSED_GOLD_BOARD,
+    DICT_FILTER_MOVE_MK,
+    DICTIONARY_ENE,
+    DICTIONARY_H,
+    DICTIONARY_MAK_MOV,
+    DICTIONARY_MAK_MOV_P2,
+    FILTER_MOVE_BOARD_ENE,
+    filter_move_board_h,
+    filter_move_make_move,
+    FIN_FILTER_MOVE_BOARD_ENE,
+    fin_filter_move_board_h,
+    fin_filter_move_make_move,
     FIND_GOLD_POS_1,
     FIND_GOLD_POS_2,
     FIND_GOLD_POS_3,
     FIND_GOLD_POS_4,
     INITIAL_BIG_FAIL_BOARD,
+    make_move_board,
+    make_move_board_p2,
     RECURSIVE,
     RECURSIVE_SIDE,
     RECURSIVE_SIDE_CORNER,
@@ -47,7 +60,10 @@ from constans.constants_utils import (
 )
 from exceptions.personal_exceptions import (
     friendlyFireException,
+    moveToYourOwnCharPositionException,
     noArrowsAvailableException,
+    noPossibleMoveException,
+    notYourCharacterException,
     shootOutOfBoundsException,
 )
 from game.character import Character
@@ -464,3 +480,314 @@ class TestBoard(unittest.TestCase):
         board = patched_game()
         board._board = deepcopy(VALID_HOLE_SCENARIO)
         self.assertEqual(board._valid_hole(row, col), expected)
+
+    @parameterized.expand([  # case for filter event
+        (DICTIONARY_H, filter_move_board_h(),
+         fin_filter_move_board_h(), [
+            Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
+            ], 5, 1),
+        (DICTIONARY_ENE, FILTER_MOVE_BOARD_ENE,
+         FIN_FILTER_MOVE_BOARD_ENE, [
+            Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
+            ], 5, 1),
+        (DICT_FILTER_MOVE_MK, filter_move_make_move(),
+         fin_filter_move_make_move(), [], 0, 0)
+    ])
+    def test_filter_move(self, dictionary, initial_board,
+                         finalboard, treasure, count_gold, count_diam):
+        board = Board()
+        board._board = initial_board
+        board.filter_move(dictionary)
+        cell = finalboard[dictionary["from_row"]][dictionary["from_col"]]
+        cell.treasures = treasure
+        gold_cel = cell.gold
+        diam_cel = cell.diamond
+        diam_char = cell.character
+        self.assertEqual(gold_cel, count_gold)
+        self.assertEqual(diam_cel, count_diam)
+        self.assertIsNone(diam_char)
+
+    @parameterized.expand([  # verify new cell is discovered
+         (DICTIONARY_MAK_MOV, make_move_board(),
+          True, False),
+    ])
+    def test_make_move_P1_new_cell_is_discovered(
+        self, dictionary,
+        initial_board,
+        is_visited_p1,
+        is_visited_p2,
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+        new_cell: Cell = board._board[
+            dictionary["to_row"]][dictionary["to_col"]]
+        self.assertEqual(new_cell.is_discover[0], is_visited_p1)
+        self.assertEqual(new_cell.is_discover[1], is_visited_p2)
+
+    @parameterized.expand([  # verify new cell objects
+         (DICTIONARY_MAK_MOV, make_move_board(), 0, 0, 0),
+    ])
+    def test_make_move_P1_new_cell_objects(
+        self, dictionary,
+        initial_board,
+        gold_old,
+        diamond_old,
+        old_arrow
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+
+        new_cell: Cell = board._board[
+            dictionary["to_row"]][dictionary["to_col"]]
+        self.assertEqual(new_cell.arrow, old_arrow)
+        self.assertEqual(new_cell.gold, gold_old)
+        self.assertEqual(new_cell.diamond, diamond_old)
+
+    @parameterized.expand([  # verify old cell objects
+         (DICTIONARY_MAK_MOV, make_move_board(),
+          0, 0, 0),
+    ])
+    def test_make_move_P1_old_cell_objects(
+        self, dictionary,
+        initial_board,
+        gold_old,
+        diamond_old,
+        old_arrow
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+        old_cell: Cell = board._board[
+            dictionary["from_row"]][dictionary["from_col"]]
+        self.assertEqual(old_cell.arrow, old_arrow)
+        self.assertEqual(old_cell.gold, gold_old)
+        self.assertEqual(old_cell.diamond, diamond_old)
+
+    @parameterized.expand([  # verify player 1 objects
+         (DICTIONARY_MAK_MOV, make_move_board(),
+          3, 0, 2),
+    ])
+    def test_make_move_P1_player_objects(
+        self, dictionary,
+        initial_board,
+        gold_new,
+        diamond_new,
+        new_arrows,
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+        player_character: Character = board.\
+            _board[dictionary["to_row"]][dictionary["to_col"]].character
+        self.assertIsNotNone(player_character)
+        self.assertEqual(player_character.gold, gold_new)
+        self.assertEqual(player_character.diamond, diamond_new)
+        self.assertEqual(player_character.player.arrows, new_arrows)
+
+    @parameterized.expand([  # verify new cell is discovered
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(), False, True)
+    ])
+    def test_make_move_P2_new_cell_is_discoverd(
+        self,
+        dictionary,
+        initial_board,
+        is_visited_p1,
+        is_visited_p2,
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+
+        new_cell: Cell = board._board[
+            dictionary["to_row"]][dictionary["to_col"]]
+
+        self.assertEqual(new_cell.is_discover[0], is_visited_p1)
+        self.assertEqual(new_cell.is_discover[1], is_visited_p2)
+
+    @parameterized.expand([  # verify new cell objects
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(), 0, 0, 0)
+    ])
+    def test_make_move_P2_new_cell_objects(
+        self,
+        dictionary,
+        initial_board,
+        gold_old,
+        diamond_old,
+        old_arrow
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+
+        new_cell: Cell = board._board[
+            dictionary["to_row"]][dictionary["to_col"]]
+        self.assertEqual(new_cell.arrow, old_arrow)
+        self.assertEqual(new_cell.gold, gold_old)
+        self.assertEqual(new_cell.diamond, diamond_old)
+
+    @parameterized.expand([  # verify old cell objects
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(), 0, 0, 0)
+    ])
+    def test_make_move_P2_old_cell_objects(
+        self,
+        dictionary,
+        initial_board,
+        gold_old,
+        diamond_old,
+        old_arrow
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+        old_cell: Cell = board._board[
+            dictionary["from_row"]][dictionary["from_col"]]
+        self.assertEqual(old_cell.arrow, old_arrow)
+        self.assertEqual(old_cell.gold, gold_old)
+        self.assertEqual(old_cell.diamond, diamond_old)
+
+    @parameterized.expand([  # verify Player 2 objects
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(),
+          5, 1, 3)
+    ])
+    def test_make_move_P2_player_objects(
+        self,
+        dictionary,
+        initial_board,
+        gold_new,
+        diamond_new,
+        new_arrows,
+    ):
+        board = Board()
+        board._board = initial_board
+        board.make_move(dictionary)
+        player_character: Character = board.\
+            _board[dictionary["to_row"]][dictionary["to_col"]].character
+
+        self.assertIsNotNone(player_character)
+        self.assertEqual(player_character.gold, gold_new)
+        self.assertEqual(player_character.diamond, diamond_new)
+        self.assertEqual(player_character.player.arrows, new_arrows)
+
+    @parameterized.expand([  # verify string returned for Player 1
+         (DICTIONARY_MAK_MOV, make_move_board(), CORRECT_MOVE)
+    ])
+    def test_make_move_P1_string_returned(
+        self,
+        dictionary,
+        initial_board,
+        expected_result,
+    ):
+        board = Board()
+        board._board = initial_board
+        result = board.make_move(dictionary)
+        self.assertEqual(result, expected_result)
+
+    @parameterized.expand([  # verify string returned for Player 2
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(), CORRECT_MOVE)
+    ])
+    def test_make_move_P2_string_returned(
+        self,
+        dictionary,
+        initial_board,
+        expected_result,
+    ):
+        board = Board()
+        board._board = initial_board
+        result = board.make_move(dictionary)
+        self.assertEqual(result, expected_result)
+
+    @parameterized.expand([
+        (PLAYER_1, PLAYER_2, 0, 0, 0, 1)
+    ])
+    def test_is_valid_move_not_your_character(self, p1, p2,
+                                              from_row, from_col,
+                                              to_row, to_col):
+        board = Board()
+        player_1 = Player(p1)
+        player_2 = Player(p2)
+        character_1_of_player_1 = player_1.characters[0]
+        board._board[from_row][from_col].character = character_1_of_player_1
+        # try to move a character that is not yours, current player is Player 2
+        # and try to move characters from player 1
+        with self.assertRaises(notYourCharacterException):
+            board.is_valid_move(
+                from_row,
+                from_col,
+                to_row,
+                to_col,
+                player_2)
+
+    @parameterized.expand([
+        (PLAYER_1, 0, 0, -1, 0),
+        (PLAYER_1, 0, 0, 3, 0),
+        (PLAYER_1, 0, 0, 0, 0),
+    ])
+    def test_is_valid_move_not_possible_move(self, p1,
+                                             from_row, from_col,
+                                             to_row, to_col):
+        board = Board()
+        player_1 = Player(p1)
+        character_1_of_player_1 = player_1.characters[0]
+        board._board[from_row][from_col].character = character_1_of_player_1
+        with self.assertRaises(noPossibleMoveException):
+            board.is_valid_move(
+                from_row,
+                from_col,
+                to_row,
+                to_col,
+                player_1)
+
+    @parameterized.expand([
+        (PLAYER_1, 0, 0, 0, 1),
+    ])
+    def test_is_valid_move_to_a_same_character(self, P1, from_row, from_col,
+                                               to_row, to_col):
+        board = Board()
+        player_1 = Player(P1)
+        character_1_of_player_1 = player_1.characters[0]
+        character_2_of_player_1 = player_1.characters[1]
+        board._board[from_row][from_col].character = character_1_of_player_1
+        board._board[to_row][to_col].character = character_2_of_player_1
+        with self.assertRaises(moveToYourOwnCharPositionException):
+            board.is_valid_move(
+                from_row,
+                from_col,
+                to_row,
+                to_col,
+                player_1
+            )
+
+    @parameterized.expand([
+        (PLAYER_1, 0, 0, PLAYER_2, 0, 1, 0, 1, {
+                'from_row': 0,
+                'from_col': 0,
+                'to_row': 0,
+                'to_col': 1,
+            }),
+    ])
+    def test_is_valid_move_good_move(self, P1, c1_row, c1_col, P2, c2_row,
+                                     c2_col, to_row, to_col, _expected_result):
+        expected_result = _expected_result
+        board = Board()
+        player_1 = Player(P1)
+        player_2 = Player(P2)
+        character_1_of_player_1 = player_1.characters[0]
+        character_1_of_player_2 = player_2.characters[0]
+        board._board[c1_row][c1_col].character = character_1_of_player_1
+        board._board[c2_row][c2_col].character = character_1_of_player_2
+        expected_result['player'] = player_1
+        board.filter_move = MagicMock()
+        board.is_valid_move(
+            c1_row,
+            c1_col,
+            to_row,
+            to_col,
+            player_1)
+        board.filter_move.assert_called_once()
+        board.filter_move.assert_called_once_with(expected_result)
+
+
+if __name__ == "__main__":
+    unittest.main()

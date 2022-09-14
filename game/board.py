@@ -1,5 +1,4 @@
 import random
-
 from constans.constans import FORBIDDEN_HOLE_CELLS, INITIAL_POSITIONS
 from constans.constants_game import (
     GOLD,
@@ -27,7 +26,10 @@ from constans.constants_utils import (
 )
 from exceptions.personal_exceptions import (
     friendlyFireException,
+    moveToYourOwnCharPositionException,
     noArrowsAvailableException,
+    noPossibleMoveException,
+    notYourCharacterException,
     shootOutOfBoundsException,
 )
 from game.player import Player
@@ -237,3 +239,65 @@ class Board():
            or target_col < 0 or target_col > LARGE - 1):
             raise shootOutOfBoundsException()
         return (target_row, target_col)
+
+    def move_to_own_character_position(self, current_player, row_to, col_to):
+        ch = self._board[row_to][col_to].character
+        if ch and ch.player == current_player:
+            raise moveToYourOwnCharPositionException()
+
+    def is_a_player_character(self, row, col, current_player):
+        result = self._board[row][col].character.player == current_player
+        return result
+
+    def is_valid_move(
+        self,
+        from_row,
+        from_col,
+        to_row,
+        to_col,
+        current_player: Player
+    ):
+        coordinates = (to_row, to_col)
+        if not self.is_a_player_character(from_row, from_col, current_player):
+            raise notYourCharacterException()
+        if (coordinates not in posibles_positions(from_row, from_col)):
+            raise noPossibleMoveException()
+        self.move_to_own_character_position(current_player, to_row, to_col)
+        dictionary = {
+            "from_row": from_row,
+            "from_col": from_col,
+            "to_row": to_row,
+            "to_col": to_col,
+            "player": current_player,
+        }
+        self.filter_move(dictionary)
+
+    def make_move(self, dictionary):
+        from_row = dictionary["from_row"]
+        from_col = dictionary["from_col"]
+        to_row = dictionary["to_row"]
+        to_col = dictionary["to_col"]
+        current_player = dictionary["player"]
+        new_cell: Cell = self._board[to_row][to_col]
+        old_cel = self._board[from_row][from_col]
+        character: Character = self._board[from_row][from_col].character
+        character.player.arrows += new_cell.arrow
+        new_cell.transfer_tresaure(character)
+        new_cell.arrow = 0
+        new_cell.character = character
+        old_cel.character = None
+        self.discover_cell(to_row, to_col, current_player)
+        return CORRECT_MOVE
+
+    def filter_move(self, dictionary):
+        cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
+        current_player = dictionary["player"]
+        character_cel = cell_to.character
+        # falta sumar puntos por moverse a hoyo
+        if cell_to.has_hole or (character_cel and
+                                character_cel.player.name != current_player):
+            cell = self._board[dictionary["from_row"]][dictionary["from_col"]]
+            char = cell.character
+            char.transfer_tresaure(cell)
+        else:
+            self.make_move(dictionary)

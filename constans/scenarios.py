@@ -167,34 +167,41 @@ TESTED_CELL_9.is_discover[0] = True
 TESTED_CELL_10 = Cell(0, 0)
 TESTED_CELL_10.arrow = 1
 
-FILTER_MOVE_BOARD_H = [
-    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-FILTER_MOVE_BOARD_H[5][5].has_hole = True
-player_1 = Player(PLAYER_1)
-character_player_1 = Character(player_1)
-character_player_1.treasures.append(Gold())
-character_player_1.treasures.append(Gold())
-character_player_1.treasures.append(Gold())
-character_player_1.treasures.append(Gold())
-character_player_1.treasures.append(Gold())
-character_player_1.treasures.append(Diamond())
-FILTER_MOVE_BOARD_H[5][4].character = character_player_1
 
-FIN_FILTER_MOVE_BOARD_H = [
-    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-FIN_FILTER_MOVE_BOARD_H[5][5].has_hole = True
-FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
-FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
-FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
-FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
-FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
-FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Diamond())
+def filter_move_board_h():
+    FILTER_MOVE_BOARD_H = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    FILTER_MOVE_BOARD_H[5][5].has_hole = True
+    player_1 = Player(PLAYER_1)
+    character_player_1 = Character(player_1)
+    character_player_1.treasures.append(Gold())
+    character_player_1.treasures.append(Gold())
+    character_player_1.treasures.append(Gold())
+    character_player_1.treasures.append(Gold())
+    character_player_1.treasures.append(Gold())
+    character_player_1.treasures.append(Diamond())
+    FILTER_MOVE_BOARD_H[5][4].character = character_player_1
+    return FILTER_MOVE_BOARD_H
+
+
+def fin_filter_move_board_h():
+    FIN_FILTER_MOVE_BOARD_H = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    FIN_FILTER_MOVE_BOARD_H[5][5].has_hole = True
+    FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
+    FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
+    FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
+    FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
+    FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Gold())
+    FIN_FILTER_MOVE_BOARD_H[5][4].treasures.append(Diamond())
+    return FIN_FILTER_MOVE_BOARD_H
+
 
 DICTIONARY_H = {"from_row": 5,
                 "from_col": 4,
                 "to_row": 5,
                 "to_col": 5,
-                "player": PLAYER_1}
+                "player": Player(PLAYER_1)}
 
 FILTER_MOVE_SAME_P = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
@@ -247,73 +254,88 @@ DICTIONARY_ENE = {"from_row": 5,
                   "from_col": 4,
                   "to_row": 5,
                   "to_col": 5,
-                  "player": PLAYER_1}
+                  "player": Player(PLAYER_1)}
 
 DICTIONARY_MAK_MOV = {"from_row": 5,
                       "from_col": 4,
                       "to_row": 5,
                       "to_col": 5,
-                      "player": PLAYER_1}
+                      "player": Player(PLAYER_1)}
 
-MAKE_MOVE_BOARD = [
-    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-player_1 = Player(PLAYER_1)
-player_1.arrows = 1
-character_player_1 = Character(player_1)
-character_player_1.treasures = [Gold(), Gold()]
-MAKE_MOVE_BOARD[5][4].character = character_player_1
-MAKE_MOVE_BOARD[5][5].arrow = 1
-MAKE_MOVE_BOARD[5][5].treasures.append(Gold())
+
+def make_move_board():
+    MAKE_MOVE_BOARD = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    player_1 = Player(PLAYER_1)
+    player_1.arrows = 1
+    character_player_1 = Character(player_1)
+    character_player_1.treasures = [Gold(), Gold()]
+    MAKE_MOVE_BOARD[5][4].character = character_player_1
+    MAKE_MOVE_BOARD[5][5].arrow = 1
+    MAKE_MOVE_BOARD[5][5].treasures.append(Gold())
+    return MAKE_MOVE_BOARD
+
 
 DICTIONARY_MAK_MOV_P2 = {"from_row": 5,
                          "from_col": 4,
                          "to_row": 5,
                          "to_col": 5,
-                         "player": PLAYER_2}
+                         "player": Player(PLAYER_2)}
 
-MAKE_MOVE_BOARD_P2 = [
-    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-player_2 = Player(PLAYER_2)
-player_2.arrows = 3
-character_player_2 = Character(player_2)
-character_player_2.treasures.append(Gold())
-character_player_2.treasures.append(Gold())
-MAKE_MOVE_BOARD_P2[5][4].character = character_player_2
-MAKE_MOVE_BOARD_P2[5][5].arrow = 0
-MAKE_MOVE_BOARD_P2[5][5].treasures.append(Gold())
-MAKE_MOVE_BOARD_P2[5][5].treasures.append(Gold())
-MAKE_MOVE_BOARD_P2[5][5].treasures.append(Gold())
-MAKE_MOVE_BOARD_P2[5][5].treasures.append(Diamond())
+
+def make_move_board_p2():
+    MAKE_MOVE_BOARD_P2 = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    player_2 = Player(PLAYER_2)
+    player_2.arrows = 3
+    character_player_2 = Character(player_2)
+    character_player_2.treasures.append(Gold())
+    character_player_2.treasures.append(Gold())
+    MAKE_MOVE_BOARD_P2[5][4].character = character_player_2
+    MAKE_MOVE_BOARD_P2[5][5].arrow = 0
+    MAKE_MOVE_BOARD_P2[5][5].treasures.append(Gold())
+    MAKE_MOVE_BOARD_P2[5][5].treasures.append(Gold())
+    MAKE_MOVE_BOARD_P2[5][5].treasures.append(Gold())
+    MAKE_MOVE_BOARD_P2[5][5].treasures.append(Diamond())
+    return MAKE_MOVE_BOARD_P2
+
 
 DICT_FILTER_MOVE_MK = {"from_row": 5,
                        "from_col": 4,
                        "to_row": 5,
                        "to_col": 5,
-                       "player": PLAYER_2}
+                       "player": Player(PLAYER_2)}
 
-FILTER_MOVE_MAKE_MOVE = [
-    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-player_2 = Player(PLAYER_2)
-player_2.arrows = 3
-character_player_2 = Character(player_2)
-character_player_2.treasures.append(Gold())
-character_player_2.treasures.append(Gold())
-FILTER_MOVE_MAKE_MOVE[5][4].character = character_player_2
-FILTER_MOVE_MAKE_MOVE[5][5].arrow = 0
-FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
-FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
-FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
-FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
-FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Diamond())
 
-FIN_FILTER_MOVE_MAKE_MOVE = [
-    [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-player_2 = Player(PLAYER_2)
-player_2.arrows = 3
-character_player_2 = Character(player_2)
-character_player_2.treasures.append(Gold())
-character_player_2.treasures.append(Gold())
-FILTER_MOVE_MAKE_MOVE[5][5].character = character_player_2
+def filter_move_make_move():
+    FILTER_MOVE_MAKE_MOVE = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    player_2 = Player(PLAYER_2)
+    player_2.arrows = 3
+    character_player_2 = Character(player_2)
+    character_player_2.treasures.append(Gold())
+    character_player_2.treasures.append(Gold())
+    FILTER_MOVE_MAKE_MOVE[5][4].character = character_player_2
+    FILTER_MOVE_MAKE_MOVE[5][5].arrow = 0
+    FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
+    FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
+    FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
+    FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Gold())
+    FILTER_MOVE_MAKE_MOVE[5][5].treasures.append(Diamond())
+    return FILTER_MOVE_MAKE_MOVE
+
+
+def fin_filter_move_make_move():
+    FIN_FILTER_MOVE_MAKE_MOVE = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    player_2 = Player(PLAYER_2)
+    player_2.arrows = 3
+    character_player_2 = Character(player_2)
+    character_player_2.treasures.append(Gold())
+    character_player_2.treasures.append(Gold())
+    FIN_FILTER_MOVE_MAKE_MOVE[5][5].character = character_player_2
+    return FIN_FILTER_MOVE_MAKE_MOVE
+
 
 PARSE_CELL_SCENARIO = [
     [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]

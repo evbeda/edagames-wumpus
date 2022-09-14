@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 from parameterized import parameterized
 from constans.constants_utils import (
@@ -10,6 +11,11 @@ from constans.constants_utils import (
 )
 from game.character import Character
 from game.game import WumpusGame
+from constans.scenarios import (
+    TEST_PLAYERS_CHARACTER_0,
+    TEST_PLAYERS_CHARACTER_1,
+    TEST_PLAYERS_CHARACTER_2,
+)
 from game.player import Player
 from constans.constans import (
     PLAYER_1,
@@ -150,6 +156,19 @@ class TestPlayer(unittest.TestCase):
         invalid_moves_count = game.current_player.invalid_moves_count
         self.assertEqual(score_result, expected_score)
         self.assertEqual(invalid_moves_count, expected_count)
+
+    @parameterized.expand([
+        (TEST_PLAYERS_CHARACTER_0,),
+        (TEST_PLAYERS_CHARACTER_1,),
+        (TEST_PLAYERS_CHARACTER_2,),
+    ])
+    def test_drop_caracters_treseaures(self, player: Player):
+        player = deepcopy(player)
+        player.drop_caracters_treseaures()
+        characters_without_treseaures = all([not character.treasures
+                                            for character in player.characters]
+                                            )
+        self.assertTrue(characters_without_treseaures)
 
 
 if __name__ == '__main__':

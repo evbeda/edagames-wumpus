@@ -7,7 +7,7 @@ from game.game import WumpusGame
 
 from constans.constans import INITIAL_ARROWS
 from constans.constants_utils import NORTH, SOUTH, EAST, WEST
-from exceptions.personal_exceptios import (
+from exceptions.personal_exceptions import (
                                            noArrowsAvailableException,
                                            friendlyFireException,
                                            shootOutOfBoundsException)

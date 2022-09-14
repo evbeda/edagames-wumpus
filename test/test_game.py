@@ -78,9 +78,9 @@ from constans.scenarios import (
     SCENARIO_STR_PLAYER_1,
 )
 from game.utils import posibles_positions
-from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
-                                           notYourCharacterException,
-                                           noPossibleMoveException,)
+from exceptions.personal_exceptions import (moveToYourOwnCharPositionException,
+                                            notYourCharacterException,
+                                            noPossibleMoveException,)
 
 
 def patched_game() -> WumpusGame:

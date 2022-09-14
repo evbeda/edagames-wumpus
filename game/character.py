@@ -7,11 +7,6 @@ from game.TresaureHolder import TreasureHolder
 class Character(TreasureHolder):
 
     def __init__(self, player) -> None:
-
-        # TODO
-        # [ ] delete self.golds and migrate to the function
-        # [ ] delete self.diamonds and migrate to the function
-
         super().__init__()
         self.player = player
 

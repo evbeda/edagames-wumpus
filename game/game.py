@@ -3,6 +3,7 @@ from constans.constans import (
     FORBIDDEN_HOLE_CELLS,
     INITIAL_POSITIONS,
     JOIN_ROW_BOARD,
+    MAXIMUM_INVALID_MOVES,
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
@@ -70,6 +71,7 @@ class WumpusGame():
             Character(self.player_2)
         )
         self.current_player = self.player_1
+        self.game_is_active = True
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
         ch = self._board[row_to][col_to].character
@@ -438,3 +440,9 @@ class WumpusGame():
                 }
             }
         }
+
+    def check_the_limit_of_invalid(self) -> None:
+
+        if self.current_player.invalid_moves_count >= MAXIMUM_INVALID_MOVES:
+            self.current_player.penalizated_for_invalid_moves = True
+            self.game_is_active = False

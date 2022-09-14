@@ -2,6 +2,7 @@ from constans.constans import (
     INITIAL_ARROWS,
     INITIAL_SCORE,
     CHARACTER_AMOUNT_PER_PLAYER,
+    INVALID_MOVES_SCORE,
 )
 from constans.constants_game import DIAMOND, GOLD
 from constans.constants_scores import SCORES
@@ -17,6 +18,7 @@ class Player():
         self.characters = []
         self.instance_characters()
         self.invalid_moves_count = 0
+        self.penalizated_for_invalid_moves = False
 
     def update_score(self, new_score):
         self.score += new_score
@@ -29,14 +31,20 @@ class Player():
             self.characters.append(Character(self))
 
     @property
-    def score(self):
+    def score(self) -> int:
         gold_score = sum([chracter.gold
                           for chracter in self.characters]) * SCORES[GOLD]
         diamond_score = sum([chracter.diamond
                              for chracter in self.characters]
                             ) * SCORES[DIAMOND]
-        return self._score + gold_score + diamond_score
+        return (self._score + gold_score + diamond_score
+                if not self.penalizated_for_invalid_moves
+                else INVALID_MOVES_SCORE)
 
     @score.setter
     def score(self, score):
         self._score = score
+
+    def drop_caracters_treseaures(self) -> None:
+        for character in self.characters:
+            character.drop_treasures()

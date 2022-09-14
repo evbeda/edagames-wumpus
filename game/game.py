@@ -373,7 +373,6 @@ class WumpusGame():
 
     def action_manager(self, action, from_row, from_col, direction):
         to_row, to_col = translate_position(from_row, from_col, direction)
-
         try:
             if action == MOVE:
                 self.is_valid_move(
@@ -390,3 +389,23 @@ class WumpusGame():
 
         except invalidMoveException:
             self.current_player.invalid_moves_count += 1
+
+    def generate_response(self) -> dict:
+        response = {
+            "board": self.board,
+            # "game_status": self.is_game_active, # Add property when ready
+            # "turn": self.current_turn # Add property when ready
+            "player1": {
+                "name": self.player_1.name,
+                "score": self.player_1.score,
+                "arrows": self.player_1.arrows,
+                "characters_alive": len(self.player_1.characters),
+            },
+            "player2": {
+                "name": self.player_2.name,
+                "score": self.player_2.score,
+                "arrows": self.player_2.arrows,
+                "characters_alive": len(self.player_2.characters),
+            }
+        }
+        return response

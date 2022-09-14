@@ -41,7 +41,8 @@ from exceptions.personal_exceptios import (moveToYourOwnCharPositionException,
                                            noPossibleMoveException,
                                            noArrowsAvailableException,
                                            friendlyFireException,
-                                           shootOutOfBoundsException)
+                                           shootOutOfBoundsException,
+                                           invalidMoveException)
 
 
 class WumpusGame():
@@ -191,8 +192,10 @@ class WumpusGame():
     def is_valid_move(self, from_row, from_col, to_row, to_col, player_game):
         coordinates = (to_row, to_col)
         if not self.is_a_player_character(from_row, from_col, player_game):
+            self.modify_score(INVALID_MOVE)
             raise notYourCharacterException()
         if (coordinates not in posibles_positions(from_row, from_col)):
+            self.modify_score(INVALID_MOVE)
             raise noPossibleMoveException()
         self.move_to_own_character_position(player_game, to_row, to_col)
         dictionary = {
@@ -246,6 +249,8 @@ class WumpusGame():
             score = cell.gold * SCORES[GOLD] + cell.diamond * SCORES[DIAMOND]
             self.current_player.update_score(score)
         elif event == DEATH:
+            # it has to be removed, because this
+            # functionally is done by treasure_treasure method
             char = payload["character"]
             score = (char.gold * SCORES[GOLD] +
                      char.diamond * SCORES[DIAMOND]) * -1
@@ -281,7 +286,6 @@ class WumpusGame():
         cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
         player_dic = dictionary["player"]
         character_cel = cell_to.character
-        self.modify_score(CORRECT_MOVE)  # Awards score for moving correctly.
         if cell_to.has_hole or (character_cel and
                                 character_cel.player.name != player_dic):
             cell = self._board[dictionary["from_row"]][dictionary["from_col"]]
@@ -369,12 +373,20 @@ class WumpusGame():
 
     def action_manager(self, action, from_row, from_col, direction):
         to_row, to_col = translate_position(from_row, from_col, direction)
-        if action == MOVE:
-            self.is_valid_move(
-                from_row,
-                from_col,
-                to_row,
-                to_col,
-                self.current_player)
-        elif action == SHOOT:
-            self.shoot_arrow(from_row, from_col, direction)
+
+        try:
+            if action == MOVE:
+                self.is_valid_move(
+                    from_row,
+                    from_col,
+                    to_row,
+                    to_col,
+                    self.current_player)
+
+            elif action == SHOOT:
+                self.shoot_arrow(from_row, from_col, direction)
+
+            self.current_player.invalid_moves_count = 0
+
+        except invalidMoveException:
+            self.current_player.invalid_moves_count += 1

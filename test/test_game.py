@@ -765,6 +765,53 @@ class TestGame(unittest.TestCase):
         }
         self.assertEqual(game.generate_response(), expected_response)
 
+    @parameterized.expand([
+        (10000, 8000, {
+            'GAME_OVER': {
+                'SCORE': {
+                    PLAYER_1: 10000,
+                    PLAYER_2: 8000,
+                },
+                'RESULT': {
+                    'WINNER': PLAYER_1,
+                    'LOSER': PLAYER_2,
+                }
+            }
+        }),
+        (8000, 10000, {
+            'GAME_OVER': {
+                'SCORE': {
+                    PLAYER_1: 8000,
+                    PLAYER_2: 10000,
+                },
+                'RESULT': {
+                    'WINNER': PLAYER_2,
+                    'LOSER': PLAYER_1,
+                }
+            }
+        }),
+        (10000, 10000, {
+                'GAME_OVER': {
+                    'SCORE': {
+                        PLAYER_1: 10000,
+                        PLAYER_2: 10000,
+                    },
+                    'RESULT': 'DRAW',
+                },
+            }),
+    ])
+    def test_game_over_final_message(
+        self,
+        score_p1,
+        score_p2,
+        expected_result
+    ):
+        game = WumpusGame()
+        game.player_1._score = score_p1
+        game.player_2._score = score_p2
+        result = game.game_over_final_message()
+        self.assertEqual(result, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()

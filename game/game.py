@@ -409,3 +409,32 @@ class WumpusGame():
             }
         }
         return response
+
+    def game_over_final_message(self):
+        name_player_1, name_player_2 = self.player_1.name, self.player_2.name
+        score_player_1 = self.player_1.score
+        score_player_2 = self.player_2.score
+        if score_player_1 == score_player_2:
+            return {
+                'GAME_OVER': {
+                    'SCORE': {
+                        name_player_1: score_player_1,
+                        name_player_2: score_player_2,
+                    },
+                    'RESULT': 'DRAW',
+                },
+            }
+        return {
+            'GAME_OVER': {
+                'SCORE': {
+                    name_player_1: score_player_1,
+                    name_player_2: score_player_2,
+                },
+                'RESULT': {
+                    'WINNER': (name_player_1 if score_player_1 > score_player_2
+                               else name_player_2),
+                    'LOSER': (name_player_2 if score_player_2 < score_player_1
+                              else name_player_1),
+                }
+            }
+        }

@@ -1,0 +1,123 @@
+import unittest
+from parameterized import parameterized
+from constans.scenarios import kill_opp_scenario, shoot_n_kill_scenario
+from game.character import Character
+
+from constans.constans import INITIAL_ARROWS
+from constans.constants_utils import NORTH, SOUTH, EAST, WEST
+from exceptions.personal_exceptions import (
+                                           noArrowsAvailableException,
+                                           friendlyFireException,
+                                           shootOutOfBoundsException)
+
+from test.test_game import patched_game
+
+
+class Test_shoot(unittest.TestCase):
+
+    def test_no_arrows_to_shoot(self):
+        game = patched_game()
+        game.current_player.arrows = 0
+        with self.assertRaises(noArrowsAvailableException):
+            game._board.shoot_arrow(0, 0, EAST, game.current_player)
+
+    def test_arrow_decrease(self):
+        game = patched_game()
+        game._board.shoot_arrow(0, 0, EAST, game.current_player)
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
+
+    @parameterized.expand(
+        [
+            (0, 0, WEST),
+            (0, 0, NORTH),
+            (16, 16, EAST),
+            (16, 16, SOUTH)
+        ]
+    )
+    def test_target_out_of_bounds(self, row, col, direction):
+        game = patched_game()
+        with self.assertRaises(shootOutOfBoundsException):
+            game._board.target_position(row, col, direction)
+
+    @parameterized.expand(
+        [
+            (0, 0, EAST, (0, 1)),
+            (0, 0, SOUTH, (1, 0)),
+            (16, 16, WEST, (16, 15)),
+            (16, 16, NORTH, (15, 16))
+        ]
+    )
+    def test_target_in_bounds(self, row, col, direction, expected):
+        game = patched_game()
+        result = game._board.target_position(row, col, direction)
+        self.assertEqual(result, expected)
+
+    def test_shoot_own_character(self):
+        game = patched_game()
+        character = Character(game.current_player)
+        game._board._board[0][1].character = character
+        with self.assertRaises(friendlyFireException):
+            game._board.shoot_arrow(0, 0, EAST, game.current_player)
+
+    def test_kill_opp(self):
+        row = 0
+        col = 1
+        game = patched_game()
+
+        scenarios, player_1, player_2 = kill_opp_scenario()
+        game._board._board = scenarios
+        game.player_1 = player_1
+        game.player_2 = player_2
+
+        opp_cell = game._board._board[row][col]
+        game._board.kill_opp(row, col, game.current_player)
+        self.assertEqual(opp_cell.diamond, 1)
+        self.assertEqual(opp_cell.gold, 2)
+        self.assertEqual(opp_cell.character, None)
+        self.assertTrue(opp_cell.is_discover[0])
+
+    def test_shoot_miss(self):
+        game = patched_game()
+        row = 0
+        col = 1
+        target_cell = game._board._board[row][col]
+        current_player = game.current_player
+        game._board.shoot_miss(row, col, current_player)
+        self.assertEqual(target_cell.arrow, 1)
+        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+        self.assertTrue(not target_cell.is_discover[0])
+
+    def test_shoot_into_hole(self):
+        game = patched_game()
+        row = 0
+        col = 1
+        target_cell = game._board._board[row][col]
+        current_player = game.current_player
+        game._board.shoot_hole(row, col, current_player)
+        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+        self.assertTrue(target_cell.is_discover[0])
+
+    def test_shoot_n_kill(self):
+        game = patched_game()
+
+        scenarios, player_1, player_2 = shoot_n_kill_scenario()
+        game._board._board = scenarios
+        game.player_1 = player_1
+        game.player_2 = player_2
+
+        game._board.shoot_arrow(0, 0, EAST, game.current_player)
+        self.assertEqual(len(game._board._board[0][1].treasures), 3)
+        self.assertEqual(game._board._board[0][1].character, None)
+        self.assertTrue(game._board._board[0][1].is_discover[0])
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
+
+    def test_shoot_hole(self):
+        game = patched_game()
+        game._board._board[0][1].has_hole = True
+        game._board.shoot_arrow(0, 0, EAST, game.current_player)
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
+        self.assertTrue(game._board._board[0][1].is_discover[0])
+
+
+if __name__ == '__main__':
+    unittest.main()

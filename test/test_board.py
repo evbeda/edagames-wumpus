@@ -788,6 +788,16 @@ class TestBoard(unittest.TestCase):
         board.filter_move.assert_called_once()
         board.filter_move.assert_called_once_with(expected_result)
 
+    def test_initial_diamond_position(self, row_random=4, expected_result=1):
+        game = patched_game()
+        mid_col = LARGE//2
+        with patch('random.randint', return_value=row_random):
+            game.initial_diamond_position()
+        self.assertEqual(
+            game._board[row_random][mid_col]
+            .diamond, expected_result
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

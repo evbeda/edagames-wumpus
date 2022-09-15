@@ -74,6 +74,7 @@ class WumpusGame():
         )
         self.current_player = self.player_1
         self.game_is_active = True
+        self.remaining_moves = 200
 
     def move_to_own_character_position(self, player_game, row_to, col_to):
         ch = self._board[row_to][col_to].character
@@ -448,3 +449,7 @@ class WumpusGame():
         if self.current_player.invalid_moves_count >= MAXIMUM_INVALID_MOVES:
             self.current_player.penalizated_for_invalid_moves = True
             self.game_is_active = False
+
+    def next_turn(self):
+        self.remaining_moves -= 1
+        self.change_current_player()

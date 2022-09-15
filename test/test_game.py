@@ -835,6 +835,32 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.current_player.score, expected_score)
         self.assertEqual(game.game_is_active, game_active)
 
+    @parameterized.expand([
+        (PLAYER_1, 10, PLAYER_2, 9),
+        (PLAYER_1, 200, PLAYER_2, 199),
+        (PLAYER_2, 10, PLAYER_1, 9),
+        (PLAYER_2, 15, PLAYER_1, 14),
+    ])
+    def test_next_turn(self, initial_player, initial_remaining_moves,
+                       expected_player, expected_remainig_moves):
+
+        game = patched_game()
+
+        if PLAYER_1 == initial_player:
+            game.current_player = game.player_1
+        else:
+            game.current_player = game.player_2
+
+        game.remaining_moves = initial_remaining_moves
+
+        game.next_turn()
+
+        actual_player = game.current_player
+        actual_remaining_moves = game.remaining_moves
+
+        self.assertEqual(actual_player.name, expected_player)
+        self.assertEqual(actual_remaining_moves, expected_remainig_moves)
+
 
 if __name__ == '__main__':
     unittest.main()

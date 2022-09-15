@@ -41,9 +41,9 @@ class Board():
         self._board = [
             [Cell(row, col) for col in range(LARGE)] for row in range(LARGE)
         ]
+        self.initial_diamond_position()
         self.place_items(GOLD, GOLD_QUANTITY)
         self.place_items(HOLE, HOLE_QUANTITY)
-        self.initial_diamond_position()
 
     def place_character_initial_pos(
         self,
@@ -202,7 +202,7 @@ class Board():
         col: int,
         current_player: Player,
     ) -> str:
-        self.discover_cell(row, col, current_player)
+        # self.discover_cell(row, col, current_player)
         current_player.arrows -= 1
         self._board[row][col].arrow += 1
         return ARROW_MISS
@@ -254,8 +254,8 @@ class Board():
             raise moveToYourOwnCharPositionException()
 
     def is_a_player_character(self, row, col, current_player):
-        result = self._board[row][col].character.player == current_player
-        return result
+        character = self._board[row][col].character
+        return character.player.name == current_player.name if character else False
 
     def is_valid_move(
         self,
@@ -301,12 +301,16 @@ class Board():
         cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
         current_player = dictionary["player"]
         character_cel = cell_to.character
-        # falta sumar puntos por moverse a hoyo
+
         if cell_to.has_hole or (character_cel and
                                 character_cel.player.name != current_player):
-            cell = self._board[dictionary["from_row"]][dictionary["from_col"]]
+            row, col = dictionary["from_row"], dictionary["from_col"]
+            cell = self._board[row][col]
             char = cell.character
+            self.discover_cell(dictionary["to_row"], dictionary["to_col"], current_player)
             char.transfer_tresaure(cell)
             cell.remove_character()
+
+            return CORRECT_MOVE
         else:
             return self.make_move(dictionary)

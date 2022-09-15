@@ -101,7 +101,7 @@ class WumpusGame():
                      char.diamond * SCORES[DIAMOND]) * -1
             char.player.update_score(score)
         elif event == KILL:
-            self.current_player.update_score(SCORES[KILL])
+            self.current_player.update_score(SCORES[CORRECT_MOVE] + SCORES[KILL])
         elif event == CORRECT_MOVE:
             self.current_player.update_score(SCORES[CORRECT_MOVE])
         elif event == INVALID_MOVE:
@@ -131,24 +131,18 @@ class WumpusGame():
 
         return JOIN_ROW_BOARD.join(user_board)
 
-    def action_manager(self, action, from_row, from_col, direction):
+    def execute_action(self, action, from_row, from_col, direction):
         to_row, to_col = translate_position(from_row, from_col, direction)
         try:
             if action == MOVE:
-                valid_mesagge = self._board.is_valid_move(
-                    from_row,
-                    from_col,
-                    to_row,
-                    to_col,
-                    self.current_player)
+                valid_message = self._board.is_valid_move(from_row, from_col,
+                                                          to_row, to_col,
+                                                          self.current_player)
             elif action == SHOOT:
-                valid_mesagge = self._board.shoot_arrow(
-                                 from_row,
-                                 from_col,
-                                 direction,
-                                 self.current_player)
+                valid_message = self._board.shoot_arrow(from_row, from_col, direction,
+                                                        self.current_player)
             self.current_player.invalid_moves_count = 0
-            self.modify_score(valid_mesagge)
+            self.modify_score(valid_message)
         except invalidMoveException:
             self.current_player.invalid_moves_count += 1
             self.modify_score(INVALID_MOVE)
@@ -208,6 +202,6 @@ class WumpusGame():
             self.current_player.penalizated_for_invalid_moves = True
             self.game_is_active = False
 
-    # def next_turn(self):
-    #     self.remaining_moves -= 1
-    #     self.change_current_player()
+    def next_turn(self):
+        self.remaining_moves -= 1
+        self.change_current_player()

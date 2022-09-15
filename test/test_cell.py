@@ -88,7 +88,7 @@ class TestCell(unittest.TestCase):
     ])
     def test_has_player_property(self, row, col, expected):
         game = WumpusGame()
-        cell = game._board[row][col]
+        cell = game._board._board[row][col]
         result = cell.has_player
         self.assertEqual(result, expected)
 

@@ -270,7 +270,7 @@ class Board():
             "to_col": to_col,
             "player": current_player,
         }
-        self.filter_move(dictionary)
+        return self.filter_move(dictionary)
 
     def make_move(self, dictionary):
         from_row = dictionary["from_row"]
@@ -300,4 +300,4 @@ class Board():
             char = cell.character
             char.transfer_tresaure(cell)
         else:
-            self.make_move(dictionary)
+            return self.make_move(dictionary)

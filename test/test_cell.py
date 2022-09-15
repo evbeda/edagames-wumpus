@@ -109,3 +109,7 @@ class TestCell(unittest.TestCase):
     ])
     def test_cell_representation(self, player, cell: Cell, expected):
         self.assertEqual(cell.to_str(player), expected)
+
+
+if __name__ == "__main__":
+    unittest.main()

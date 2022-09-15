@@ -9,7 +9,6 @@ from constans.constants_utils import (
     WEST,
     SOUTH
 )
-from game.character import Character
 from game.game import WumpusGame
 from constans.scenarios import (
     TEST_PLAYERS_CHARACTER_0,
@@ -18,6 +17,8 @@ from constans.scenarios import (
 )
 from game.player import Player
 from constans.constans import (
+    INITIAL_POSITION_PLAYER_1,
+    INITIAL_POSITION_PLAYER_2,
     PLAYER_1,
     PLAYER_2,
     INITIAL_ARROWS,
@@ -75,18 +76,13 @@ class TestPlayer(unittest.TestCase):
             expected_score,
             expected_count
     ):
-
         game = WumpusGame()
-        game._board = [
+        game._board._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
-        player = game.current_player
-        game.place_character_initial_pos(
-            player,
-            Character(player),
-            Character(player),
-            Character(player)
-            )
+        game._board.place_character_initial_pos(game.player_1.characters,
+                                                INITIAL_POSITION_PLAYER_1,
+                                                0)
         game.action_manager(action, from_row, from_col, direction)
         score_result = game.current_player.score
         invalid_moves_count = game.current_player.invalid_moves_count
@@ -107,19 +103,14 @@ class TestPlayer(unittest.TestCase):
             expected_score,
             expected_count
     ):
-
         game = WumpusGame()
-        game._board = [
+        game._board._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
         game.current_player = game.player_2
-        player = game.current_player
-        game.place_character_initial_pos(
-            player,
-            Character(player),
-            Character(player),
-            Character(player)
-            )
+        game._board.place_character_initial_pos(game.player_2.characters,
+                                                INITIAL_POSITION_PLAYER_2,
+                                                1)
         game.action_manager(action, from_row, from_col, direction)
         score_result = game.current_player.score
         invalid_moves_count = game.current_player.invalid_moves_count
@@ -141,16 +132,12 @@ class TestPlayer(unittest.TestCase):
             expected_count
     ):
         game = WumpusGame()
-        game._board = [
+        game._board._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
-        player = game.current_player
-        game.place_character_initial_pos(
-            player,
-            Character(player),
-            Character(player),
-            Character(player)
-            )
+        game._board.place_character_initial_pos(game.player_1.characters,
+                                                INITIAL_POSITION_PLAYER_1,
+                                                0)
         game.action_manager(action, from_row, from_col, direction)
         score_result = game.current_player.score
         invalid_moves_count = game.current_player.invalid_moves_count

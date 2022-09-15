@@ -1,5 +1,11 @@
 from copy import deepcopy
+import unittest
+from unittest.mock import patch
+
+from parameterized import parameterized
+
 from constans.constans import (
+    INITIAL_ARROWS,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
     PLAYER_1,
@@ -28,10 +34,26 @@ from constans.scenarios import (
 )
 from game.board import Board
 from game.cell import Cell
+from constans.constants_scores import (
+    ARROW_MISS,
+    CORRECT_MOVE,
+    KILL,
+)
+from constans.constants_utils import (
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST,
+)
+from exceptions.personal_exceptions import (
+    friendlyFireException,
+    noArrowsAvailableException,
+    shootOutOfBoundsException,
+)
+from game.character import Character
+from game.diamond import Diamond
+from game.gold import Gold
 from game.player import Player
-from parameterized import parameterized
-from unittest.mock import patch
-import unittest
 
 
 def patched_game() -> Board:
@@ -42,34 +64,262 @@ def patched_game() -> Board:
 
 class TestBoard(unittest.TestCase):
 
-    def test_board_size(self):
+    def test_board_is_created_with_right_dimensions(self):
         board = Board()
         self.assertEqual(len(board._board), LARGE)
         self.assertEqual(len(board._board[0]), LARGE)
 
-    def test_place_character_initial_pos_player_1(self):
+    @parameterized.expand(
+        [
+            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 0),
+            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 1),
+            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 2),
+            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 0),
+            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 1),
+            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 2),
+        ]
+    )
+    def test_place_character_initial_pos_player(
+        self,
+        player,
+        init_positions,
+        char_index
+    ):
         board = Board()
-        player_1 = Player(PLAYER_1)
+        current_player = Player(player)
+        row, col = init_positions[char_index]
         board.place_character_initial_pos(
-            player_1.characters,
-            INITIAL_POSITION_PLAYER_1,
-            0)
-        for index, character in enumerate(player_1.characters):
-            row, col = INITIAL_POSITION_PLAYER_1[index]
-            self.assertEqual(board._board[row][col].character, character)
-            self.assertTrue(board._board[row][col].is_discover[0])
+            current_player.characters,
+            init_positions,
+            0,
+        )
+        self.assertEqual(
+            board._board[row][col].character,
+            current_player.characters[char_index]
+        )
 
-    def test_place_character_initial_pos_player_2(self):
+    def test_no_arrows_availabe(self):
+        current_player = Player(PLAYER_1)
         board = Board()
-        player_2 = Player(PLAYER_2)
+        current_player.arrows = 0
+        with self.assertRaises(noArrowsAvailableException):
+            board.there_are_arrows_available(current_player)
+
+    def test_friendly_fire(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row, col = INITIAL_POSITION_PLAYER_1[1]
         board.place_character_initial_pos(
-            player_2.characters,
-            INITIAL_POSITION_PLAYER_2,
-            1)
-        for index, character in enumerate(player_2.characters):
-            row, col = INITIAL_POSITION_PLAYER_2[index]
-            self.assertEqual(board._board[row][col].character, character)
-            self.assertTrue(board._board[row][col].is_discover[1])
+            current_player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0
+        )
+        board._board[0][1].character = board._board[row][col].character
+        board._board[row][col].character = None
+
+        with self.assertRaises(friendlyFireException):
+            board.is_not_frendly_fire(
+                board._board[0][1],
+                current_player,
+            )
+
+    @parameterized.expand(
+        [
+            (0, 0, NORTH),
+            (0, 0, WEST),
+            (16, 16, SOUTH),
+            (16, 16, EAST)
+        ]
+    )
+    def test_target_position_exception(self, row, col, direction):
+        board = Board()
+        with self.assertRaises(shootOutOfBoundsException):
+            board.target_position(row, col, direction)
+
+    @parameterized.expand(
+        [
+            (0, 0, SOUTH, (1, 0)),
+            (0, 0, EAST, (0, 1)),
+            (16, 16, NORTH, (15, 16)),
+            (16, 16, WEST, (16, 15))
+        ]
+    )
+    def test_target_position_ok(self, row, col, direction, expected):
+        board = Board()
+        result = board.target_position(row, col, direction)
+        self.assertEqual(result, expected)
+
+    def test_shoot_own_character(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        character = Character(current_player)
+        board._board[0][1].character = character
+        with self.assertRaises(friendlyFireException):
+            board.shoot_arrow(0, 0, EAST, current_player)
+
+    def test_kill_opp_return(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        board.place_character_initial_pos(
+            current_player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0,
+        )
+        opp_player = Player(PLAYER_2)
+        opp_character = Character(opp_player)
+        board._board[0][1].character = opp_character
+        result = board.kill_opp(0, 1, current_player)
+        self.assertEqual(result, KILL)
+
+    def test_shoot_and_kill_treasures_transfer(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        board.place_character_initial_pos(
+            current_player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0,
+        )
+        opp_player = Player(PLAYER_2)
+        opp_character = Character(opp_player)
+        opp_character.treasures.append(Diamond())
+        opp_character.treasures.append(Gold())
+        opp_character.treasures.append(Gold())
+        board._board[0][1].treasures = []
+        board._board[0][1].character = opp_character
+        board.kill_opp(0, 1, current_player)
+        self.assertEqual(len(board._board[0][1].treasures), 3)
+
+    def test_kill_opp_remove_opp(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        board.place_character_initial_pos(
+            current_player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0,
+        )
+        opp_player = Player(PLAYER_2)
+        opp_character = Character(opp_player)
+        board._board[0][1].character = opp_character
+        board.kill_opp(0, 1, current_player)
+        self.assertEqual(board._board[0][1].character, None)
+
+    def test_kill_opp_arrow_decrease(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        board.place_character_initial_pos(
+            current_player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0,
+        )
+        opp_player = Player(PLAYER_2)
+        opp_character = Character(opp_player)
+        board._board[0][1].character = opp_character
+        board.kill_opp(0, 1, current_player)
+        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+
+    def test_shoot_into_hole_return(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        target_cell = board._board[row][col]
+        target_cell.has_hole = True
+        result = board.shoot_hole(row, col, current_player)
+        self.assertEqual(result, CORRECT_MOVE)
+
+    def test_shoot_into_hole_arrow_decrease(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        target_cell = board._board[row][col]
+        target_cell.has_hole = True
+        board.shoot_hole(row, col, current_player)
+        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+
+    def test_shoot_into_hole_cell_discovered(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        target_cell = board._board[row][col]
+        target_cell.has_hole = True
+        board.shoot_hole(row, col, current_player)
+        self.assertTrue(target_cell.is_discover[0])
+
+    def test_shoot_miss_return(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        result = board.shoot_miss(row, col, current_player)
+        self.assertEqual(result, ARROW_MISS)
+
+    def test_shoot_miss_arrow_decrease(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        board.shoot_miss(row, col, current_player)
+        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+
+    def test_shoot_miss_cell_discover(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        target_cell = board._board[row][col]
+        board.shoot_miss(row, col, current_player)
+        self.assertTrue(target_cell.is_discover[0])
+
+    def test_shoot_miss_cell_arrow_increase(self):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        row = 0
+        col = 1
+        target_cell = board._board[row][col]
+        board.shoot_miss(row, col, current_player)
+        self.assertEqual(target_cell.arrow, 1)
+
+    @parameterized.expand(
+        [
+            (0, 0, EAST, CORRECT_MOVE,),
+            (0, 0, SOUTH, ARROW_MISS,),
+            (16, 0, NORTH, KILL,),
+        ]
+    )
+    def test_shoot_arrow(self, row, col, direction, expected):
+        board = Board()
+        current_player = Player(PLAYER_1)
+        board.place_character_initial_pos(
+            current_player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0,
+        )
+        opp_player = Player(PLAYER_2)
+        board._board[row-1][col].character = opp_player.characters[0]
+        board._board[0][1].has_hole = True
+        result = board.shoot_arrow(row, col, direction, current_player)
+        self.assertEqual(result, expected)
+
+    @parameterized.expand(
+        [
+            (PLAYER_1, 2, 2, 0),
+            (PLAYER_2, 5, 5, 1),
+        ]
+    )
+    def test_discover_cell_player(
+        self,
+        player_name,
+        row,
+        col,
+        is_discover_pos,
+    ):
+        board = Board()
+        player = Player(player_name)
+        board.discover_cell(row, col, player)
+        result = board._board[row][col].is_discover[is_discover_pos]
+        self.assertEqual(result, True)
 
     def test_place_gold(self):
         board = patched_game()

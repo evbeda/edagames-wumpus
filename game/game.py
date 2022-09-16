@@ -208,6 +208,6 @@ class WumpusGame():
             self.current_player.penalizated_for_invalid_moves = True
             self.game_is_active = False
 
-    def next_turn(self):
-        self.remaining_moves -= 1
-        self.change_current_player()
+    # def next_turn(self):
+    #     self.remaining_moves -= 1
+    #     self.change_current_player()

@@ -182,7 +182,9 @@ class TestBoard(unittest.TestCase):
             0,
         )
         opp_player = Player(PLAYER_2)
+        opp_player.characters = []
         opp_character = Character(opp_player)
+        opp_player.characters.append(opp_character)
         board._board[0][1].character = opp_character
         result = board.kill_opp(0, 1, current_player)
         self.assertEqual(result, KILL)
@@ -197,6 +199,8 @@ class TestBoard(unittest.TestCase):
         )
         opp_player = Player(PLAYER_2)
         opp_character = Character(opp_player)
+        opp_player.characters = []
+        opp_player.characters.append(opp_character)
         opp_character.treasures.append(Diamond())
         opp_character.treasures.append(Gold())
         opp_character.treasures.append(Gold())
@@ -215,6 +219,8 @@ class TestBoard(unittest.TestCase):
         )
         opp_player = Player(PLAYER_2)
         opp_character = Character(opp_player)
+        opp_player.characters = []
+        opp_player.characters.append(opp_character)
         board._board[0][1].character = opp_character
         board.kill_opp(0, 1, current_player)
         self.assertEqual(board._board[0][1].character, None)
@@ -229,6 +235,8 @@ class TestBoard(unittest.TestCase):
         )
         opp_player = Player(PLAYER_2)
         opp_character = Character(opp_player)
+        opp_player.characters = []
+        opp_player.characters.append(opp_character)
         board._board[0][1].character = opp_character
         board.kill_opp(0, 1, current_player)
         self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
@@ -789,12 +797,12 @@ class TestBoard(unittest.TestCase):
         board.filter_move.assert_called_once_with(expected_result)
 
     def test_initial_diamond_position(self, row_random=4, expected_result=1):
-        game = patched_game()
+        board = Board()
         mid_col = LARGE//2
         with patch('random.randint', return_value=row_random):
-            game.initial_diamond_position()
+            board.initial_diamond_position()
         self.assertEqual(
-            game._board[row_random][mid_col]
+            board._board[row_random][mid_col]
             .diamond, expected_result
         )
 

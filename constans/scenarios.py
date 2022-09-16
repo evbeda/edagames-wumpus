@@ -174,6 +174,8 @@ def filter_move_board_h():
     FILTER_MOVE_BOARD_H[5][5].has_hole = True
     player_1 = Player(PLAYER_1)
     character_player_1 = Character(player_1)
+    player_1.characters = []
+    player_1.characters.append(character_player_1)
     character_player_1.treasures.append(Gold())
     character_player_1.treasures.append(Gold())
     character_player_1.treasures.append(Gold())
@@ -229,6 +231,8 @@ character_player_2 = Character(player_2)
 FILTER_MOVE_BOARD_ENE[5][5].character = character_player_2
 player_1 = Player(PLAYER_1)
 character_player_1 = Character(player_1)
+player_1.characters = []
+player_1.characters.append(character_player_1)
 character_player_1.treasures.append(Gold())
 character_player_1.treasures.append(Gold())
 character_player_1.treasures.append(Gold())

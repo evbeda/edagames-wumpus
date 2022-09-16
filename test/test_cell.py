@@ -110,6 +110,13 @@ class TestCell(unittest.TestCase):
     def test_cell_representation(self, player, cell: Cell, expected):
         self.assertEqual(cell.to_str(player), expected)
 
+    def test_remove_character(self):
+        game = WumpusGame()
+        cell_player = game._board._board[0][0]
+        cell_player.remove_character()
+        self.assertIsNone(cell_player.character)
+        self.assertEqual(len(game.current_player.characters), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

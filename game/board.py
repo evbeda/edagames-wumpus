@@ -192,7 +192,7 @@ class Board():
         cell = self._board[row][col]
         character_to_kill = cell.character
         character_to_kill.transfer_tresaure(cell)
-        cell.character = None
+        cell.remove_character()
         self.discover_cell(row, col, current_player)
         return KILL
 
@@ -307,5 +307,6 @@ class Board():
             cell = self._board[dictionary["from_row"]][dictionary["from_col"]]
             char = cell.character
             char.transfer_tresaure(cell)
+            cell.remove_character()
         else:
             return self.make_move(dictionary)

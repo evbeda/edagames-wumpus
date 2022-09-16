@@ -69,6 +69,7 @@ class Test_shoot(unittest.TestCase):
         opp_character.treasures.append(Diamond())
         opp_character.treasures.append(Gold())
         opp_character.treasures.append(Gold())
+        game.player_2.characters.append(opp_character)
         game._board._board[row][col].treasures = []
         game._board._board[row][col].character = opp_character
         opp_cell = game._board._board[row][col]
@@ -105,6 +106,7 @@ class Test_shoot(unittest.TestCase):
         opp_character.treasures.append(Diamond())
         opp_character.treasures.append(Gold())
         opp_character.treasures.append(Gold())
+        game.player_2.characters.append(opp_character)
         game._board._board[0][1].treasures = []
         game._board._board[0][1].character = opp_character
         game._board.shoot_arrow(0, 0, EAST, game.current_player)

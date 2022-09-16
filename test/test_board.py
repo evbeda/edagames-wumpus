@@ -68,6 +68,7 @@ from exceptions.personal_exceptions import (
 )
 from game.character import Character
 from game.diamond import Diamond
+from game.game import WumpusGame
 from game.gold import Gold
 from game.player import Player
 
@@ -174,64 +175,42 @@ class TestBoard(unittest.TestCase):
             board.shoot_arrow(0, 0, EAST, current_player)
 
     def test_kill_opp_return(self):
-        board = Board()
-        current_player = Player(PLAYER_1)
-        board.place_character_initial_pos(
-            current_player.characters,
-            INITIAL_POSITION_PLAYER_1,
-            0,
-        )
-        opp_player = Player(PLAYER_2)
+        game = WumpusGame()
+        opp_character = Character(game.player_2)
+        opp_player = game.player_2
         opp_character = Character(opp_player)
-        board._board[0][1].character = opp_character
-        result = board.kill_opp(0, 1, current_player)
+        game.player_2.characters.append(opp_character)
+        game._board._board[0][1].character = opp_character
+        result = game._board.kill_opp(0, 1, game.current_player)
         self.assertEqual(result, KILL)
 
     def test_shoot_and_kill_treasures_transfer(self):
-        board = Board()
-        current_player = Player(PLAYER_1)
-        board.place_character_initial_pos(
-            current_player.characters,
-            INITIAL_POSITION_PLAYER_1,
-            0,
-        )
-        opp_player = Player(PLAYER_2)
-        opp_character = Character(opp_player)
+        game = WumpusGame()
+        opp_character = Character(game.player_2)
         opp_character.treasures.append(Diamond())
         opp_character.treasures.append(Gold())
         opp_character.treasures.append(Gold())
-        board._board[0][1].treasures = []
-        board._board[0][1].character = opp_character
-        board.kill_opp(0, 1, current_player)
-        self.assertEqual(len(board._board[0][1].treasures), 3)
+        game.player_2.characters.append(opp_character)
+        game._board._board[0][1].treasures = []
+        game._board._board[0][1].character = opp_character
+        game._board.kill_opp(0, 1, game.current_player)
+        self.assertEqual(len(game._board._board[0][1].treasures), 3)
 
     def test_kill_opp_remove_opp(self):
-        board = Board()
-        current_player = Player(PLAYER_1)
-        board.place_character_initial_pos(
-            current_player.characters,
-            INITIAL_POSITION_PLAYER_1,
-            0,
-        )
-        opp_player = Player(PLAYER_2)
-        opp_character = Character(opp_player)
-        board._board[0][1].character = opp_character
-        board.kill_opp(0, 1, current_player)
-        self.assertEqual(board._board[0][1].character, None)
+        game = WumpusGame()
+        opp_character = Character(game.player_2)
+        game.player_2.characters.append(opp_character)
+        game._board._board[0][1].character = opp_character
+        game._board.kill_opp(0, 1, game.current_player)
+        self.assertEqual(game._board._board[0][1].character, None)
 
     def test_kill_opp_arrow_decrease(self):
-        board = Board()
-        current_player = Player(PLAYER_1)
-        board.place_character_initial_pos(
-            current_player.characters,
-            INITIAL_POSITION_PLAYER_1,
-            0,
-        )
-        opp_player = Player(PLAYER_2)
-        opp_character = Character(opp_player)
-        board._board[0][1].character = opp_character
-        board.kill_opp(0, 1, current_player)
-        self.assertEqual(current_player.arrows, INITIAL_ARROWS - 1)
+        game = WumpusGame()
+        opp_character = Character(game.player_2)
+        game.player_2.characters.append(opp_character)
+        game._board._board[0][1].character = opp_character
+        game._board.kill_opp(0, 1, game.current_player)
+        self.assertEqual(game.current_player.arrows, INITIAL_ARROWS - 1)
 
     def test_shoot_into_hole_return(self):
         board = Board()

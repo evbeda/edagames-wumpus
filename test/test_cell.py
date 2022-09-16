@@ -115,7 +115,7 @@ class TestCell(unittest.TestCase):
         cell_player = game._board._board[0][0]
         cell_player.remove_character()
         self.assertIsNone(cell_player.character)
-        self.assertEqual(len(game.current_player.characters),2)
+        self.assertEqual(len(game.current_player.characters), 2)
 
 
 if __name__ == "__main__":

@@ -67,3 +67,8 @@ class Cell(TreasureHolder):
             representation[1] = str(self.gold)
         if self.diamond:
             representation[-2] = 'D'
+
+    def remove_character(self):
+        player = self.character.player
+        player.characters.remove(self.character)
+        self.character = None

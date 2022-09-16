@@ -10,6 +10,7 @@ from constans.constants_game import (
 )
 from game.cell import Cell
 from game.character import Character
+from game.diamond import Diamond
 from game.gold import Gold
 from game.utils import posibles_positions
 from constans.constans import PLAYER_1
@@ -42,6 +43,7 @@ class Board():
         ]
         self.place_items(GOLD, GOLD_QUANTITY)
         self.place_items(HOLE, HOLE_QUANTITY)
+        self.initial_diamond_position()
 
     def place_character_initial_pos(
         self,
@@ -53,6 +55,12 @@ class Board():
             row, col = coordinates[index]
             self._board[row][col].character = character
             self._board[row][col].is_discover[player_discover] = True
+
+    def initial_diamond_position(self) -> None:
+        (
+            self._board[random.randint(0, LARGE - 1)][LARGE//2]
+            .treasures.append(Diamond())
+        )
 
     def place_items(self, item, item_quantity):
         fisrt_half = (0, MIDDLE-1)

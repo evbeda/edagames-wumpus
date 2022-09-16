@@ -21,7 +21,10 @@ from constans.constants_scores import (
     TIMEOUT,
     DEATH,
     )
-from constans.constants_utils import MOVE, SHOOT
+from constans.constants_utils import (
+    MOVE,
+    SHOOT,
+)
 from game.board import Board
 from game.player import Player
 from game.utils import posibles_positions, translate_position

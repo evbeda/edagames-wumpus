@@ -31,6 +31,8 @@ player_1 = Player(PLAYER_1)
 character_player_1 = Character(player_1)
 BOARD_WIOUT_ITEMS[5][5].character = character_player_1
 
+EMPTY_BOARD = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
 # scenarios to test recursive
 RECURSIVE = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 RECURSIVE[0][1].treasures.append(Gold())
@@ -541,6 +543,7 @@ SCENARIO_STR_PLAYER_1 = (
     "#####################################################################################"
     "  B  ################################################################################"
 )
+
 TEST_PLAYERS_CHARACTER_0 = Player(PLAYER_1)
 TEST_PLAYERS_CHARACTER_0.characters[0].treasures.extend([Gold()])
 TEST_PLAYERS_CHARACTER_0.characters[1].treasures.extend([Gold()])

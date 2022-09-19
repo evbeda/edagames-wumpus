@@ -80,7 +80,7 @@ class Board():
                 self.place_items_in_free_position(start, end, item)
 
     def place_items_in_free_position(self, start: int, end: int, item):
-        while True:  # search until find an available position
+        while True:  # search until find an available positio
             row = random.randint(0, LARGE - 1)
             col = random.randint(start, end)
             if self._is_valid(row, col, item):

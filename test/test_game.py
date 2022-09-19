@@ -402,8 +402,45 @@ class TestGame(unittest.TestCase):
         player = game.player_1
         player.invalid_moves_count = MAXIMUM_INVALID_MOVES - 1
         game.penalize_player()
-
         self.assertTrue(player.penalizated_for_invalid_moves)
+
+    def test_is_game_over_for_incorrect_moves_p1(self):
+        game = WumpusGame()
+        game.player_1.invalid_moves_count = 5
+        message = 'GAME OVER - Player 1 reached 5 invalid moves in a row'
+        self.assertEqual(game.is_game_over(), message)
+
+    def test_is_game_over_for_incorrect_moves_p2(self):
+        game = WumpusGame()
+        game.player_2.invalid_moves_count = 5
+        message = 'GAME OVER - Player 2 reached 5 invalid moves in a row'
+        self.assertEqual(game.is_game_over(), message)
+
+    def test_is_game_over_for_no_turns_left(self):
+        game = WumpusGame()
+        game.remaining_moves = 0
+        message = "GAME OVER - No turns left"
+        self.assertEqual(game.is_game_over(), message)
+
+    @parameterized.expand([
+        (5, 3, 38, None, 'GAME OVER - Player 1 reached 5 invalid moves in a row'),
+        (0, 5, 38, None, 'GAME OVER - Player 2 reached 5 invalid moves in a row'),
+        (0, 0, 0, None, "GAME OVER - No turns left"),
+        (0, 0, 24, "p1", "GAME OVER - Player 1 has no living Characters..."),
+        (0, 0, 85, "p2", "GAME OVER - Player 2 has no living Characters..."),
+        (0, 0, 85, None, False),  # Here, no game-over condition is met.
+
+    ])
+    def test_is_game_over(self, p1_invalids, p2_invalids, moves, noChars, message):
+        game = WumpusGame()
+        game.player_1.invalid_moves_count = p1_invalids
+        game.player_2.invalid_moves_count = p2_invalids
+        game.remaining_moves = moves
+        if (noChars == "p1"):
+            game.player_1.characters = []
+        elif (noChars == "p2"):
+            game.player_2.characters = []
+        self.assertEqual(game.is_game_over(), message)
 
 
 if __name__ == '__main__':

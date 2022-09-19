@@ -208,3 +208,17 @@ class WumpusGame():
     def next_turn(self):
         self.remaining_moves -= 1
         self.change_current_player()
+
+    def is_game_over(self) -> str:
+        message = False
+        if len(self.player_1.characters) == 0:
+            message = "GAME OVER - Player 1 has no living Characters..."
+        if len(self.player_2.characters) == 0:
+            message = "GAME OVER - Player 2 has no living Characters..."
+        if (self.remaining_moves == 0):
+            message = "GAME OVER - No turns left"
+        if (self.player_1.invalid_moves_count) >= 5:
+            message = "GAME OVER - Player 1 reached 5 invalid moves in a row"
+        if (self.player_2.invalid_moves_count) >= 5:
+            message = "GAME OVER - Player 2 reached 5 invalid moves in a row"
+        return message

@@ -30,6 +30,8 @@ from constans.scenarios import (
     DICTIONARY_H,
     DICTIONARY_MAK_MOV,
     DICTIONARY_MAK_MOV_P2,
+    DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT,
+    DUPLICATE_FIRST_COOR_FOR_HOLES_PLACEMENT,
     EMPTY_BOARD,
     FILTER_MOVE_BOARD_ENE,
     filter_move_board_h,
@@ -411,27 +413,6 @@ class TestBoard(unittest.TestCase):
             ]
             self.assertEqual(sorted(holes_positions), sorted(holes))
 
-    def test_holes_quantity(self):
-        board = patched_board()
-        board._board = [
-            [Cell(row, col) for col in range(LARGE)] for row in range(LARGE)
-        ]
-        board.place_items(HOLE, HOLE_QUANTITY)
-
-        hole_quantity = sum([cell.has_hole
-                            for row_cell in board._board
-                            for cell in row_cell])
-
-        holes_first_half = sum([board._board[row][col].has_hole
-                                for col in range(MIDDLE)
-                                for row in range(LARGE)])
-        holes_second_half = sum([board._board[row][col].has_hole
-                                for col in range(MIDDLE + 1, LARGE)
-                                for row in range(LARGE)])
-        self.assertEqual(hole_quantity, HOLE_QUANTITY)
-        self.assertEqual(holes_first_half, HOLE_QUANTITY // 2)
-        self.assertEqual(holes_second_half, HOLE_QUANTITY // 2)
-
     @parameterized.expand([
         ((0, 0), (0, 1), RECURSIVE, True),
         ((0, 0), (4, 4), CLOSED_GOLD_BOARD, False),
@@ -480,8 +461,6 @@ class TestBoard(unittest.TestCase):
         (1, 0, False),
         (3, 0, False),
         (4, 0, True),
-        (15, 0, False),
-        (16, 1, False),
     ])
     def test_valid_hole(self, row, col, expected):
         board = patched_board()
@@ -805,6 +784,69 @@ class TestBoard(unittest.TestCase):
             board._board[row_random][mid_col]
             .diamond, expected_result
         )
+
+    def test_only_right_HOLE_QUANTITY_have_to_be_placed(self):
+        board = Board()
+        board._board = []
+        board._board = [
+            [Cell(row, col) for col in range(LARGE)]
+            for row in range(LARGE)
+        ]
+        board.place_items(GOLD, GOLD_QUANTITY)
+        board.place_items(HOLE, HOLE_QUANTITY)
+        self.assertEqual(board.item_quantity(HOLE), HOLE_QUANTITY)
+
+    def test_hole_is_removed_if_is_no_valid_hole(self):
+        board = Board()
+        player = Player(PLAYER_1)
+        board._board = [
+            [Cell(row, col) for col in range(LARGE)]
+            for row in range(LARGE)
+        ]
+        board.place_character_initial_pos(
+            player.characters,
+            INITIAL_POSITION_PLAYER_1,
+            0,
+        )
+        board._board[5][5].treasures.append(Gold())
+        board._board[3][0].has_hole = True
+        board._board[2][1].has_hole = True
+        board._board[1][2].has_hole = True
+
+        board._valid_hole(0, 3)
+
+        self.assertFalse(board._board[0][3].has_hole)
+
+    @parameterized.expand(
+        [
+            (
+                "GOLD", GOLD, GOLD_QUANTITY, DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT,
+            ),
+            (
+                "HOLE", HOLE, HOLE_QUANTITY, DUPLICATE_FIRST_COOR_FOR_HOLES_PLACEMENT,
+            ),
+        ]
+    )
+    def test_correct_amount_of_items_should_be_placed_when_ranint_generate_duplicate_coor(
+        self,
+        name,
+        item,
+        item_quantity,
+        item_coor,
+    ):
+        """
+        It test only workes if length of the board is less than 16.
+        In other cases the item_coor parameter must be modified
+        """
+        items_coor_patch = sum(item_coor, ())
+        board = Board()
+        board._board = [
+            [Cell(row, col) for col in range(LARGE)] for row in range(LARGE)
+        ]
+
+        with patch('random.randint', side_effect=items_coor_patch):
+            board.place_items(item, item_quantity)
+        self.assertEqual(item_quantity, board.item_quantity(item))
 
 
 if __name__ == "__main__":

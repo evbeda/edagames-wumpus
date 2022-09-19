@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import random
 from constans.constans import (
     EAST,
@@ -35,6 +36,12 @@ from exceptions.personal_exceptions import (
     shootOutOfBoundsException,
 )
 from game.player import Player
+
+
+@dataclass
+class PlayerPosition:
+    row: int
+    col: int
 
 
 class Board():
@@ -90,24 +97,32 @@ class Board():
                     self._board[row][col].has_hole = True
                 break
 
-    def _is_valid(self, row, col, item) -> bool:
-        valid = (
-            (row, col) not in INITIAL_POSITIONS and
-            self._board[row][col].empty)
-        if item == HOLE and valid:
-            valid = self._valid_hole(row, col)
-        return valid
+    def _is_valid(
+        self,
+        row: int,
+        col: int,
+        item: str
+    ) -> bool:
+        cell = self.get_cell(row, col)
+        if item == GOLD:
+            return (cell.position not in INITIAL_POSITIONS and cell.empty)
+        if item == HOLE and cell.position not in FORBIDDEN_HOLE_CELLS and not cell.has_hole:
+            return self._valid_hole(row, col)
+
+    def get_cell(self, row: int, col: int) -> Cell:
+        cell = self._board[row][col]
+        return cell
 
     def _valid_hole(self, row: int, col: int) -> bool:
-        if (row, col) not in FORBIDDEN_HOLE_CELLS:
-            self._board[row][col].has_hole = True
-            golds = self._gold_positions()
-            for row_player, col_player in INITIAL_POSITIONS:
-                return self._player_can_find_gold(
-                    row_player, col_player,
-                    golds)
-        else:
-            return False
+        cell = self.get_cell(row, col)
+        cell.put_hole()
+        golds = self._gold_positions()
+        for row_player, col_player in INITIAL_POSITIONS:
+            player_position = PlayerPosition(row_player, col_player)
+            if not self._player_can_find_gold(player_position, golds):
+                cell.remove_hole()
+                return False
+        return True
 
     def _gold_positions(self) -> 'list[tuple]':
         return [
@@ -117,10 +132,18 @@ class Board():
             if self._board[row][col].gold > 0
         ]
 
-    def _player_can_find_gold(self, row, col, golds):
+    def _player_can_find_gold(
+        self,
+        player_position: PlayerPosition,
+        golds,
+    ) -> bool:
         for gold_position in golds:
-            if not self._can_find_gold(row, col, gold_position, []):
-                self._board[row][col].has_hole = False
+            if not self._can_find_gold(
+                player_position.row,
+                player_position.col,
+                gold_position,
+                visited=[],
+            ):
                 return False
         return True
 
@@ -324,3 +347,8 @@ class Board():
             return CORRECT_MOVE
         else:
             return self.make_move(dictionary)
+
+    def item_quantity(self, item):
+        gold_quantity = sum([1 for row in self._board for cell in row if cell.gold > 0])
+        hole_quantity = sum([1 for row in self._board for cell in row if cell.has_hole])
+        return hole_quantity if item == HOLE else gold_quantity

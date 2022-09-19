@@ -7,7 +7,7 @@ class Cell(TreasureHolder):
 
     def __init__(self, row, col):
         super().__init__()
-        self.position: tuple(row, col)
+        self.position = (row, col)
         self.character = None
         self.has_hole = False
         # self.is_discover_by_player_1 = False
@@ -72,3 +72,9 @@ class Cell(TreasureHolder):
         player = self.character.player
         player.characters.remove(self.character)
         self.character = None
+
+    def put_hole(self):
+        self.has_hole = True
+
+    def remove_hole(self):
+        self.has_hole = False

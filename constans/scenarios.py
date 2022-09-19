@@ -649,3 +649,13 @@ def generate_board_for_move_action_test():
     SCENARIOS_MOVE_TEST[5][4] = CELL_MOVE_5_4
 
     return SCENARIOS_MOVE_TEST, MOVED_PLAYER, OPPONENT_PLAYER
+
+
+DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT = [
+    (2, 4), (2, 4), (4, 6), (5, 2), (7, 6), (9, 2), (11, 4), (11, 6), (12, 0),
+    (4, 10), (4, 12), (4, 15), (9, 10), (10, 16), (11, 12), (13, 12), (14, 10),
+]
+DUPLICATE_FIRST_COOR_FOR_HOLES_PLACEMENT = [
+    (3, 1), (3, 1), (3, 10), (3, 13), (4, 4), (6, 2), (6, 14), (8, 4), (9, 14),
+    (12, 11), (12, 14), (13, 2), (13, 4), (15, 2), (15, 12), (15, 14), (16, 4)
+]

@@ -49,9 +49,23 @@ class Board():
         self._board = [
             [Cell(row, col) for col in range(LARGE)] for row in range(LARGE)
         ]
-        self.initial_diamond_position()
+        self._free_cells = []
+        self._free_cells_left_half = []
+        self._free_cells_right_half = []
+        self.initialize_free_cells()
         self.place_items(GOLD, GOLD_QUANTITY)
         self.place_items(HOLE, HOLE_QUANTITY)
+        self.initial_diamond_position()
+
+    def initialize_free_cells(self):
+        for row in self._board:
+            for cell in row:
+                if (cell.position not in INITIAL_POSITIONS):
+                    self._free_cells.append(cell.position)
+                if (cell.position[1] < LARGE//2):
+                    self._free_cells_left_half.append(cell.position)
+                if (cell.position[1] > LARGE//2):
+                    self._free_cells_right_half.append(cell.position)
 
     def place_character_initial_pos(
         self,
@@ -80,14 +94,36 @@ class Board():
         )
 
     def place_items(self, item, item_quantity):
-        fisrt_half = (0, MIDDLE-1)
+        first_half = (0, MIDDLE-1)
         second_half = (MIDDLE + 1, LARGE - 1)
-        for start, end in [fisrt_half, second_half]:
+        for start, end in [first_half, second_half]:
             for _ in range(item_quantity//2):
                 self.place_items_in_free_position(start, end, item)
 
     def place_items_in_free_position(self, start: int, end: int, item):
-        while True:  # search until find an available positio
+
+        if (start == 0):
+            availableCells = self._free_cells_left_half
+        else:
+            availableCells = self._free_cells_right_half
+
+        while True:  # search until find an available position
+            myCoord = random.choice(availableCells)
+            row = myCoord[0]
+            col = myCoord[1]
+            try:
+                availableCells.remove(myCoord)
+            except ValueError:
+                pass
+            if self._is_valid(row, col, item):
+                if item == GOLD:
+                    self._board[row][col].treasures.append(Gold())
+                elif item == HOLE:
+                    self._board[row][col].has_hole = True
+                break
+
+        '''
+        while True:  # search until find an available position
             row = random.randint(0, LARGE - 1)
             col = random.randint(start, end)
             if self._is_valid(row, col, item):
@@ -96,6 +132,7 @@ class Board():
                 elif item == HOLE:
                     self._board[row][col].has_hole = True
                 break
+        '''
 
     def _is_valid(
         self,

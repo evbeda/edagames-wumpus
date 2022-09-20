@@ -51,6 +51,8 @@ from constans.scenarios import (
     RECURSIVE_SIDE_CORNER,
     VALID_HOLE_SCENARIO,
     WAY_GOLD_TWO_PLAYERS,
+    LEFT_HALF_COORDS,
+    RIGHT_HALF_COORDS,
 )
 from game.board import Board
 from game.cell import Cell
@@ -373,10 +375,11 @@ class TestBoard(unittest.TestCase):
             (1, 1), (5, 0), (11, 0), (14, 4), (11, 5),
             (10, 7), (5, 5), (1, 3), (15, 15), (15, 12),
             (10, 12), (7, 11), (4, 9), (0, 15), (1, 12),
-            (6, 9)]
-        gold_places_patch = sum(gold_places, ())
+            (6, 9),
+            ]
+        #  gold_places_patch = sum(gold_places, ())
         board = patched_board()
-        with patch('random.randint', side_effect=list(gold_places_patch)):
+        with patch('random.choice', side_effect=gold_places):
             board._board = [
                 [Cell(row, col)for col in range(LARGE)]
                 for row in range(LARGE)
@@ -396,11 +399,10 @@ class TestBoard(unittest.TestCase):
             (14, 1), (15, 11), (1, 13),
             (4, 13), (7, 15), (9, 12),
             (13, 15), (14, 9), (15, 15),
-            (3, 14)]
-
-        hole_places_patch = sum(holes_positions, ())
+            (3, 14),
+            ]
         board = patched_board()
-        with patch('random.randint', side_effect=list(hole_places_patch)):
+        with patch('random.choice', side_effect=holes_positions):
             board._board = [
                 [Cell(row, col) for col in range(LARGE)]
                 for row in range(LARGE)
@@ -847,6 +849,15 @@ class TestBoard(unittest.TestCase):
         with patch('random.randint', side_effect=items_coor_patch):
             board.place_items(item, item_quantity)
         self.assertEqual(item_quantity, board.item_quantity(item))
+
+    def test_initialize_free_cells(self):
+        board = Board()
+        board._free_cells = []
+        board._free_cells_left_half = []
+        board._free_cells_right_half = []
+        board.initialize_free_cells()
+        self.assertEqual(board._free_cells_left_half, LEFT_HALF_COORDS)
+        self.assertEqual(board._free_cells_right_half, RIGHT_HALF_COORDS)
 
 
 if __name__ == "__main__":

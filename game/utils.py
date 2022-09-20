@@ -1,5 +1,5 @@
 from constans.constants_game import LARGE
-from constans.constants_utils import EAST, NORTH, SOUTH, WEST
+from constans.constans import EAST, NORTH, SOUTH, WEST
 
 
 def posibles_positions(row, col):
@@ -35,5 +35,4 @@ def translate_position(from_row, from_col, direction):
     elif direction == WEST:
         to_row = from_row
         to_col = from_col - 1
-
     return to_row, to_col

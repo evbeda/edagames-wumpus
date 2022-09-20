@@ -1,5 +1,12 @@
 import random
-from constans.constans import FORBIDDEN_HOLE_CELLS, INITIAL_POSITIONS
+from constans.constans import (
+    EAST,
+    FORBIDDEN_HOLE_CELLS,
+    INITIAL_POSITIONS,
+    NORTH,
+    SOUTH,
+    WEST,
+)
 from constans.constants_game import (
     GOLD,
     GOLD_QUANTITY,
@@ -18,12 +25,6 @@ from constans.constants_scores import (
     ARROW_MISS,
     CORRECT_MOVE,
     KILL,
-)
-from constans.constants_utils import (
-    EAST,
-    NORTH,
-    SOUTH,
-    WEST,
 )
 from exceptions.personal_exceptions import (
     friendlyFireException,

@@ -1,6 +1,0 @@
-NORTH = "w"
-SOUTH = "s"
-EAST = "d"
-WEST = "a"
-MOVE = "m"
-SHOOT = "z"

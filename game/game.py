@@ -1,10 +1,12 @@
 from constans.constans import (
     JOIN_ROW_BOARD,
     MAXIMUM_INVALID_MOVES,
+    MOVE,
+    SHOOT,
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
-    PLAYER_2
+    PLAYER_2,
 )
 from constans.constants_game import (
     DIAMOND,
@@ -21,10 +23,6 @@ from constans.constants_scores import (
     TIMEOUT,
     DEATH,
     )
-from constans.constants_utils import (
-    MOVE,
-    SHOOT,
-)
 from game.board import Board
 from game.player import Player
 from game.utils import posibles_positions, translate_position

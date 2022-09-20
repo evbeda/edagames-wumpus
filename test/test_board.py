@@ -5,11 +5,15 @@ from unittest.mock import MagicMock, patch
 from parameterized import parameterized
 
 from constans.constans import (
+    EAST,
     INITIAL_ARROWS,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
+    NORTH,
+    SOUTH,
     PLAYER_1,
     PLAYER_2,
+    WEST,
 )
 from constans.constants_game import (
     GOLD,
@@ -51,12 +55,6 @@ from constans.constants_scores import (
     ARROW_MISS,
     CORRECT_MOVE,
     KILL,
-)
-from constans.constants_utils import (
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST,
 )
 from exceptions.personal_exceptions import (
     friendlyFireException,

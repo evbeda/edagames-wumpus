@@ -1,15 +1,6 @@
 from copy import deepcopy
 import unittest
 from parameterized import parameterized
-from constans.constants_utils import (
-    EAST,
-    MOVE,
-    SHOOT,
-    NORTH,
-    WEST,
-    SOUTH
-)
-
 from constans.scenarios import (
     TEST_PLAYERS_CHARACTER_0,
     TEST_PLAYERS_CHARACTER_1,
@@ -17,12 +8,18 @@ from constans.scenarios import (
 )
 from game.player import Player
 from constans.constans import (
+    EAST,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
+    MOVE,
+    NORTH,
+    SOUTH,
+    SHOOT,
     PLAYER_1,
     PLAYER_2,
     INITIAL_ARROWS,
     INITIAL_SCORE,
+    WEST
 )
 from constans.constants_game import LARGE
 from game.cell import Cell

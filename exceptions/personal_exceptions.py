@@ -24,3 +24,11 @@ class friendlyFireException(invalidMoveException):
 
 class shootOutOfBoundsException(invalidMoveException):
     pass
+
+
+class InvalidData(invalidMoveException):
+    pass
+
+
+class InvalidKey(invalidMoveException):
+    pass

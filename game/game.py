@@ -149,7 +149,7 @@ class WumpusGame():
         response = {
             "board": self.board,
             # "game_status": self.is_game_active, # Add property when ready
-            # "turn": self.current_turn # Add property when ready
+            # "turn": self.current_turn # Add property later
             "player1": {
                 "name": self.player_1.name,
                 "score": self.player_1.score,

@@ -381,8 +381,7 @@ class Board():
         current_player = dictionary["player"]
         character_cel = cell_to.character
 
-        if cell_to.has_hole or (character_cel and
-                                character_cel.player.name != current_player):
+        if cell_to.has_hole or self.has_opponent_player(character_cel, current_player):
             row, col = dictionary["from_row"], dictionary["from_col"]
             cell = self._board[row][col]
             char = cell.character
@@ -400,3 +399,6 @@ class Board():
             for cell in row:
                 item_quantity += (cell.gold > 0 and item == GOLD) or (cell.has_hole and item == HOLE)
         return item_quantity
+
+    def has_opponent_player(self, character: Character, current_player: Player) -> bool:
+        return character.player.name != current_player.name if character else False

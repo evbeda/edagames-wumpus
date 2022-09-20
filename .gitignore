@@ -134,3 +134,5 @@ dmypy.json
 #others
 
 .DS_Store
+
+pruebas.ipynb

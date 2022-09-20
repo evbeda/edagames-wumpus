@@ -33,7 +33,7 @@ class Cell(TreasureHolder):
             self.character is not None
             ) else None
 
-    def to_str(self, player_name):
+    def to_str(self, player_name: str):
 
         if player_name == PLAYER_1:
             discovered = self.is_discover[0]

@@ -9,7 +9,7 @@ from constans.constants_utils import (
     WEST,
     SOUTH
 )
-from game.game import WumpusGame
+
 from constans.scenarios import (
     TEST_PLAYERS_CHARACTER_0,
     TEST_PLAYERS_CHARACTER_1,
@@ -26,6 +26,7 @@ from constans.constans import (
 )
 from constans.constants_game import LARGE
 from game.cell import Cell
+from test.test_game import patched_game
 
 
 class TestPlayer(unittest.TestCase):
@@ -76,14 +77,14 @@ class TestPlayer(unittest.TestCase):
             expected_score,
             expected_count
     ):
-        game = WumpusGame()
+        game = patched_game()
         game._board._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
         game._board.place_character_initial_pos(game.player_1.characters,
                                                 INITIAL_POSITION_PLAYER_1,
                                                 0)
-        game.action_manager(action, from_row, from_col, direction)
+        game.execute_action(action, from_row, from_col, direction)
         score_result = game.current_player.score
         invalid_moves_count = game.current_player.invalid_moves_count
         self.assertEqual(score_result, expected_score)
@@ -103,7 +104,7 @@ class TestPlayer(unittest.TestCase):
             expected_score,
             expected_count
     ):
-        game = WumpusGame()
+        game = patched_game()
         game._board._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
@@ -111,7 +112,7 @@ class TestPlayer(unittest.TestCase):
         game._board.place_character_initial_pos(game.player_2.characters,
                                                 INITIAL_POSITION_PLAYER_2,
                                                 1)
-        game.action_manager(action, from_row, from_col, direction)
+        game.execute_action(action, from_row, from_col, direction)
         score_result = game.current_player.score
         invalid_moves_count = game.current_player.invalid_moves_count
         self.assertEqual(score_result, expected_score)
@@ -131,14 +132,14 @@ class TestPlayer(unittest.TestCase):
             expected_score,
             expected_count
     ):
-        game = WumpusGame()
+        game = patched_game()
         game._board._board = [
             [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)
         ]
         game._board.place_character_initial_pos(game.player_1.characters,
                                                 INITIAL_POSITION_PLAYER_1,
                                                 0)
-        game.action_manager(action, from_row, from_col, direction)
+        game.execute_action(action, from_row, from_col, direction)
         score_result = game.current_player.score
         invalid_moves_count = game.current_player.invalid_moves_count
         self.assertEqual(score_result, expected_score)

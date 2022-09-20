@@ -22,3 +22,10 @@ JOIN_ROW_BOARD = ''
 
 MAXIMUM_INVALID_MOVES = 5
 INVALID_MOVES_SCORE = -9999
+
+NORTH = "w"
+SOUTH = "s"
+EAST = "d"
+WEST = "a"
+MOVE = "m"
+SHOOT = "z"

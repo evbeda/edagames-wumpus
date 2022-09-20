@@ -6,12 +6,18 @@ from game.diamond import Diamond
 from game.board import Board
 from game.game import WumpusGame
 from constans.constans import (
+    EAST,
     EMPTY_CELL,
+    MOVE,
+    NORTH,
     PLAYER_1,
     PLAYER_2,
     INITIAL_ARROWS,
     INITIAL_SCORE,
     INVALID_MOVES_SCORE,
+    SHOOT,
+    SOUTH,
+    WEST,
 )
 from constans.constants_game import (
     DIAMOND,
@@ -34,10 +40,14 @@ from constans.constants_scores import (
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
     DANGER_SIGNAL_SCENARIO,
+    SCENARIOS_SHOOT_TEST,
+    SHOOTER_PLAYER,
     TEST_PLAYERS_CHARACTER_0,
     TEST_PLAYERS_CHARACTER_1,
     TEST_PLAYERS_CHARACTER_2,
     SCENARIO_STR_PLAYER_1,
+    board_player_1_scenario,
+    generate_board_for_move_action_test,
 )
 from game.utils import posibles_positions
 
@@ -86,7 +96,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.current_player, game.player_2)
 
     def test_modify_score_get_items(self):  # testing "Get_Items" event
-        game = WumpusGame()
+        game = patched_game()
         cell = Cell(2, 4)
         cell.treasures.append(Gold())
         cell.treasures.append(Gold())
@@ -95,10 +105,10 @@ class TestGame(unittest.TestCase):
         payload = {"cell": cell}
         game.modify_score(GET_ITEMS, payload)
         self.assertEqual(game.current_player.score,
-                         (SCORES[GOLD]*3 + SCORES[DIAMOND]*1))
+                         (SCORES[GOLD] * 3 + SCORES[DIAMOND] * 1))
 
     def test_modify_score_death(self):  # testing "Death" event
-        game = WumpusGame()
+        game = patched_game()
         char = Character(Player(PLAYER_2))
         game.current_player = char.player
         char.treasures.append(Gold())
@@ -107,10 +117,10 @@ class TestGame(unittest.TestCase):
         char.treasures.append(Gold())
         payload = {"character": char}
         game.modify_score(DEATH, payload)
-        self.assertEqual(char.player.score, (SCORES[GOLD]*4) * -1)
+        self.assertEqual(char.player.score, (SCORES[GOLD] * 4) * -1)
 
     @parameterized.expand([  # test for modify_score() function
-        ("KILL", SCORES[KILL]),
+        ("KILL", SCORES[KILL] + SCORES[CORRECT_MOVE]),
         ("CORRECT_MOVE", SCORES[CORRECT_MOVE]),
         ("INVALID_MOVE", SCORES[INVALID_MOVE]),
         ("ARROW_MISS", SCORES[ARROW_MISS]),
@@ -118,7 +128,7 @@ class TestGame(unittest.TestCase):
     ])
     def test_modify_score(self, event, expected):
 
-        game = WumpusGame()
+        game = patched_game()
         game.modify_score(event)
         self.assertEqual(game.current_player.score, expected)
 
@@ -163,7 +173,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(str(char), expected)
 
     def test_make_move_and_modify_score(self):
-        game = WumpusGame()
+        game = patched_game()
         game._board._board = BOARD_FOR_MOVE_AND_MODIFY_SCORE
 
         character = Character(game.player_1)
@@ -190,10 +200,10 @@ class TestGame(unittest.TestCase):
         self.assertEqual(CORRECT_MOVE, result)
 
     def test_generate_response(self):
-        game = WumpusGame()
+        game = patched_game()
+        game._board._board = board_player_1_scenario()
         game.current_player = game.player_1
-        game.player_1.name = "B"
-        game.player_2.name = "P"
+        self.maxDiff = None
         expected_response = {
             "board": SCENARIO_STR_PLAYER_1,
             # "game_status": "active", # Add property when ready
@@ -239,14 +249,14 @@ class TestGame(unittest.TestCase):
             }
         }),
         (10000, 10000, {
-                'GAME_OVER': {
-                    'SCORE': {
-                        PLAYER_1: 10000,
-                        PLAYER_2: 10000,
-                    },
-                    'RESULT': 'DRAW',
+            'GAME_OVER': {
+                'SCORE': {
+                    PLAYER_1: 10000,
+                    PLAYER_2: 10000,
                 },
-            }),
+                'RESULT': 'DRAW',
+            },
+        }),
     ])
     def test_game_over_final_message(
         self,
@@ -254,7 +264,7 @@ class TestGame(unittest.TestCase):
         score_p2,
         expected_result
     ):
-        game = WumpusGame()
+        game = patched_game()
         game.player_1._score = score_p1
         game.player_2._score = score_p2
         result = game.game_over_final_message()
@@ -280,8 +290,95 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.game_is_active, game_active)
 
     def test_board_game_is_class(self):
-        game = WumpusGame()
+        game = patched_game()
         self.assertIsInstance(game._board, Board)
+
+    @parameterized.expand([
+        ('shoot opponent', 5, 8, 8, WEST, 8, 7, 16100, 4, "     "),
+        ('shoot empty cell', 5, 8, 8, EAST, 8, 9, 1100, 4, "##F##"),
+        ('shoot hole', 5, 8, 8, NORTH, 7, 8, 1100, 4, "  O  "),
+        ('shoot own char', 5, 8, 8, SOUTH, 9, 8, 900, 4, "  B  "),
+    ])
+    def test_execute_action_shoot(self, name,
+                                  initial_arrows,
+                                  from_row, from_col, direction,
+                                  destination_row, destination_col,
+                                  expected_score, expected_arrows, expected_destination_cell):
+        game = patched_game()
+
+        game.player_1 = SHOOTER_PLAYER
+        game.current_player = game.player_1
+
+        game._board._board = deepcopy(SCENARIOS_SHOOT_TEST)
+        game.current_player.score = 1000
+        game.current_player.arrows = initial_arrows
+
+        game.execute_action(SHOOT, from_row, from_col, direction)
+
+        current_score = game.current_player.score
+        current_arrows = game.current_player.arrows
+        destination_cell = game._board._board[destination_row][destination_col]
+
+        self.assertEqual(current_score, expected_score)
+        self.assertEqual(current_arrows, expected_arrows)
+        self.assertEqual(destination_cell.to_str(PLAYER_1), expected_destination_cell)
+
+    @parameterized.expand([
+        ('cell with hole', 4, 4, WEST, 1000, 4, 3, 1100, 2, EMPTY_CELL, '  O  '),
+        ('cell empty', 4, 4, EAST, 1000, 4, 5, 1100, 3, EMPTY_CELL, '  B  '),
+        ('cell with opponent char', 4, 4, NORTH, 1000, 3, 4, 1100, 2, EMPTY_CELL, '  P  '),
+        ('cell with own char', 4, 4, SOUTH, 1000, 5, 4, 900, 3, '  B  ', '  B  '),
+    ])
+    def test_execute_action_move(self, name,
+                                 from_row, from_col, direction, initial_socre,
+                                 destination_row, destination_col,
+                                 expected_score, expected_remaining_characters,
+                                 expected_initial_cell, expected_destination_cell, ):
+        game = patched_game()
+        board, player_1, player_2 = generate_board_for_move_action_test()
+        game.player_1 = player_1
+        game.player_2 = player_2
+        game.current_player = game.player_1
+        game._board._board = board
+        game.current_player.score = initial_socre
+
+        game.execute_action(MOVE, from_row, from_col, direction)
+
+        current_score = game.current_player.score
+        initial_cell = game._board._board[from_row][from_col]
+        destination_cell = game._board._board[destination_row][destination_col]
+        current_remaining_characters = len(game.current_player.characters)
+
+        self.assertEqual(current_score, expected_score)
+        self.assertEqual(initial_cell.to_str(PLAYER_1), expected_initial_cell)
+        self.assertEqual(destination_cell.to_str(PLAYER_1), expected_destination_cell)
+        self.assertEqual(current_remaining_characters, expected_remaining_characters)
+
+    @parameterized.expand([
+        (PLAYER_1, 10, PLAYER_2, 9),
+        (PLAYER_1, 200, PLAYER_2, 199),
+        (PLAYER_2, 10, PLAYER_1, 9),
+        (PLAYER_2, 15, PLAYER_1, 14),
+    ])
+    def test_next_turn(self, initial_player, initial_remaining_moves,
+                       expected_player, expected_remainig_moves):
+
+        game = patched_game()
+
+        if PLAYER_1 == initial_player:
+            game.current_player = game.player_1
+        else:
+            game.current_player = game.player_2
+
+        game.remaining_moves = initial_remaining_moves
+
+        game.next_turn()
+
+        actual_player = game.current_player
+        actual_remaining_moves = game.remaining_moves
+
+        self.assertEqual(actual_player.name, expected_player)
+        self.assertEqual(actual_remaining_moves, expected_remainig_moves)
 
 
 if __name__ == '__main__':

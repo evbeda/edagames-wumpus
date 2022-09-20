@@ -519,7 +519,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(new_cell.is_discover[1], is_visited_p2)
 
     @parameterized.expand([  # verify new cell objects
-         (DICTIONARY_MAK_MOV, make_move_board(), 0, 0, 0),
+         (DICTIONARY_MAK_MOV, make_move_board(), 3, 0, 0),
     ])
     def test_make_move_P1_new_cell_objects(
         self, dictionary,
@@ -600,7 +600,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(new_cell.is_discover[1], is_visited_p2)
 
     @parameterized.expand([  # verify new cell objects
-         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(), 0, 0, 0)
+         (DICTIONARY_MAK_MOV_P2, make_move_board_p2(), 5, 1, 0)
     ])
     def test_make_move_P2_new_cell_objects(
         self,

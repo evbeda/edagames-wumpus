@@ -25,7 +25,7 @@ class Player():
         self.invalid_moves_count += 1
 
     def update_score(self, new_score):
-        self.score += new_score
+        self._score += new_score
 
     def update_arrows(self, new_arrow_amt):
         self.arrows += new_arrow_amt

@@ -63,9 +63,9 @@ class Cell(TreasureHolder):
             representation[2] = 'F'
 
     def _put_treasure(self, representation: list):
-        if self.gold:
+        if self.there_is_gold():
             representation[1] = str(self.gold)
-        if self.diamond:
+        if self.there_is_diamond():
             representation[-2] = 'D'
 
     def remove_character(self) -> None:
@@ -78,3 +78,21 @@ class Cell(TreasureHolder):
 
     def remove_hole(self):
         self.has_hole = False
+
+    def there_is_gold(self):
+        return (self.gold or self.character.gold
+                if self.character
+                else self.gold)
+
+    def there_is_diamond(self):
+        return (self.diamond or self.character.diamond
+                if self.character
+                else self.diamond)
+
+    @TreasureHolder.gold.getter
+    def gold(self):
+        return super().gold + (self.character.gold if self.character else 0)
+
+    @TreasureHolder.diamond.getter
+    def diamond(self):
+        return super().diamond + (self.character.diamond if self.character else 0)

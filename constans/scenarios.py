@@ -561,6 +561,7 @@ TEST_PLAYERS_CHARACTER_1.characters[2].treasures.extend([Gold()])
 TEST_PLAYERS_CHARACTER_2 = Player(PLAYER_1, NAME_USER_1)
 TEST_PLAYERS_CHARACTER_2.score = 1000
 
+
 # shoot scenarios
 SCENARIOS_SHOOT_TEST = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 CELL_SHOOT_8_8 = Cell(8, 8)
@@ -569,23 +570,102 @@ SHOOTED_PLAYER = Player(PLAYER_2, NAME_USER_2)
 CELL_SHOOT_8_8.character = SHOOTER_PLAYER.characters[0]
 CELL_SHOOT_8_8.is_discover[0] = True
 
-CELL_SHOOT_7_8 = Cell(7, 8)
-CELL_SHOOT_7_8.has_hole = True
+
+def generate_board_for_shoot_action_test():
+    scenario = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+    shooter_player = Player(PLAYER_1, NAME_USER_1)
+    shotted_player = Player(PLAYER_2, NAME_USER_2)
+
+    # add one more character to test cases
+    shooter_player.characters.append(Character(shooter_player))
+    shotted_player.characters.append(Character(shotted_player))
+
+    (cell_shoot_8_8, cell_shoot_7_8, cell_shoot_9_8,
+     cell_shoot_8_7, cell_shoot_4_4, cell_shoot_4_3,
+     cell_shoot_4_5, cell_shoot_3_4, cell_shoot_5_4,
+     cell_shoot_0_0, cell_shoot_0_1, cell_shoot_1_0,) = cells_for_move_shoot_board(shooter_player, shotted_player)
+
+    scenario[8][8] = cell_shoot_8_8
+    scenario[7][8] = cell_shoot_7_8
+    scenario[9][8] = cell_shoot_9_8
+    scenario[8][7] = cell_shoot_8_7
+
+    scenario[4][4] = cell_shoot_4_4
+    scenario[4][3] = cell_shoot_4_3
+    scenario[4][5] = cell_shoot_4_5
+    scenario[3][4] = cell_shoot_3_4
+    scenario[5][4] = cell_shoot_5_4
+
+    scenario[0][0] = cell_shoot_0_0
+    scenario[0][1] = cell_shoot_0_1
+    scenario[1][0] = cell_shoot_1_0
+
+    return scenario, shooter_player, shotted_player
 
 
-CELL_SHOOT_9_8 = Cell(9, 8)
-CELL_SHOOT_9_8.character = SHOOTER_PLAYER.characters[0]
-CELL_SHOOT_9_8.is_discover[0] = True
+def cells_for_move_shoot_board(shooter_player, shoted_player):
 
-CELL_SHOOT_8_7 = Cell(8, 7)
-CELL_SHOOT_8_7.character = SHOOTED_PLAYER.characters[0]
-CELL_SHOOT_8_7.is_discover[0] = True
+    # shooter cell 1
+    cell_shoot_8_8 = Cell(8, 8)
+    cell_shoot_8_8.character = shooter_player.characters[0]
+    cell_shoot_8_8.is_discover[0] = True
 
+    # cell with hole
+    cell_shoot_7_8 = Cell(7, 8)
+    cell_shoot_7_8.has_hole = True
 
-SCENARIOS_SHOOT_TEST[8][8] = CELL_SHOOT_8_8
-SCENARIOS_SHOOT_TEST[7][8] = CELL_SHOOT_7_8
-SCENARIOS_SHOOT_TEST[9][8] = CELL_SHOOT_9_8
-SCENARIOS_SHOOT_TEST[8][7] = CELL_SHOOT_8_7
+    # cell with own chracter
+    cell_shoot_9_8 = Cell(9, 8)
+    cell_shoot_9_8.character = shooter_player.characters[0]
+    cell_shoot_9_8.is_discover[0] = True
+
+    # discovered cell with opponent character
+    cell_shoot_8_7 = Cell(8, 7)
+    cell_shoot_8_7.character = shoted_player.characters[0]
+    cell_shoot_8_7.is_discover[0] = True
+
+    # shooter cell 2
+    cell_shoot_4_4 = Cell(4, 4)
+    cell_shoot_4_4.character = shooter_player.characters[0]
+    cell_shoot_4_4.is_discover[0] = True
+
+    # covered cell with opponent character
+    cell_shoot_4_3 = Cell(4, 3)
+    cell_shoot_4_3.character = shoted_player.characters[1]
+    cell_shoot_4_3.is_discover[0] = False
+
+    # discovered empty cell
+    cell_shoot_4_5 = Cell(4, 5)
+    cell_shoot_4_5.is_discover[0] = True
+
+    # covered opponent charact with treasures
+    cell_shoot_3_4 = Cell(3, 4)
+    cell_shoot_3_4.character: Character = shoted_player.characters[2]
+    cell_shoot_3_4.character.treasures.extend([Gold(), Gold(), Diamond()])
+
+    # a covered cell with treasures
+    cell_shoot_5_4 = Cell(5, 4)
+    cell_shoot_5_4.treasures.append(Gold())
+
+    # shooter cell 3
+    cell_shoot_0_0 = Cell(0, 0)
+    cell_shoot_0_0.character = shooter_player.characters[3]
+    cell_shoot_0_0.is_discover[0] = True
+
+    # discovered opponent charact with treasures
+    cell_shoot_0_1 = Cell(0, 1)
+    cell_shoot_0_1.character: Character = shoted_player.characters[3]
+    cell_shoot_0_1.character.treasures.extend([Gold(), Gold(), Gold()])
+    cell_shoot_0_1.is_discover[0] = True
+
+    # a discovered cell with treasures
+    cell_shoot_1_0 = Cell(1, 0)
+    cell_shoot_1_0.treasures.append(Gold())
+    cell_shoot_1_0.is_discover[0] = True
+    return [cell_shoot_8_8, cell_shoot_7_8, cell_shoot_9_8, cell_shoot_8_7,
+            cell_shoot_4_4, cell_shoot_4_3, cell_shoot_4_5, cell_shoot_3_4, cell_shoot_5_4,
+            cell_shoot_0_0, cell_shoot_0_1, cell_shoot_1_0, ]
 
 
 def kill_opp_scenario():
@@ -616,41 +696,6 @@ def shoot_n_kill_scenario():
     scenarios[0][1].character = opp_character
 
     return scenarios, player_1, player_2
-
-
-def generate_board_for_move_action_test():
-    SCENARIOS_MOVE_TEST = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
-    CELL_MOVE_4_4 = Cell(4, 4)
-    MOVED_PLAYER = Player(PLAYER_1, NAME_USER_1)
-    OPPONENT_PLAYER = Player(PLAYER_2, NAME_USER_2)
-    CELL_MOVE_4_4.character = MOVED_PLAYER.characters[0]
-    CELL_MOVE_4_4.is_discover[0] = True
-
-    # cell with hole
-    CELL_MOVE_4_3 = Cell(4, 3)
-    CELL_MOVE_4_3.has_hole = True
-
-    # cell empty
-    CELL_MOVE_4_5 = Cell(4, 5)
-    CELL_MOVE_4_5.is_discover[0] = True
-
-    # cell with opponent char
-    CELL_MOVE_3_4 = Cell(3, 4)
-    CELL_MOVE_3_4.character = OPPONENT_PLAYER.characters[0]
-    CELL_MOVE_3_4.is_discover[0] = True
-
-    # cell with own char
-    CELL_MOVE_5_4 = Cell(5, 4)
-    CELL_MOVE_5_4.character = MOVED_PLAYER.characters[1]
-    CELL_MOVE_5_4.is_discover[0] = True
-
-    SCENARIOS_MOVE_TEST[4][4] = CELL_MOVE_4_4
-    SCENARIOS_MOVE_TEST[4][3] = CELL_MOVE_4_3
-    SCENARIOS_MOVE_TEST[4][5] = CELL_MOVE_4_5
-    SCENARIOS_MOVE_TEST[3][4] = CELL_MOVE_3_4
-    SCENARIOS_MOVE_TEST[5][4] = CELL_MOVE_5_4
-
-    return SCENARIOS_MOVE_TEST, MOVED_PLAYER, OPPONENT_PLAYER
 
 
 DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT = [
@@ -707,3 +752,91 @@ RIGHT_HALF_COORDS = [
     (16, 9), (16, 10), (16, 11), (16, 12), (16, 13), (16, 14), (16, 15),
     (16, 16)
 ]
+
+
+def generate_board_for_move_action_test():
+    scenarios = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    moving_player = Player(PLAYER_1, NAME_USER_1)
+    opponent_player = Player(PLAYER_2, NAME_USER_2)
+    # add one more character to test cases
+    moving_player.characters.append(Character(moving_player))
+    opponent_player.characters.append(Character(opponent_player))
+
+    (cell_move_4_4, cell_move_4_3, cell_move_4_5,
+     cell_move_3_4, cell_move_5_4, cell_move_8_8,
+     cell_move_8_7, cell_move_8_9, cell_move_7_8,
+     cell_move_9_8, cell_move_0_0) = cells_for_move_action_board(moving_player, opponent_player)
+
+    scenarios[4][4] = cell_move_4_4
+    scenarios[4][3] = cell_move_4_3
+    scenarios[4][5] = cell_move_4_5
+    scenarios[3][4] = cell_move_3_4
+    scenarios[5][4] = cell_move_5_4
+    scenarios[8][8] = cell_move_8_8
+    scenarios[8][7] = cell_move_8_7
+    scenarios[8][9] = cell_move_8_9
+    scenarios[7][8] = cell_move_7_8
+    scenarios[9][8] = cell_move_9_8
+    scenarios[0][0] = cell_move_0_0
+    return scenarios, moving_player, opponent_player
+
+
+def cells_for_move_action_board(moving_player, opponent_player) -> list:
+
+    # moving character 1
+    cell_move_4_4 = Cell(4, 4)
+    cell_move_4_4.character = moving_player.characters[0]
+    cell_move_4_4.is_discover[0] = True
+
+    # covered cell with hole
+    cell_move_4_3 = Cell(4, 3)
+    cell_move_4_3.has_hole = True
+
+    # discovered cell empty
+    cell_move_4_5 = Cell(4, 5)
+    cell_move_4_5.is_discover[0] = True
+
+    # discovered cell with opponent char
+    cell_move_3_4 = Cell(3, 4)
+    cell_move_3_4.character = opponent_player.characters[0]
+    cell_move_3_4.is_discover[0] = True
+
+    # discovered cell with own char
+    cell_move_5_4 = Cell(5, 4)
+    cell_move_5_4.character = moving_player.characters[1]
+    cell_move_5_4.is_discover[0] = True
+
+    # moving character 2 carrying treasures
+    cell_move_8_8 = Cell(8, 8)
+    cell_move_8_8.character: Character = moving_player.characters[2]
+    cell_move_8_8.character.treasures.append(Gold())
+    cell_move_8_8.is_discover[0] = True
+
+    # discovered cell with hole
+    cell_move_8_7 = Cell(8, 7)
+    cell_move_8_7.has_hole = True
+    cell_move_8_7.is_discover[0] = True
+
+    # covered cell with treasures
+    cell_move_8_9 = Cell(8, 9)
+    cell_move_8_9.treasures.extend([Gold(), Gold(), Diamond()])
+    cell_move_8_9.is_discover[0] = False
+
+    # discovered cell with arrow
+    cell_move_7_8 = Cell(7, 8)
+    cell_move_7_8.arrow = 1
+    cell_move_7_8.is_discover[0] = True
+
+    # covered cell with opponent charatcer
+    cell_move_9_8 = Cell(9, 8)
+    cell_move_9_8.character = opponent_player.characters[1]
+    cell_move_9_8.is_discover[0] = False
+
+    # moving character 3
+    cell_move_0_0 = Cell(0, 0)
+    cell_move_0_0.character = moving_player.characters[3]
+    cell_move_0_0.is_discover[0] = True
+    return [cell_move_4_4, cell_move_4_3, cell_move_4_5,
+            cell_move_3_4, cell_move_5_4, cell_move_8_8,
+            cell_move_8_7, cell_move_8_9, cell_move_7_8,
+            cell_move_9_8, cell_move_0_0]

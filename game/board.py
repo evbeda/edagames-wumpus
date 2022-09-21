@@ -386,6 +386,8 @@ class Board():
             return self.make_move(dictionary)
 
     def item_quantity(self, item):
-        gold_quantity = sum([1 for row in self._board for cell in row if cell.gold > 0])
-        hole_quantity = sum([1 for row in self._board for cell in row if cell.has_hole])
-        return hole_quantity if item == HOLE else gold_quantity
+        item_quantity = 0
+        for row in self._board:
+            for cell in row:
+                item_quantity += (cell.gold > 0 and item == GOLD) or (cell.has_hole and item == HOLE)
+        return item_quantity

@@ -30,8 +30,18 @@ WEST = "WEST"
 MOVE = "MOVE"
 SHOOT = "SHOOT"
 
+ACTION = "action"
+
+DATA = "data"
+
 DIRECTION_MESSAGE = 'direction'
 
-MESSAGE_DATA_KEYS = ['from_row', 'from_col', DIRECTION_MESSAGE]
+ROW = 'from_row'
+
+COL = 'from_col'
+
+MESSAGE_DATA_KEYS = [ROW, COL, DIRECTION_MESSAGE]
 
 POSIBLE_DIRECTIONS = [NORTH, SOUTH, EAST, WEST]
+
+POSIBLE_ACTIONS = [MOVE, SHOOT]

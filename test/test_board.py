@@ -30,6 +30,7 @@ from constans.scenarios import (
     DICTIONARY_H,
     DICTIONARY_MAK_MOV,
     DICTIONARY_MAK_MOV_P2,
+    EMPTY_BOARD,
     FILTER_MOVE_BOARD_ENE,
     filter_move_board_h,
     filter_move_make_move,
@@ -795,7 +796,8 @@ class TestBoard(unittest.TestCase):
         board.filter_move.assert_called_once_with(expected_result)
 
     def test_initial_diamond_position(self, row_random=4, expected_result=1):
-        board = patched_board()
+        board = Board()
+        board._board = EMPTY_BOARD
         mid_col = LARGE//2
         with patch('random.randint', return_value=row_random):
             board.initial_diamond_position()

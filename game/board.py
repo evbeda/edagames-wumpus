@@ -58,6 +58,15 @@ class Board():
             self._board[row][col].is_discover[player_discover] = True
 
     def initial_diamond_position(self) -> None:
+        '''
+        #  DEBUG LINES for multiple diamnods bug,
+        #  left here in case further debugging is needed
+        print("initial_diamond called")
+        for row in range(LARGE):
+            for t in self._board[row][LARGE//2].treasures:
+                if isinstance(t, Diamond):
+                    print("Already one diamond in the map")
+        '''
         (
             self._board[random.randint(0, LARGE - 1)][LARGE//2]
             .treasures.append(Diamond())
@@ -71,7 +80,7 @@ class Board():
                 self.place_items_in_free_position(start, end, item)
 
     def place_items_in_free_position(self, start: int, end: int, item):
-        while True:  # search until find an available position
+        while True:  # search until find an available positio
             row = random.randint(0, LARGE - 1)
             col = random.randint(start, end)
             if self._is_valid(row, col, item):

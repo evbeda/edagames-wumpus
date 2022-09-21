@@ -60,12 +60,13 @@ class Board():
     def initialize_free_cells(self):
         for row in self._board:
             for cell in row:
-                if (cell.position not in INITIAL_POSITIONS):
-                    self._free_cells.append(cell.position)
-                if (cell.position[1] < LARGE//2):
-                    self._free_cells_left_half.append(cell.position)
-                if (cell.position[1] > LARGE//2):
-                    self._free_cells_right_half.append(cell.position)
+                self.decide_and_append(cell)
+
+    def decide_and_append(self, cell):
+        if (cell.position[1] < LARGE//2):
+            self._free_cells_left_half.append(cell.position)
+        if (cell.position[1] > LARGE//2):
+            self._free_cells_right_half.append(cell.position)
 
     def place_character_initial_pos(
         self,
@@ -101,20 +102,25 @@ class Board():
                 self.place_items_in_free_position(start, end, item)
 
     def place_items_in_free_position(self, start: int, end: int, item):
-
         if (start == 0):
             availableCells = self._free_cells_left_half
         else:
             availableCells = self._free_cells_right_half
+        self.search_position_and_place_item(availableCells, item)
 
-        while True:  # search until find an available position
+    def search_position_and_place_item(self, availableCells, item):
+        '''
+        Searchs available position and attemps to place item, validating
+        every cell in availableCells and placing the item is
+        placement is valid, otherwise removes the cell from
+        available cells is that cell turns out to be invalid for
+        positioning.
+        '''
+        while True:  # searches until it finds an available position
             myCoord = random.choice(availableCells)
             row = myCoord[0]
             col = myCoord[1]
-            try:
-                availableCells.remove(myCoord)
-            except ValueError:
-                pass
+            self.attempt_remove_cell(availableCells, myCoord)
             if self._is_valid(row, col, item):
                 if item == GOLD:
                     self._board[row][col].treasures.append(Gold())
@@ -122,17 +128,11 @@ class Board():
                     self._board[row][col].has_hole = True
                 break
 
-        '''
-        while True:  # search until find an available position
-            row = random.randint(0, LARGE - 1)
-            col = random.randint(start, end)
-            if self._is_valid(row, col, item):
-                if item == GOLD:
-                    self._board[row][col].treasures.append(Gold())
-                elif item == HOLE:
-                    self._board[row][col].has_hole = True
-                break
-        '''
+    def attempt_remove_cell(self, availableCells: list, coord):
+        try:
+            availableCells.remove(coord)
+        except ValueError:
+            pass
 
     def _is_valid(
         self,

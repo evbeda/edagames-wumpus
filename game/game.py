@@ -145,6 +145,11 @@ class WumpusGame():
             self.current_player.invalid_moves_count += 1
             self.modify_score(INVALID_MOVE)
 
+    def penalize_player(self) -> None:
+        self.current_player.penalize()
+        self.modify_score(TIMEOUT)
+        self.check_the_limit_of_invalid()
+
     def generate_response(self) -> dict:
         response = {
             "board": self.board,

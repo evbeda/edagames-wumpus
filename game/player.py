@@ -20,6 +20,9 @@ class Player():
         self.invalid_moves_count = 0
         self.penalizated_for_invalid_moves = False
 
+    def penalize(self) -> None:
+        self.invalid_moves_count += 1
+
     def update_score(self, new_score):
         self.score += new_score
 

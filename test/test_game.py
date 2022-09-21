@@ -8,6 +8,7 @@ from game.game import WumpusGame
 from constans.constans import (
     EAST,
     EMPTY_CELL,
+    MAXIMUM_INVALID_MOVES,
     MOVE,
     NORTH,
     PLAYER_1,
@@ -379,6 +380,30 @@ class TestGame(unittest.TestCase):
 
         self.assertEqual(actual_player.name, expected_player)
         self.assertEqual(actual_remaining_moves, expected_remainig_moves)
+
+    def test_when_a_penalize_is_called_invalid_moves_count_increase(self):
+        game = patched_game()
+        player = game.player_1
+        player.invalid_moves_count = 0
+        game.penalize_player()
+
+        self.assertEqual(player.invalid_moves_count, 1)
+
+    def test_when_a_penalize_is_called_score_decreases(self):
+        game = patched_game()
+        player = game.player_1
+        player._score = INITIAL_SCORE
+        game.penalize_player()
+
+        self.assertEqual(player._score, INITIAL_SCORE + SCORES[TIMEOUT])
+
+    def test_when_a_penalize_is_called_and_player_reaches_limit_invalids_games_end(self):
+        game = patched_game()
+        player = game.player_1
+        player.invalid_moves_count = MAXIMUM_INVALID_MOVES - 1
+        game.penalize_player()
+
+        self.assertTrue(player.penalizated_for_invalid_moves)
 
 
 if __name__ == '__main__':

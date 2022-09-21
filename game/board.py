@@ -189,6 +189,7 @@ class Board():
         if (row, col) == gold_position:
             return True
         possible_moves = posibles_positions(row, col)
+        possible_moves = self.sort_possibles_position(possible_moves, *gold_position)
         for row_next, col_next in possible_moves:
             if (
                 (row_next, col_next) not in visited and
@@ -198,6 +199,14 @@ class Board():
             ):
                 return True
         return False
+
+    def sort_possibles_position(self, positions, destination_row, destination_col) -> list:
+        def sorted_key(position) -> int:
+            row, col = position
+            # Euclidean distance between two points √((d_row - row)²+(d_col -col)²)
+            # The 0.1 it's to give advantage to pick col direction over row direction going from left to right
+            return ((destination_row - (row + 0.1)) ** 2 + (destination_col - col) ** 2) ** (0.5)
+        return sorted(positions, key=sorted_key)
 
     def shoot_arrow(
         self,

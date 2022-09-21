@@ -865,6 +865,26 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._free_cells_left_half, LEFT_HALF_COORDS)
         self.assertEqual(board._free_cells_right_half, RIGHT_HALF_COORDS)
 
+    @parameterized.expand([
+        ('from (0, 0) to (3, 3)', 3, 3, [(1, 0), (0, 1), ], [(0, 1), (1, 0), ]),
+        ('from (0, 1) to (3, 3)', 3, 3, [(0, 0), (0, 2), (1, 1), ], [(1, 1), (0, 2), (0, 0)]),
+        ('from (1, 1) to (3, 3)', 3, 3, [(0, 1), (2, 1), (1, 0), (1, 2)], [(1, 2), (2, 1), (0, 1), (1, 0), ]),
+        ('from (1, 2) to (3, 3)', 3, 3, [(0, 2), (2, 2), (1, 3), (1, 1)], [(2, 2), (1, 3), (1, 1), (0, 2), ]),
+        ('from (2, 2) to (3, 3)', 3, 3, [(1, 2), (3, 2), (2, 3), (2, 1)], [(2, 3), (3, 2), (1, 2), (2, 1), ]),
+        ('from (2, 3) to (3, 3)', 3, 3, [(1, 3), (3, 3), (2, 4), (2, 2)], [(3, 3), (2, 4), (2, 2), (1, 3), ]),
+
+        ('from (0, 0) to (2, 0)', 2, 0, [(1, 0), (0, 1), ], [(1, 0), (0, 1), ]),
+        ('from (1, 0) to (2, 0)', 2, 0, [(0, 0), (1, 1), (2, 0)], [(2, 0), (1, 1), (0, 0), ]),
+
+    ])
+    def test_sort_possibles_position(self, name,
+                                     destination_row, destination_col,
+                                     positions, expeted_sorted_possitions):
+        board = patched_board()
+        sorted_possitions = board.sort_possibles_position(positions,
+                                                          destination_row, destination_col,)
+        self.assertEqual(sorted_possitions, expeted_sorted_possitions)
+
 
 if __name__ == "__main__":
     unittest.main()

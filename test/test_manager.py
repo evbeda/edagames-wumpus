@@ -1,11 +1,19 @@
 import unittest
+from unittest.mock import patch
+from test.test_game import patched_game
 from game.manager import Manager
 from parameterized import parameterized
 from constans.constans import (
+    ACTION,
+    COL,
+    DATA,
+    DIRECTION_MESSAGE,
     EAST,
     NORTH,
     MESSAGE_DATA_KEYS,
+    MOVE,
     SOUTH,
+    ROW,
     WEST
 )
 from exceptions.personal_exceptions import (
@@ -107,3 +115,57 @@ class TestManager(unittest.TestCase):
         manager = Manager()
         with self.assertRaises(expection):
             manager.get_correct_data(data_message, MESSAGE_DATA_KEYS)
+
+    @patch('game.game.WumpusGame.execute_action')
+    def test_execute_action_manager(self, mock_execute_action):
+        manager = Manager()
+        game = patched_game()
+        api_data = dict(
+            {
+                ACTION: MOVE,
+                DATA: {
+                    ROW: 0,
+                    COL: 4,
+                    DIRECTION_MESSAGE: NORTH
+                }
+            }
+        )
+        manager.execute_action_manager(game, api_data)
+        mock_execute_action.assert_called_once_with(
+            MOVE,
+            0,
+            4,
+            NORTH
+        )
+
+    def test_execute_action_manager_raise(self):
+        manager = Manager()
+        game = patched_game()
+        api_data = dict(
+            {
+                ACTION: "WUMPUS",
+                DATA: {
+                    ROW: 0,
+                    COL: 4,
+                    DIRECTION_MESSAGE: NORTH
+                }
+            }
+        )
+        with self.assertRaises(InvalidData):
+            manager.execute_action_manager(game, api_data)
+
+    def test_execute_action_manager_raise_key(self):
+        manager = Manager()
+        game = patched_game()
+        api_data = dict(
+            {
+                "Wumpus": MOVE,
+                DATA: {
+                    ROW: 0,
+                    COL: 4,
+                    DIRECTION_MESSAGE: NORTH
+                }
+            }
+        )
+        with self.assertRaises(InvalidData):
+            manager.execute_action_manager(game, api_data)

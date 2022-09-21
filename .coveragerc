@@ -5,6 +5,7 @@ source =
 omit =
     env/*
     */test*
+    */environment.py
 
 [report]
 exclude_lines =

@@ -1,10 +1,10 @@
 import unittest
 from game.redis import (
-    create_redis
+    redis_client,
 )
 
 
 class TestRedis(unittest.TestCase):
 
-    def test_create_redir(self):
-        self.assertEqual(True, create_redis())
+    def test_create_redis_client(self):
+        self.assertIsNotNone(redis_client)

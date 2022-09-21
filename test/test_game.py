@@ -38,6 +38,14 @@ from constans.constants_scores import (
     SCORES,
     TIMEOUT,
 )
+from constans.constants_messages import (
+    GAME_OVER_MESSAGE_1,
+    GAME_OVER_MESSAGE_2,
+    GAME_OVER_MESSAGE_3,
+    GAME_OVER_MESSAGE_4,
+    GAME_OVER_MESSAGE_5,
+    GAME_OVER_NOT_MET,
+)
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
     DANGER_SIGNAL_SCENARIO,
@@ -404,32 +412,13 @@ class TestGame(unittest.TestCase):
         game.penalize_player()
         self.assertTrue(player.penalizated_for_invalid_moves)
 
-    def test_is_game_over_for_incorrect_moves_p1(self):
-        game = WumpusGame()
-        game.player_1.invalid_moves_count = 5
-        message = 'GAME OVER - Player 1 reached 5 invalid moves in a row'
-        self.assertEqual(game.is_game_over(), message)
-
-    def test_is_game_over_for_incorrect_moves_p2(self):
-        game = WumpusGame()
-        game.player_2.invalid_moves_count = 5
-        message = 'GAME OVER - Player 2 reached 5 invalid moves in a row'
-        self.assertEqual(game.is_game_over(), message)
-
-    def test_is_game_over_for_no_turns_left(self):
-        game = WumpusGame()
-        game.remaining_moves = 0
-        message = "GAME OVER - No turns left"
-        self.assertEqual(game.is_game_over(), message)
-
     @parameterized.expand([
-        (5, 3, 38, None, 'GAME OVER - Player 1 reached 5 invalid moves in a row'),
-        (0, 5, 38, None, 'GAME OVER - Player 2 reached 5 invalid moves in a row'),
-        (0, 0, 0, None, "GAME OVER - No turns left"),
-        (0, 0, 24, "p1", "GAME OVER - Player 1 has no living Characters..."),
-        (0, 0, 85, "p2", "GAME OVER - Player 2 has no living Characters..."),
-        (0, 0, 85, None, False),  # Here, no game-over condition is met.
-
+        (5, 3, 38, None, (True, GAME_OVER_MESSAGE_1)),
+        (0, 5, 38, None, (True, GAME_OVER_MESSAGE_2)),
+        (0, 0, 0, None, (True, GAME_OVER_MESSAGE_3)),
+        (0, 0, 24, "p1", (True, GAME_OVER_MESSAGE_4)),
+        (0, 0, 85, "p2", (True, GAME_OVER_MESSAGE_5)),
+        (0, 0, 85, None, (False, GAME_OVER_NOT_MET)),  # Here, no game-over condition is met.
     ])
     def test_is_game_over(self, p1_invalids, p2_invalids, moves, noChars, message):
         game = WumpusGame()

@@ -1,0 +1,6 @@
+GAME_OVER_MESSAGE_1 = "GAME OVER - Player 1 reached 5 invalid moves in a row"
+GAME_OVER_MESSAGE_2 = "GAME OVER - Player 2 reached 5 invalid moves in a row"
+GAME_OVER_MESSAGE_3 = "GAME OVER - No turns left"
+GAME_OVER_MESSAGE_4 = "GAME OVER - Player 1 has no living Characters..."
+GAME_OVER_MESSAGE_5 = "GAME OVER - Player 2 has no living Characters..."
+GAME_OVER_NOT_MET = "Game comtinues..."

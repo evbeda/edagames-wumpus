@@ -37,3 +37,4 @@ checks:
 exclude_patterns:
     - "**/test_*.py"
     - "tests/"
+    - "game/environment.py"

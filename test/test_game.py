@@ -38,6 +38,14 @@ from constans.constants_scores import (
     SCORES,
     TIMEOUT,
 )
+from constans.constants_messages import (
+    GAME_OVER_MESSAGE_1,
+    GAME_OVER_MESSAGE_2,
+    GAME_OVER_MESSAGE_3,
+    GAME_OVER_MESSAGE_4,
+    GAME_OVER_MESSAGE_5,
+    GAME_OVER_NOT_MET,
+)
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
     DANGER_SIGNAL_SCENARIO,
@@ -402,8 +410,26 @@ class TestGame(unittest.TestCase):
         player = game.player_1
         player.invalid_moves_count = MAXIMUM_INVALID_MOVES - 1
         game.penalize_player()
-
         self.assertTrue(player.penalizated_for_invalid_moves)
+
+    @parameterized.expand([
+        (5, 3, 38, None, (True, GAME_OVER_MESSAGE_1)),
+        (0, 5, 38, None, (True, GAME_OVER_MESSAGE_2)),
+        (0, 0, 0, None, (True, GAME_OVER_MESSAGE_3)),
+        (0, 0, 24, "p1", (True, GAME_OVER_MESSAGE_4)),
+        (0, 0, 85, "p2", (True, GAME_OVER_MESSAGE_5)),
+        (0, 0, 85, None, (False, GAME_OVER_NOT_MET)),  # Here, no game-over condition is met.
+    ])
+    def test_is_game_over(self, p1_invalids, p2_invalids, moves, noChars, message):
+        game = WumpusGame()
+        game.player_1.invalid_moves_count = p1_invalids
+        game.player_2.invalid_moves_count = p2_invalids
+        game.remaining_moves = moves
+        if (noChars == "p1"):
+            game.player_1.characters = []
+        elif (noChars == "p2"):
+            game.player_2.characters = []
+        self.assertEqual(game.is_game_over(), message)
 
 
 if __name__ == '__main__':

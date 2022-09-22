@@ -23,6 +23,14 @@ from constans.constants_scores import (
     TIMEOUT,
     DEATH,
     )
+from constans.constants_messages import (
+    GAME_OVER_MESSAGE_1,
+    GAME_OVER_MESSAGE_2,
+    GAME_OVER_MESSAGE_3,
+    GAME_OVER_MESSAGE_4,
+    GAME_OVER_MESSAGE_5,
+    GAME_OVER_NOT_MET,
+)
 from game.board import Board
 from game.player import Player
 from game.utils import posibles_positions, translate_position
@@ -208,3 +216,27 @@ class WumpusGame():
     def next_turn(self):
         self.remaining_moves -= 1
         self.change_current_player()
+
+    def get_game_over_conditions_status(self) -> dict:
+        game_over_conditions = {
+            GAME_OVER_MESSAGE_4: len(self.player_1.characters) == 0,
+            GAME_OVER_MESSAGE_5: len(self.player_2.characters) == 0,
+            GAME_OVER_MESSAGE_3: (self.remaining_moves == 0),
+            GAME_OVER_MESSAGE_1: (self.player_1.invalid_moves_count) >= 5,
+            GAME_OVER_MESSAGE_2: (self.player_2.invalid_moves_count) >= 5,
+        }
+        return game_over_conditions
+
+    def is_game_over(self):
+        '''
+        Return a Tuple with (Boolean, String), where the first element
+        is indicates if a Game Over condition has been met, and the second
+        indicates the corresponding message. E.g.:
+        (True, "GAME OVER - Player 1 has no living Characters...") indicates
+        that a Game should end now, because player1 has no living Characters.
+        '''
+        dictionary = self.get_game_over_conditions_status()
+        for key in dictionary:
+            if dictionary[key]:
+                return (True, key)
+        return (False, GAME_OVER_NOT_MET)

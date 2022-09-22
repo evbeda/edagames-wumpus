@@ -19,6 +19,8 @@ from constans.constans import (
     SHOOT,
     SOUTH,
     WEST,
+    NAME_USER_1,
+    NAME_USER_2,
 )
 from constans.constants_game import (
     DIAMOND,
@@ -63,7 +65,8 @@ from game.utils import posibles_positions
 
 def patched_game() -> WumpusGame:
     with patch.object(Board, '_valid_hole', return_value=True):
-        game = WumpusGame()
+        users_name = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_name)
     return game
 
 
@@ -118,7 +121,7 @@ class TestGame(unittest.TestCase):
 
     def test_modify_score_death(self):  # testing "Death" event
         game = patched_game()
-        char = Character(Player(PLAYER_2))
+        char = Character(Player(PLAYER_2, NAME_USER_2))
         game.current_player = char.player
         char.treasures.append(Gold())
         char.treasures.append(Gold())
@@ -177,7 +180,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_char_str(self):
-        char = Character(Player(PLAYER_1))
+        char = Character(Player(PLAYER_1, NAME_USER_1))
         expected = f"gold: 0, player: {char.player}, diamonds: 0."
         self.assertEqual(str(char), expected)
 
@@ -421,7 +424,8 @@ class TestGame(unittest.TestCase):
         (0, 0, 85, None, (False, GAME_OVER_NOT_MET)),  # Here, no game-over condition is met.
     ])
     def test_is_game_over(self, p1_invalids, p2_invalids, moves, noChars, message):
-        game = WumpusGame()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         game.player_1.invalid_moves_count = p1_invalids
         game.player_2.invalid_moves_count = p2_invalids
         game.remaining_moves = moves

@@ -13,10 +13,15 @@ from constans.constans import (
     # STATE,
     # TIMEOUT
 )
+
 from exceptions.personal_exceptions import (
     InvalidData,
-    InvalidKey
+    InvalidKey,
+    InvalidQuantityPlayers
 )
+
+from typing import List
+from edagames_grpc.game_start import GameStart
 
 
 class Manager():
@@ -93,3 +98,16 @@ class Manager():
     #         game.get_turn_data(),
     #         play_data,
     #     )
+    def create_game(self, users_names: List[str]) -> GameStart:
+        if len(users_names) in [2, 4]:
+            new_game = WumpusGame(users_names)
+            return self.get_game_start(new_game)
+        else:
+            raise InvalidQuantityPlayers()
+
+    def get_game_start(self, game: WumpusGame) -> GameStart:
+        return GameStart(
+            game.game_id,
+            game.get_current_player_name(),
+            game.generate_response(),
+        )

@@ -57,3 +57,5 @@ STATE = 'state'
 # Invalid penalize
 
 INVALID_PENALIZE = {'from_row': 'invalid', 'from_col': 'invalid', 'direction': 'invalid'}
+NAME_USER_1 = 'name1'
+NAME_USER_2 = 'name2'

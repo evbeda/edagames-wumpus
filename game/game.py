@@ -22,7 +22,7 @@ from constans.constants_scores import (
     GET_ITEMS,
     TIMEOUT,
     DEATH,
-    )
+)
 from constans.constants_messages import (
     GAME_OVER_MESSAGE_1,
     GAME_OVER_MESSAGE_2,
@@ -31,6 +31,9 @@ from constans.constants_messages import (
     GAME_OVER_MESSAGE_5,
     GAME_OVER_NOT_MET,
 )
+
+
+import uuid
 from game.board import Board
 from game.player import Player
 from game.utils import posibles_positions, translate_position
@@ -41,9 +44,10 @@ from exceptions.personal_exceptions import (
 
 class WumpusGame():
 
-    def __init__(self) -> None:
-        self.player_1 = Player(PLAYER_1)
-        self.player_2 = Player(PLAYER_2)
+    def __init__(self, users_names) -> None:
+        self.game_id = str(uuid.uuid1())
+        self.player_1 = Player(PLAYER_1, users_names[0])
+        self.player_2 = Player(PLAYER_2, users_names[1])
         self._board = Board()
         self._board.place_character_initial_pos(self.player_1.characters,
                                                 INITIAL_POSITION_PLAYER_1,
@@ -240,3 +244,7 @@ class WumpusGame():
             if dictionary[key]:
                 return (True, key)
         return (False, GAME_OVER_NOT_MET)
+
+    def get_current_player_name(self) -> str:
+        if self.remaining_moves > 0:
+            return self.current_player.user_name

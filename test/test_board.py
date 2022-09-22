@@ -14,6 +14,8 @@ from constans.constans import (
     PLAYER_1,
     PLAYER_2,
     WEST,
+    NAME_USER_1,
+    NAME_USER_2
 )
 from constans.constants_game import (
     GOLD,
@@ -90,22 +92,24 @@ class TestBoard(unittest.TestCase):
 
     @parameterized.expand(
         [
-            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 0),
-            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 1),
-            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 2),
-            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 0),
-            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 1),
-            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 2),
+            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 0, NAME_USER_1),
+            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 1, NAME_USER_1),
+            (PLAYER_1, INITIAL_POSITION_PLAYER_1, 2, NAME_USER_1),
+            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 0, NAME_USER_2),
+            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 1, NAME_USER_2),
+            (PLAYER_2, INITIAL_POSITION_PLAYER_2, 2, NAME_USER_2),
         ]
     )
     def test_place_character_initial_pos_player(
         self,
         player,
         init_positions,
-        char_index
+        char_index,
+        name_user,
+
     ):
         board = patched_board()
-        current_player = Player(player)
+        current_player = Player(player, name_user)
         row, col = init_positions[char_index]
         board.place_character_initial_pos(
             current_player.characters,
@@ -118,7 +122,7 @@ class TestBoard(unittest.TestCase):
         )
 
     def test_no_arrows_availabe(self):
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         board = patched_board()
         current_player.arrows = 0
         with self.assertRaises(noArrowsAvailableException):
@@ -126,7 +130,7 @@ class TestBoard(unittest.TestCase):
 
     def test_friendly_fire(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row, col = INITIAL_POSITION_PLAYER_1[1]
         board.place_character_initial_pos(
             current_player.characters,
@@ -170,7 +174,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_own_character(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         character = Character(current_player)
         board._board[0][1].character = character
         with self.assertRaises(friendlyFireException):
@@ -178,13 +182,13 @@ class TestBoard(unittest.TestCase):
 
     def test_kill_opp_return(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         board.place_character_initial_pos(
             current_player.characters,
             INITIAL_POSITION_PLAYER_1,
             0,
         )
-        opp_player = Player(PLAYER_2)
+        opp_player = Player(PLAYER_2, NAME_USER_2)
         opp_player.characters = []
         opp_character = Character(opp_player)
         opp_player.characters.append(opp_character)
@@ -194,13 +198,13 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_and_kill_treasures_transfer(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         board.place_character_initial_pos(
             current_player.characters,
             INITIAL_POSITION_PLAYER_1,
             0,
         )
-        opp_player = Player(PLAYER_2)
+        opp_player = Player(PLAYER_2, NAME_USER_2)
         opp_character = Character(opp_player)
         opp_player.characters = []
         opp_player.characters.append(opp_character)
@@ -214,13 +218,13 @@ class TestBoard(unittest.TestCase):
 
     def test_kill_opp_remove_opp(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         board.place_character_initial_pos(
             current_player.characters,
             INITIAL_POSITION_PLAYER_1,
             0,
         )
-        opp_player = Player(PLAYER_2)
+        opp_player = Player(PLAYER_2, NAME_USER_2)
         opp_character = Character(opp_player)
         opp_player.characters = []
         opp_player.characters.append(opp_character)
@@ -230,13 +234,13 @@ class TestBoard(unittest.TestCase):
 
     def test_kill_opp_arrow_decrease(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         board.place_character_initial_pos(
             current_player.characters,
             INITIAL_POSITION_PLAYER_1,
             0,
         )
-        opp_player = Player(PLAYER_2)
+        opp_player = Player(PLAYER_2, NAME_USER_2)
         opp_character = Character(opp_player)
         opp_player.characters = []
         opp_player.characters.append(opp_character)
@@ -246,7 +250,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_into_hole_return(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         target_cell = board._board[row][col]
@@ -256,7 +260,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_into_hole_arrow_decrease(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         target_cell = board._board[row][col]
@@ -266,7 +270,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_into_hole_cell_discovered(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         target_cell = board._board[row][col]
@@ -276,7 +280,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_miss_return(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         result = board.shoot_miss(row, col, current_player)
@@ -284,7 +288,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_miss_arrow_decrease(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         board.shoot_miss(row, col, current_player)
@@ -292,7 +296,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_miss_cell_not_discover(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         target_cell = board._board[row][col]
@@ -301,7 +305,7 @@ class TestBoard(unittest.TestCase):
 
     def test_shoot_miss_cell_arrow_increase(self):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         row = 0
         col = 1
         target_cell = board._board[row][col]
@@ -317,22 +321,22 @@ class TestBoard(unittest.TestCase):
     )
     def test_shoot_arrow(self, row, col, direction, expected):
         board = patched_board()
-        current_player = Player(PLAYER_1)
+        current_player = Player(PLAYER_1, NAME_USER_1)
         board.place_character_initial_pos(
             current_player.characters,
             INITIAL_POSITION_PLAYER_1,
             0,
         )
-        opp_player = Player(PLAYER_2)
-        board._board[row-1][col].character = opp_player.characters[0]
+        opp_player = Player(PLAYER_2, NAME_USER_2)
+        board._board[row - 1][col].character = opp_player.characters[0]
         board._board[0][1].has_hole = True
         result = board.shoot_arrow(row, col, direction, current_player)
         self.assertEqual(result, expected)
 
     @parameterized.expand(
         [
-            (PLAYER_1, 2, 2, 0),
-            (PLAYER_2, 5, 5, 1),
+            (PLAYER_1, 2, 2, 0, NAME_USER_1),
+            (PLAYER_2, 5, 5, 1, NAME_USER_2),
         ]
     )
     def test_discover_cell_player(
@@ -341,9 +345,10 @@ class TestBoard(unittest.TestCase):
         row,
         col,
         is_discover_pos,
+        name_user
     ):
         board = patched_board()
-        player = Player(player_name)
+        player = Player(player_name, name_user)
         board.discover_cell(row, col, player)
         result = board._board[row][col].is_discover[is_discover_pos]
         self.assertEqual(result, True)
@@ -376,7 +381,7 @@ class TestBoard(unittest.TestCase):
             (10, 7), (5, 5), (1, 3), (15, 15), (15, 12),
             (10, 12), (7, 11), (4, 9), (0, 15), (1, 12),
             (6, 9),
-            ]
+        ]
         #  gold_places_patch = sum(gold_places, ())
         board = patched_board()
         with patch('random.choice', side_effect=gold_places):
@@ -400,7 +405,7 @@ class TestBoard(unittest.TestCase):
             (4, 13), (7, 15), (9, 12),
             (13, 15), (14, 9), (15, 15),
             (3, 14),
-            ]
+        ]
         board = patched_board()
         with patch('random.choice', side_effect=holes_positions):
             board._board = [
@@ -411,7 +416,7 @@ class TestBoard(unittest.TestCase):
             holes = [
                 position for position in holes_positions if (
                     board._board[position[0]][position[1]].has_hole is True
-                    )
+                )
             ]
             self.assertEqual(sorted(holes_positions), sorted(holes))
 
@@ -473,7 +478,7 @@ class TestBoard(unittest.TestCase):
         (DICTIONARY_H, filter_move_board_h(),
          fin_filter_move_board_h(), [
             Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
-            ], 5, 1),
+        ], 5, 1),
         (DICTIONARY_ENE, FILTER_MOVE_BOARD_ENE,
          FIN_FILTER_MOVE_BOARD_ENE, [
             Gold(), Gold(), Gold(), Gold(), Gold(), Diamond()
@@ -687,14 +692,14 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     @parameterized.expand([
-        (PLAYER_1, PLAYER_2, 0, 0, 0, 1)
+        (PLAYER_1, PLAYER_2, 0, 0, 0, 1, NAME_USER_1, NAME_USER_2)
     ])
     def test_is_valid_move_not_your_character(self, p1, p2,
                                               from_row, from_col,
-                                              to_row, to_col):
+                                              to_row, to_col, user_name1, user_name2):
         board = patched_board()
-        player_1 = Player(p1)
-        player_2 = Player(p2)
+        player_1 = Player(p1, user_name1)
+        player_2 = Player(p2, user_name2)
         character_1_of_player_1 = player_1.characters[0]
         board._board[from_row][from_col].character = character_1_of_player_1
         # try to move a character that is not yours, current player is Player 2
@@ -708,15 +713,15 @@ class TestBoard(unittest.TestCase):
                 player_2)
 
     @parameterized.expand([
-        (PLAYER_1, 0, 0, -1, 0),
-        (PLAYER_1, 0, 0, 3, 0),
-        (PLAYER_1, 0, 0, 0, 0),
+        (PLAYER_1, 0, 0, -1, 0, NAME_USER_1),
+        (PLAYER_1, 0, 0, 3, 0, NAME_USER_1),
+        (PLAYER_1, 0, 0, 0, 0, NAME_USER_1),
     ])
     def test_is_valid_move_not_possible_move(self, p1,
                                              from_row, from_col,
-                                             to_row, to_col):
+                                             to_row, to_col, name_user1):
         board = patched_board()
-        player_1 = Player(p1)
+        player_1 = Player(p1, name_user1)
         character_1_of_player_1 = player_1.characters[0]
         board._board[from_row][from_col].character = character_1_of_player_1
         with self.assertRaises(noPossibleMoveException):
@@ -728,12 +733,12 @@ class TestBoard(unittest.TestCase):
                 player_1)
 
     @parameterized.expand([
-        (PLAYER_1, 0, 0, 0, 1),
+        (PLAYER_1, 0, 0, 0, 1, NAME_USER_1),
     ])
     def test_is_valid_move_to_a_same_character(self, P1, from_row, from_col,
-                                               to_row, to_col):
+                                               to_row, to_col, name_user1):
         board = patched_board()
-        player_1 = Player(P1)
+        player_1 = Player(P1, name_user1)
         character_1_of_player_1 = player_1.characters[0]
         character_2_of_player_1 = player_1.characters[1]
         board._board[from_row][from_col].character = character_1_of_player_1
@@ -753,14 +758,15 @@ class TestBoard(unittest.TestCase):
                 'from_col': 0,
                 'to_row': 0,
                 'to_col': 1,
-            }),
+            }, NAME_USER_1, NAME_USER_2),
     ])
     def test_is_valid_move_good_move(self, P1, c1_row, c1_col, P2, c2_row,
-                                     c2_col, to_row, to_col, _expected_result):
+                                     c2_col, to_row, to_col, _expected_result,
+                                     name_user1, name_user2):
         expected_result = _expected_result
         board = patched_board()
-        player_1 = Player(P1)
-        player_2 = Player(P2)
+        player_1 = Player(P1, name_user1)
+        player_2 = Player(P2, name_user2)
         character_1_of_player_1 = player_1.characters[0]
         character_1_of_player_2 = player_2.characters[0]
         board._board[c1_row][c1_col].character = character_1_of_player_1
@@ -800,7 +806,7 @@ class TestBoard(unittest.TestCase):
 
     def test_hole_is_removed_if_is_no_valid_hole(self):
         board = Board()
-        player = Player(PLAYER_1)
+        player = Player(PLAYER_1, NAME_USER_1)
         board._board = [
             [Cell(row, col) for col in range(LARGE)]
             for row in range(LARGE)

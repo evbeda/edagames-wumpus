@@ -90,7 +90,10 @@ class Manager():
         game: WumpusGame,
         state: str,
     ) -> GameState:
-        play_data = game.generate_response()
+        if state == GAMEOVER_STATE:
+            play_data = game.game_over_final_message()
+        else:
+            play_data = game.generate_response()
         play_data.update(self.action_data)
         play_data[STATE] = state
         return GameState(

@@ -257,6 +257,18 @@ class TestManager(unittest.TestCase):
             GameState
         )
 
+    @patch('game.game.WumpusGame.game_over_final_message')
+    def test_get_game_state_game_over(self, game_over_mock):
+        manager = Manager()
+        game = WumpusGame([NAME_USER_1, NAME_USER_2])
+        manager.action_data = {"test": "test"}
+        manager.get_game_state(game, GAMEOVER_STATE)
+        game_over_mock.assert_called_once_with()
+        self.assertIsInstance(
+            manager.get_game_state(game, GAMEOVER_STATE),
+            GameState
+        )
+
     @patch('game.manager.Manager.get_game_state')
     def test_penalize_with_game_over(self, mok_game_set):
         manag = Manager()
@@ -267,7 +279,7 @@ class TestManager(unittest.TestCase):
         game.game_is_active = False
         manag.games[game_id] = game
         manag.penalize(game_id)
-        mok_game_set.assert_called_once_with(game ,GAMEOVER_STATE)
+        mok_game_set.assert_called_once_with(game, GAMEOVER_STATE)
 
     @patch('game.manager.Manager.get_game_state')
     def test_penalize_without_game_over(self, mok_game_set):
@@ -279,4 +291,4 @@ class TestManager(unittest.TestCase):
         manag.games[game_id] = game
         manag.penalize(game_id)
         self.assertEqual(manag.action_data, INVALID_PENALIZE)
-        mok_game_set.assert_called_once_with(game ,TIMEOUT)
+        mok_game_set.assert_called_once_with(game, TIMEOUT)

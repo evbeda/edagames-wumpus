@@ -51,3 +51,6 @@ class Manager():
             )
         else:
             raise InvalidData()
+
+    def delete_game_from_manager(self, game_id: str) -> None:
+        del self.games[game_id]

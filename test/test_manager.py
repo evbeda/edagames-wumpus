@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import patch
+
+from game.game import WumpusGame
 from test.test_game import patched_game
 from game.manager import Manager
 from parameterized import parameterized
@@ -169,3 +171,11 @@ class TestManager(unittest.TestCase):
         )
         with self.assertRaises(InvalidData):
             manager.execute_action_manager(game, api_data)
+
+    def test_delete_game_from_manager(self):
+        manag = Manager()
+        game = WumpusGame
+        game_id = "123asd"
+        manag.games[game_id] = game
+        manag.delete_game_from_manager(game_id)
+        self.assertEqual({}, manag.games)

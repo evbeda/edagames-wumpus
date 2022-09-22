@@ -4,10 +4,14 @@ from constans.constans import (
     COL,
     DATA,
     DIRECTION_MESSAGE,
+    # GAMEOVER_STATE,
+    # INVALID_PENALIZE,
     MESSAGE_DATA_KEYS,
     POSIBLE_ACTIONS,
     POSIBLE_DIRECTIONS,
-    ROW
+    ROW,
+    # STATE,
+    # TIMEOUT
 )
 from exceptions.personal_exceptions import (
     InvalidData,
@@ -54,3 +58,38 @@ class Manager():
 
     def delete_game_from_manager(self, game_id: str) -> None:
         del self.games[game_id]
+
+    def check_game_over(self, current_game):
+        if current_game.remaining_moves <= 0 or not current_game.game_is_active:
+            self.delete_game_from_manager(current_game.game_id)
+            return True
+        else:
+            return False
+
+    # TO DO
+    # def penalize(self, game_id: str) -> GameState:
+    #     current_game = self.games[game_id]
+    #     current_game.penalize_player()
+    #     current_game.next_turn()
+    #     state = TIMEOUT
+    #     if self.check_game_over(current_game):
+    #         state = GAMEOVER_STATE
+    #     self.action_data = INVALID_PENALIZE
+    #     return self.get_game_state(
+    #         current_game,
+    #         state,
+    #     )
+    # TO DO
+    # def get_game_state(
+    #     self,
+    #     game: WumpusGame,
+    #     state: str,
+    # ) -> GameState:
+    #     play_data = game.get_play_data(self.action_data)
+    #     play_data[STATE] = state
+    #     return GameState(
+    #         game.game_id,
+    #         game.get_current_player_name(),
+    #         game.get_turn_data(),
+    #         play_data,
+    #     )

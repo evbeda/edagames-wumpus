@@ -179,3 +179,35 @@ class TestManager(unittest.TestCase):
         manag.games[game_id] = game
         manag.delete_game_from_manager(game_id)
         self.assertEqual({}, manag.games)
+
+    def test_check_game_over_false(self):
+        manag = Manager()
+        game = WumpusGame()
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        self.assertFalse(manag.check_game_over(game))
+
+    @patch('game.manager.Manager.delete_game_from_manager')
+    def test_check_game_over_without_moves(self, moke_delete_game):
+        manag = Manager()
+        game = WumpusGame()
+        game_id = "123asd"
+        game.game_id = game_id
+        game.remaining_moves = 0
+        manag.games[game_id] = game
+        manag.check_game_over(game)
+        moke_delete_game.assert_called_once_with(game_id)
+        self.assertTrue(manag.check_game_over(game))
+
+    @patch('game.manager.Manager.delete_game_from_manager')
+    def test_check_game_over_game_over(self, moke_delete_game):
+        manag = Manager()
+        game = WumpusGame()
+        game_id = "123asd"
+        game.game_id = game_id
+        game.game_is_active = False
+        manag.games[game_id] = game
+        manag.check_game_over(game)
+        moke_delete_game.assert_called_once_with(game_id)
+        self.assertTrue(manag.check_game_over(game))

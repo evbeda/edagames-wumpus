@@ -45,3 +45,15 @@ MESSAGE_DATA_KEYS = [ROW, COL, DIRECTION_MESSAGE]
 POSIBLE_DIRECTIONS = [NORTH, SOUTH, EAST, WEST]
 
 POSIBLE_ACTIONS = [MOVE, SHOOT]
+
+# States
+VALID_STATE = 'valid'
+INVALID_STATE = 'invalid'
+GAMEOVER_STATE = 'gameover'
+ABORT = 'game aborted'
+TIMEOUT = 'timeout'
+STATE = 'state'
+
+# Invalid penalize
+
+INVALID_PENALIZE = {'from_row': 'invalid', 'from_col': 'invalid', 'direction': 'invalid'}

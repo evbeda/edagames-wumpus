@@ -7,6 +7,7 @@ from test.test_game import patched_game
 from game.manager import Manager
 from parameterized import parameterized
 from constans.constans import (
+    ABORT,
     ACTION,
     COL,
     DATA,
@@ -24,7 +25,7 @@ from constans.constans import (
     WEST,
     NAME_USER_1,
     NAME_USER_2,
-    ABORT,
+    VALID_STATE,
 )
 from exceptions.personal_exceptions import (
     InvalidData,
@@ -327,3 +328,71 @@ class TestManager(unittest.TestCase):
         manager.games['correct_id'] = [game]
         with self.assertRaises(InvalidData):
             manager.find_game('incorrect_id')
+
+    @patch('game.game.WumpusGame.penalize_player')
+    @patch.object(Manager, 'execute_action_manager')
+    @patch.object(Manager, 'check_game_over')
+    def test_process_request_punible_error_data(
+        self,
+        mok_penalize_player,
+        execute_mock_action,
+        mok_check_game_over
+    ):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        execute_mock_action.side_effect = InvalidData()
+        mok_check_game_over.return_value = False
+        manag.process_request(game_id, {})
+        mok_penalize_player.assert_called_once()
+
+    @patch('game.game.WumpusGame.penalize_player')
+    @patch.object(Manager, 'execute_action_manager')
+    @patch.object(Manager, 'check_game_over')
+    def test_process_request_punible_error_key(
+        self,
+        mok_penalize_player,
+        execute_mock_action,
+        mok_check_game_over
+    ):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        execute_mock_action.side_effect = InvalidKey()
+        mok_check_game_over.return_value = False
+        manag.process_request(game_id, {})
+        mok_penalize_player.assert_called_once()
+
+    @patch('game.manager.Manager.get_game_state')
+    def test_process_request_without_gameover(self, get_game_mock):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        manag.action_data = {"test": "test"}
+        with patch('game.manager.Manager.execute_action_manager', return_value=True):
+            with patch('game.manager.Manager.check_game_over', return_value=False):
+                manag.process_request(game_id, manag.action_data)
+                get_game_mock.assert_called_once_with(game, VALID_STATE)
+
+    @patch('game.manager.Manager.get_game_state')
+    def test_process_request_with_gameover(self, get_game_mock):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        manag.action_data = {"test": "test"}
+        with patch('game.manager.Manager.execute_action_manager', return_value=True):
+            with patch('game.manager.Manager.check_game_over', return_value=True):
+                manag.process_request(game_id, manag.action_data)
+                get_game_mock.assert_called_once_with(game, GAMEOVER_STATE)

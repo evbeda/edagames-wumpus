@@ -1,24 +1,27 @@
 from game.game import WumpusGame
 from constans.constans import (
+    ABORT,
     ACTION,
     COL,
     DATA,
     DIRECTION_MESSAGE,
     GAMEOVER_STATE,
     INVALID_PENALIZE,
+    INVALID_STATE,
     MESSAGE_DATA_KEYS,
     POSIBLE_ACTIONS,
     POSIBLE_DIRECTIONS,
     ROW,
     STATE,
     TIMEOUT,
-    ABORT,
+    VALID_STATE,
 )
 
 from exceptions.personal_exceptions import (
     InvalidData,
     InvalidKey,
-    InvalidQuantityPlayers
+    InvalidQuantityPlayers,
+    NonPunishableError
 )
 
 from typing import List
@@ -130,3 +133,24 @@ class Manager():
             return self.games[game_id]
         else:
             raise InvalidData()
+
+    def process_request(self, game_id: str, api_data: dict) -> GameState:
+        current_game = self.find_game(game_id)
+        state = INVALID_STATE
+        try:
+            self.execute_action_manager(current_game, api_data)
+        except InvalidData:
+            current_game.penalize_player()
+        except InvalidKey:
+            current_game.penalize_player()
+        except NonPunishableError:
+            pass
+        else:
+            state = VALID_STATE
+        current_game.next_turn()
+        if self.check_game_over(current_game):
+            state = GAMEOVER_STATE
+        return self.get_game_state(
+            current_game,
+            state,
+        )

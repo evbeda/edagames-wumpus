@@ -42,3 +42,7 @@ class GameNotFoundInRedis(Exception):
 
 class InvalidQuantityPlayers(Exception):
     pass
+
+
+class NonPunishableError(Exception):
+    pass

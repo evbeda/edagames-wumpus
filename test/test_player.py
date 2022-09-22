@@ -19,7 +19,8 @@ from constans.constans import (
     PLAYER_2,
     INITIAL_ARROWS,
     INITIAL_SCORE,
-    WEST
+    WEST,
+    NAME_USER_1,
 )
 from constans.constants_game import LARGE
 from game.cell import Cell
@@ -33,7 +34,7 @@ class TestPlayer(unittest.TestCase):
         (PLAYER_2, INITIAL_ARROWS, INITIAL_SCORE),
     ])
     def test_player_init(self, name, expected_arrows, expected_score):
-        self.player = Player(name)
+        self.player = Player(name, NAME_USER_1)
         self.assertEqual(self.player.arrows, expected_arrows)
         self.assertEqual(self.player.score, expected_score)
         self.assertEqual(self.player.name, name)
@@ -44,7 +45,7 @@ class TestPlayer(unittest.TestCase):
     ])
     def test_update_score(self, player_name,
                           actual_score, score_mod, expected_result):
-        self.player = Player(player_name)
+        self.player = Player(player_name, NAME_USER_1)
         self.player.score = actual_score
         self.player.update_score(score_mod)
         self.assertEqual(self.player.score, expected_result)
@@ -55,7 +56,7 @@ class TestPlayer(unittest.TestCase):
     ])
     def test_update_arrows(self, player_name,
                            actual_arrows, arrows_mod, expected_result):
-        self.player = Player(player_name)
+        self.player = Player(player_name, NAME_USER_1)
         self.player.arrows = actual_arrows
         self.player.update_arrows(arrows_mod)
         self.assertEqual(self.player.arrows, expected_result)

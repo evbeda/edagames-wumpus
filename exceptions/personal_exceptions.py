@@ -1,3 +1,5 @@
+
+
 class invalidMoveException(Exception):
     pass
 
@@ -31,4 +33,12 @@ class InvalidData(invalidMoveException):
 
 
 class InvalidKey(invalidMoveException):
+    pass
+
+
+class GameNotFoundInRedis(Exception):
+    pass
+
+
+class InvalidQuantityPlayers(Exception):
     pass

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-
+from edagames_grpc.game_start import GameStart
 from game.game import WumpusGame
 from test.test_game import patched_game
 from game.manager import Manager
@@ -16,11 +16,14 @@ from constans.constans import (
     MOVE,
     SOUTH,
     ROW,
-    WEST
+    WEST,
+    NAME_USER_1,
+    NAME_USER_2
 )
 from exceptions.personal_exceptions import (
     InvalidData,
-    InvalidKey
+    InvalidKey,
+    InvalidQuantityPlayers,
 )
 
 
@@ -174,7 +177,8 @@ class TestManager(unittest.TestCase):
 
     def test_delete_game_from_manager(self):
         manag = Manager()
-        game = WumpusGame
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         game_id = "123asd"
         manag.games[game_id] = game
         manag.delete_game_from_manager(game_id)
@@ -182,7 +186,8 @@ class TestManager(unittest.TestCase):
 
     def test_check_game_over_false(self):
         manag = Manager()
-        game = WumpusGame()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         game_id = "123asd"
         game.game_id = game_id
         manag.games[game_id] = game
@@ -191,7 +196,8 @@ class TestManager(unittest.TestCase):
     @patch('game.manager.Manager.delete_game_from_manager')
     def test_check_game_over_without_moves(self, moke_delete_game):
         manag = Manager()
-        game = WumpusGame()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         game_id = "123asd"
         game.game_id = game_id
         game.remaining_moves = 0
@@ -203,7 +209,8 @@ class TestManager(unittest.TestCase):
     @patch('game.manager.Manager.delete_game_from_manager')
     def test_check_game_over_game_over(self, moke_delete_game):
         manag = Manager()
-        game = WumpusGame()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         game_id = "123asd"
         game.game_id = game_id
         game.game_is_active = False
@@ -211,3 +218,27 @@ class TestManager(unittest.TestCase):
         manag.check_game_over(game)
         moke_delete_game.assert_called_once_with(game_id)
         self.assertTrue(manag.check_game_over(game))
+
+    def test_create_game(self):
+        with patch('game.manager.Manager.get_game_start', return_value=True):
+            manager = Manager()
+            players_names = ['bot1', 'bot2']
+            self.assertTrue(manager.create_game(players_names))
+
+    def test_create_game_error(
+        self,
+    ):
+        manager = Manager()
+        players_names = ['bot1']
+        with self.assertRaises(InvalidQuantityPlayers):
+            manager.create_game(players_names)
+
+    def test_get_game_start(self):
+        manager = Manager()
+        game_start = manager.get_game_start(
+            WumpusGame([NAME_USER_1, NAME_USER_2]),
+        )
+        self.assertIsInstance(
+            game_start,
+            GameStart,
+        )

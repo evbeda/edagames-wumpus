@@ -11,14 +11,14 @@ from parameterized import parameterized
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
-from constans.constans import EMPTY_CELL, HIDDEN_CELL, PLAYER_1, PLAYER_2
+from constans.constans import EMPTY_CELL, HIDDEN_CELL, PLAYER_1, PLAYER_2, NAME_USER_1, NAME_USER_2
 
 
 class TestCell(unittest.TestCase):
 
     @parameterized.expand([  # cell_attributes
         (0, 1, PLAYER_1, False, [False, False], 2, Gold(), Diamond()),
-        (15, 8, PLAYER_2, True, [False, False], 0, "", ""),
+        (15, 8, PLAYER_2, True, [False, False], 0, "", "",),
     ])
     def test_cell_attributes(
         self,
@@ -29,10 +29,10 @@ class TestCell(unittest.TestCase):
         is_discover,
         arrow,
         treasure1,
-        treasure2
+        treasure2,
     ):
         cell = Cell(row, col)
-        character = Character(Player(player_name))
+        character = Character(Player(player_name, NAME_USER_1))
         cell.treasures.append(treasure1)
         cell.treasures.append(treasure2)
         cell.character = character
@@ -52,7 +52,7 @@ class TestCell(unittest.TestCase):
         ([Gold()], None, False, 0, False),
         ([Gold(), Gold(), Gold(), Gold(), Gold()], None, False, 0, False),
         ([Diamond()], None, False, 0, False),
-        ([], Player(PLAYER_1), False, 0, False),
+        ([], Player(PLAYER_1, NAME_USER_1), False, 0, False),
         ([Diamond()], None, True, 0, False),
         ([Diamond()], None, False, 1, False),
     ])
@@ -69,7 +69,7 @@ class TestCell(unittest.TestCase):
         self.assertEqual(cell.empty, expected)
 
     @parameterized.expand([
-        (0, 0, Player(PLAYER_1), True),
+        (0, 0, Player(PLAYER_1, NAME_USER_1), True),
         (0, 0, None, False),
     ])
     def test_cell_there_arent_player(self, row, col,
@@ -87,7 +87,8 @@ class TestCell(unittest.TestCase):
         (1, 15, None)
     ])
     def test_has_player_property(self, row, col, expected):
-        game = WumpusGame()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         cell = game._board._board[row][col]
         result = cell.has_player
         self.assertEqual(result, expected)
@@ -111,7 +112,8 @@ class TestCell(unittest.TestCase):
         self.assertEqual(cell.to_str(player), expected)
 
     def test_remove_character(self):
-        game = WumpusGame()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
         cell_player = game._board._board[0][0]
         cell_player.remove_character()
         self.assertIsNone(cell_player.character)

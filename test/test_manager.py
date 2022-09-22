@@ -12,12 +12,15 @@ from constans.constans import (
     DATA,
     DIRECTION_MESSAGE,
     EAST,
+    GAMEOVER_STATE,
+    INVALID_PENALIZE,
     NORTH,
     MESSAGE_DATA_KEYS,
     MOVE,
+    ROW,
     SOUTH,
     STATE,
-    ROW,
+    TIMEOUT,
     WEST,
     NAME_USER_1,
     NAME_USER_2
@@ -253,3 +256,27 @@ class TestManager(unittest.TestCase):
             manager.get_game_state(game, STATE),
             GameState
         )
+
+    @patch('game.manager.Manager.get_game_state')
+    def test_penalize_with_game_over(self, mok_game_set):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        game.game_is_active = False
+        manag.games[game_id] = game
+        manag.penalize(game_id)
+        mok_game_set.assert_called_once_with(game ,GAMEOVER_STATE)
+
+    @patch('game.manager.Manager.get_game_state')
+    def test_penalize_without_game_over(self, mok_game_set):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        manag.penalize(game_id)
+        self.assertEqual(manag.action_data, INVALID_PENALIZE)
+        mok_game_set.assert_called_once_with(game ,TIMEOUT)

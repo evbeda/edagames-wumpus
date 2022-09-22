@@ -47,6 +47,9 @@ from constans.constants_messages import (
     GAME_OVER_MESSAGE_4,
     GAME_OVER_MESSAGE_5,
     GAME_OVER_NOT_MET,
+    RESPONSE_1,
+    RESPONSE_2,
+    RESPONSE_3,
 )
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
@@ -210,29 +213,29 @@ class TestGame(unittest.TestCase):
         self.assertEqual(diamonds_after_move, 1)
         self.assertEqual(CORRECT_MOVE, result)
 
-    def test_generate_response(self):
+    def test_generate_data(self):
         game = patched_game()
         game._board._board = board_player_1_scenario()
         game.current_player = game.player_1
         self.maxDiff = None
         expected_response = {
             "board": SCENARIO_STR_PLAYER_1,
-            # "game_status": "active", # Add property when ready
-            # "turn": "0" # Add property when ready
-            "player1": {
-                "name": PLAYER_1,
+            "game_active": True,
+            "remaining_turns": 200,
+            "side": "B",
+            "your_player": {
                 "score": INITIAL_SCORE,
                 "arrows": INITIAL_ARROWS,
-                "characters_alive": 3,
+                "owner": 'matias'
             },
-            "player2": {
-                "name": PLAYER_2,
+            "enemy_player": {
+                "name": PLAYER_2,  # Will be "B" or "P"
                 "score": INITIAL_SCORE,
                 "arrows": INITIAL_ARROWS,
-                "characters_alive": 3,
-            }
+                "owner": 'guille'
+            },
         }
-        self.assertEqual(game.generate_response(), expected_response)
+        self.assertEqual(game.generate_data(), expected_response)
 
     @parameterized.expand([
         (10000, 8000, {
@@ -303,6 +306,22 @@ class TestGame(unittest.TestCase):
     def test_board_game_is_class(self):
         game = patched_game()
         self.assertIsInstance(game._board, Board)
+
+    @parameterized.expand([  # test generate response
+        ("p1", RESPONSE_1),
+        (None, RESPONSE_2),
+        ("p2", RESPONSE_3)
+    ])
+    def test_generate_response(self, noChars, response):
+        game = WumpusGame([NAME_USER_1, NAME_USER_2])
+        self.maxDiff = None
+        if (noChars == "p1"):
+            game.player_1.characters = []
+            game.player_1.score = -100
+        elif (noChars == "p2"):
+            game.player_2.characters = []
+            game.player_2.score = -100
+        self.assertEqual(game.generate_response(), response)
 
     @parameterized.expand([
         ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 16_100, 110_000, 4, "     "),

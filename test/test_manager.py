@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from edagames_grpc.game_start import GameStart
+from edagames_grpc.game_state import GameState
 from game.game import WumpusGame
 from test.test_game import patched_game
 from game.manager import Manager
@@ -15,6 +16,7 @@ from constans.constans import (
     MESSAGE_DATA_KEYS,
     MOVE,
     SOUTH,
+    STATE,
     ROW,
     WEST,
     NAME_USER_1,
@@ -241,4 +243,13 @@ class TestManager(unittest.TestCase):
         self.assertIsInstance(
             game_start,
             GameStart,
+        )
+
+    def test_get_game_state(self):
+        manager = Manager()
+        game = WumpusGame([NAME_USER_1, NAME_USER_2])
+        manager.action_data = {"test": "test"}
+        self.assertIsInstance(
+            manager.get_game_state(game, STATE),
+            GameState
         )

@@ -11,7 +11,8 @@ from constans.constans import (
     POSIBLE_DIRECTIONS,
     ROW,
     STATE,
-    TIMEOUT
+    TIMEOUT,
+    ABORT,
 )
 
 from exceptions.personal_exceptions import (
@@ -116,3 +117,16 @@ class Manager():
             game.get_current_player_name(),
             game.generate_response(),
         )
+
+    def abort(self, game_id: str) -> GameState:
+        current_game = self.find_game(game_id)
+        return self.get_game_state(
+            current_game,
+            ABORT,
+        )
+
+    def find_game(self, game_id: str) -> WumpusGame:
+        if game_id in self.games.keys():
+            return self.games[game_id]
+        else:
+            raise InvalidData()

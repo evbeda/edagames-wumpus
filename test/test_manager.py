@@ -23,7 +23,8 @@ from constans.constans import (
     TIMEOUT,
     WEST,
     NAME_USER_1,
-    NAME_USER_2
+    NAME_USER_2,
+    ABORT,
 )
 from exceptions.personal_exceptions import (
     InvalidData,
@@ -292,3 +293,37 @@ class TestManager(unittest.TestCase):
         manag.penalize(game_id)
         self.assertEqual(manag.action_data, INVALID_PENALIZE)
         mok_game_set.assert_called_once_with(game, TIMEOUT)
+
+    @patch.object(Manager, 'find_game')
+    @patch.object(Manager, 'get_game_state')
+    def test_abort(
+        self,
+        mock_get_game_state,
+        mock_find_game
+    ):
+        manager = Manager()
+        name_users = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(name_users)
+        game_id = 'game_id'
+        game.game_id = game_id
+        manager.games[game_id] = game
+        mock_find_game.return_value = game
+        manager.abort(game_id)
+        mock_get_game_state.assert_called_once_with(game, ABORT)
+
+    def test_find_game(self):
+        game_id_key = 'correct_id'
+        manager = Manager()
+        game = WumpusGame(['one_player', 'two_player'])
+        game.game_id = 'correct_id'
+        manager.games['correct_id'] = [game]
+        result = manager.find_game(game_id_key)
+        self.assertEqual(result, manager.games['correct_id'])
+
+    def test_find_game_failed(self):
+        manager = Manager()
+        game = WumpusGame(['one_player', 'two_player'])
+        game.game_id = 'correct_id'
+        manager.games['correct_id'] = [game]
+        with self.assertRaises(InvalidData):
+            manager.find_game('incorrect_id')

@@ -10,7 +10,7 @@ from constans.constans import (
     POSIBLE_ACTIONS,
     POSIBLE_DIRECTIONS,
     ROW,
-    # STATE,
+    STATE,
     # TIMEOUT
 )
 
@@ -22,6 +22,7 @@ from exceptions.personal_exceptions import (
 
 from typing import List
 from edagames_grpc.game_start import GameStart
+from edagames_grpc.game_state import GameState
 
 
 class Manager():
@@ -84,20 +85,22 @@ class Manager():
     #         current_game,
     #         state,
     #     )
-    # TO DO
-    # def get_game_state(
-    #     self,
-    #     game: WumpusGame,
-    #     state: str,
-    # ) -> GameState:
-    #     play_data = game.get_play_data(self.action_data)
-    #     play_data[STATE] = state
-    #     return GameState(
-    #         game.game_id,
-    #         game.get_current_player_name(),
-    #         game.get_turn_data(),
-    #         play_data,
-    #     )
+
+    def get_game_state(
+        self,
+        game: WumpusGame,
+        state: str,
+    ) -> GameState:
+        play_data = game.generate_response()
+        play_data.update(self.action_data)
+        play_data[STATE] = state
+        return GameState(
+            game.game_id,
+            game.get_current_player_name(),
+            game.generate_response(),
+            play_data,
+        )
+
     def create_game(self, users_names: List[str]) -> GameStart:
         if len(users_names) in [2, 4]:
             new_game = WumpusGame(users_names)

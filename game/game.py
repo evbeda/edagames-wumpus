@@ -1,4 +1,5 @@
 from constans.constans import (
+    DATA,
     JOIN_ROW_BOARD,
     MAXIMUM_INVALID_MOVES,
     MOVE,
@@ -56,6 +57,7 @@ class WumpusGame():
                                                 INITIAL_POSITION_PLAYER_2,
                                                 1)
         self.current_player = self.player_1
+        self.inactive_player = self.player_2
         self.game_is_active = True
         self.remaining_moves = 200
 
@@ -67,6 +69,9 @@ class WumpusGame():
         self.current_player = self.player_2 if (
             self.current_player == self.player_1
             ) else self.player_1
+        self.inactive_player = self.player_1 if (
+            self.current_player == self.player_2
+            ) else self.player_2
 
     def put_danger_signal(self, parsed_cell: str, row, col):
         parsed_cell = list(parsed_cell)
@@ -162,27 +167,49 @@ class WumpusGame():
         self.modify_score(TIMEOUT)
         self.check_the_limit_of_invalid()
 
-    def generate_response(self) -> dict:
-        response = {
+    def generate_data(self) -> dict:
+        data = {
             "board": self.board,
-            # "game_status": self.is_game_active, # Add property when ready
-            # "turn": self.current_turn # Add property later
-            "player1": {
-                "name": self.player_1.name,
-                "score": self.player_1.score,
-                "arrows": self.player_1.arrows,
-                "characters_alive": len(self.player_1.characters),
+            "game_active": self.game_is_active,
+            "remaining_turns": self.remaining_moves,
+            #  "game_id": "12345678" Add when self.game_id is ready
+            "side": self.current_player.name,  # Will be "B" or "P"
+            "your_player": {
+                "score": self.current_player.score,
+                "arrows": self.current_player.arrows,
+                "owner": 'matias'
             },
-            "player2": {
-                "name": self.player_2.name,
-                "score": self.player_2.score,
-                "arrows": self.player_2.arrows,
-                "characters_alive": len(self.player_2.characters),
+            "enemy_player": {
+                "name": self.inactive_player.name,  # Will be "B" or "P"
+                "score": self.inactive_player.score,
+                "arrows": self.inactive_player.arrows,
+                "owner": 'guille'
             }
         }
-        return response
+        return data
+
+    def generate_response(self):
+        game_over_data = self.is_game_over()
+        if not game_over_data[0]:
+            response = {
+                "event": "your_turn",
+                DATA: self.generate_data()
+            }
+            return response
+        else:
+            final_message = self.game_over_final_message()['GAME_OVER']
+            response = {
+                "event": "GAME_OVER",
+                DATA: {
+                    "status": game_over_data[1],
+                    'SCORE': final_message['SCORE'],
+                    'RESULT': final_message['RESULT'],
+                },
+            }
+            return response
 
     def game_over_final_message(self):
+        #  Will need debug since outcome is determined only by player´s score
         name_player_1, name_player_2 = self.player_1.name, self.player_2.name
         score_player_1 = self.player_1.score
         score_player_2 = self.player_2.score

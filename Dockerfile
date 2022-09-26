@@ -4,6 +4,7 @@ WORKDIR /edagames-wumpus
 
 COPY requirements.txt /edagames-wumpus
 RUN pip install -r requirements.txt
+RUN pip install ipdb
 
 COPY . /edagames-wumpus
 

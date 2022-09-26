@@ -1,6 +1,8 @@
 from constans.scenarios import SCENARIO_STR_PLAYER_1
 from constans.constans import (
-    INITIAL_ARROWS
+    INITIAL_ARROWS,
+    NAME_USER_1,
+    NAME_USER_2
 )
 
 GAME_OVER_MESSAGE_1 = "GAME OVER - Player 1 reached 5 invalid moves in a row"
@@ -26,25 +28,17 @@ RESPONSE_1 = {
 }
 
 RESPONSE_2 = {
-    "event": "your_turn",
-    "data": {
-        "board": SCENARIO_STR_PLAYER_1,
-        "game_active": True,
-        "remaining_turns": 200,
-        #  "game_id": "12345678" Add when self.game_id is ready
-        "side": "B",  # Will be "B" or "P"
-        "your_player": {
-            "score": 0,
-            "arrows": INITIAL_ARROWS,
-            "owner": 'matias'
-        },
-        "enemy_player": {
-            "name": "P",  # Will be "B" or "P"
-            "score": 0,
-            "arrows": INITIAL_ARROWS,
-            "owner": 'guille'
-        }
-    }
+    "player_2": NAME_USER_2,
+    "player_1": NAME_USER_1,
+    "score_1": 0,
+    "score_2": 0,
+    "arrows_1": INITIAL_ARROWS,
+    "arrows_2": INITIAL_ARROWS,
+    "board": SCENARIO_STR_PLAYER_1,
+    "game_active": True,
+    "remaining_turns": 200,
+    "game_id": "1234-5678-9012-3456-7890",
+    "side": "B",  # Will be "B" or "P"
 }
 
 RESPONSE_3 = {

@@ -168,34 +168,24 @@ class WumpusGame():
         self.check_the_limit_of_invalid()
 
     def generate_data(self) -> dict:
-        data = {
+        return {
+            "player_2": self.inactive_player.user_name,
+            "player_1": self.get_current_player_name(),
+            "score_1": self.current_player.score,
+            "score_2": self.current_player.score,
+            "arrows_1": self.current_player.arrows,
+            "arrows_2": self.inactive_player.arrows,
             "board": self.board,
             "game_active": self.game_is_active,
             "remaining_turns": self.remaining_moves,
-            #  "game_id": "12345678" Add when self.game_id is ready
-            "side": self.current_player.name,  # Will be "B" or "P"
-            "your_player": {
-                "score": self.current_player.score,
-                "arrows": self.current_player.arrows,
-                "owner": 'matias'
-            },
-            "enemy_player": {
-                "name": self.inactive_player.name,  # Will be "B" or "P"
-                "score": self.inactive_player.score,
-                "arrows": self.inactive_player.arrows,
-                "owner": 'guille'
-            }
+            "game_id": self.game_id,
+            "side": self.current_player.name,
         }
-        return data
 
     def generate_response(self):
         game_over_data = self.is_game_over()
         if not game_over_data[0]:
-            response = {
-                "event": "your_turn",
-                DATA: self.generate_data()
-            }
-            return response
+            return self.generate_data()
         else:
             final_message = self.game_over_final_message()['GAME_OVER']
             response = {
@@ -239,7 +229,6 @@ class WumpusGame():
         }
 
     def check_the_limit_of_invalid(self) -> None:
-
         if self.current_player.invalid_moves_count >= MAXIMUM_INVALID_MOVES:
             self.current_player.penalizated_for_invalid_moves = True
             self.game_is_active = False

@@ -35,6 +35,10 @@ from constans.constants_messages import (
 
 
 import uuid
+from domain.shoot_and_kill import ShootAndKill
+from domain.shoot_arrow import ShootArrow
+from domain.shoot_empty_cell import ShootEmptyCell
+from domain.shoot_to_hole import ShootToHole
 from game.board import Board
 from game.player import Player
 from game.utils import posibles_positions, translate_position
@@ -154,8 +158,25 @@ class WumpusGame():
                                                           to_row, to_col,
                                                           self.current_player)
             elif action == SHOOT:
-                valid_message = self._board.shoot_arrow(from_row, from_col, direction,
-                                                        self.current_player)
+
+                # initialize chain
+                shoot_arrow = ShootArrow()
+                shoot_and_kill = ShootAndKill()
+                shoot_to_hole = ShootToHole()
+                shoot_empty_cell = ShootEmptyCell()
+
+                # assign chain of responsability
+                shoot_arrow.set_next(shoot_and_kill)
+                shoot_and_kill.set_next(shoot_to_hole)
+                shoot_to_hole.set_next(shoot_empty_cell)
+
+                valid_message = shoot_arrow.execute(
+                    from_row,
+                    from_col,
+                    direction,
+                    self.current_player,
+                    self._board
+                )
             self.current_player.invalid_moves_count = 0
             self.modify_score(valid_message)
         except invalidMoveException:

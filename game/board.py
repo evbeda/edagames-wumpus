@@ -23,14 +23,14 @@ from game.gold import Gold
 from game.utils import posibles_positions
 from constans.constans import PLAYER_1
 from constans.constants_scores import (
-    ARROW_MISS,
+    # ARROW_MISS,
     CORRECT_MOVE,
-    KILL,
+    # KILL,
 )
 from exceptions.personal_exceptions import (
-    friendlyFireException,
+    # friendlyFireException,
     moveToYourOwnCharPositionException,
-    noArrowsAvailableException,
+    # noArrowsAvailableException,
     noPossibleMoveException,
     notYourCharacterException,
     shootOutOfBoundsException,
@@ -208,93 +208,93 @@ class Board():
             return ((destination_row - (row + 0.1)) ** 2 + (destination_col - col) ** 2) ** (0.5)
         return sorted(positions, key=sorted_key)
 
-    def shoot_arrow(
-        self,
-        row: int,
-        col: int,
-        direction: str,
-        current_player: Player,
-    ) -> str:
-        """
-        Takes a coordenate, a direction and a current player.
-        Returns the string with the result of the actions.
-        In case the shoot kills an enemy returns "KILL".
-        In case the shoot miss an opponent character returns "ARROW_MISS".
-        In case the shoot hit a hole returns "CORRECT_MOVE".
-        In case of an invalid move, raises an "invalidMoveException".
-        """
-        self.there_are_arrows_available(current_player)
+    # def shoot_arrow(
+    #     self,
+    #     row: int,
+    #     col: int,
+    #     direction: str,
+    #     current_player: Player,
+    # ) -> str:
+    #     """
+    #     Takes a coordenate, a direction and a current player.
+    #     Returns the string with the result of the actions.
+    #     In case the shoot kills an enemy returns "KILL".
+    #     In case the shoot miss an opponent character returns "ARROW_MISS".
+    #     In case the shoot hit a hole returns "CORRECT_MOVE".
+    #     In case of an invalid move, raises an "invalidMoveException".
+    #     """
+    #     self.there_are_arrows_available(current_player)
 
-        target_row, target_col = self.target_position(row, col, direction)
-        target_cell = self._board[target_row][target_col]
+    #     target_row, target_col = self.target_position(row, col, direction)
+    #     target_cell = self._board[target_row][target_col]
 
-        self.is_not_frendly_fire(target_cell, current_player)
+    #     self.is_not_frendly_fire(target_cell, current_player)
 
-        if (target_cell.character is not None and
-           target_cell.character.player.name != current_player.name):
-            result = self.kill_opp(target_row, target_col, current_player)
+    #     if (target_cell.character is not None and
+    #        target_cell.character.player.name != current_player.name):
+    #         result = self.kill_opp(target_row, target_col, current_player)
 
-        elif target_cell.has_hole:
-            result = self.shoot_hole(target_row, target_col, current_player)
+    #     elif target_cell.has_hole:
+    #         result = self.shoot_hole(target_row, target_col, current_player)
 
-        elif target_cell.character is None:
-            result = self.shoot_miss(target_row, target_col, current_player)
+    #     elif target_cell.character is None:
+    #         result = self.shoot_miss(target_row, target_col, current_player)
 
-        return result
+    #     return result
 
-    def there_are_arrows_available(
-        self,
-        current_player: Player,
-    ) -> None:
-        if current_player.arrows < 1:
-            raise noArrowsAvailableException()
+    # def there_are_arrows_available(
+    #     self,
+    #     current_player: Player,
+    # ) -> None:
+    #     if current_player.arrows < 1:
+    #         raise noArrowsAvailableException()
 
-    def is_not_frendly_fire(
-        self,
-        target_cell: Cell,
-        current_player: Player,
-    ) -> None:
-        if (
-            target_cell.character is not None and
-            target_cell.character.player.name == current_player.name
-        ):
-            current_player.arrows -= 1
-            raise friendlyFireException()
+    # def is_not_frendly_fire(
+    #     self,
+    #     target_cell: Cell,
+    #     current_player: Player,
+    # ) -> None:
+    #     if (
+    #         target_cell.character is not None and
+    #         target_cell.character.player.name == current_player.name
+    #     ):
+    #         current_player.arrows -= 1
+    #         raise friendlyFireException()
 
-    def kill_opp(
-        self,
-        row: int,
-        col: int,
-        current_player: Player,
-    ) -> str:
-        current_player.arrows -= 1
-        cell = self._board[row][col]
-        character_to_kill = cell.character
-        character_to_kill.transfer_tresaure(cell)
-        cell.remove_character()
-        self.discover_cell(row, col, current_player)
-        return KILL
+    # def kill_opp(
+    #     self,
+    #     row: int,
+    #     col: int,
+    #     current_player: Player,
+    # ) -> str:
+    #     current_player.arrows -= 1
+    #     cell = self._board[row][col]
+    #     character_to_kill = cell.character
+    #     character_to_kill.transfer_tresaure(cell)
+    #     cell.remove_character()
+    #     self.discover_cell(row, col, current_player)
+    #     return KILL
 
-    def shoot_miss(
-        self,
-        row: int,
-        col: int,
-        current_player: Player,
-    ) -> str:
-        # self.discover_cell(row, col, current_player)
-        current_player.arrows -= 1
-        self._board[row][col].arrow += 1
-        return ARROW_MISS
+    # def shoot_miss(
+    #     self,
+    #     row: int,
+    #     col: int,
+    #     current_player: Player,
+    # ) -> str:
+    #     # self.discover_cell(row, col, current_player)
+    #     current_player.arrows -= 1
+    #     self._board[row][col].arrow += 1
+    #     return ARROW_MISS
 
-    def shoot_hole(
-        self,
-        row: int,
-        col: int,
-        current_player: Player,
-    ) -> str:
-        self.discover_cell(row, col, current_player)
-        current_player.arrows -= 1
-        return CORRECT_MOVE
+    # def shoot_hole(
+    #     self,
+    #     row: int,
+    #     col: int,
+    #     current_player: Player,
+    # ) -> str:
+    #     self.discover_cell(row, col, current_player)
+    #     current_player.arrows -= 1
+    #     return CORRECT_MOVE
 
     def discover_cell(
         self,

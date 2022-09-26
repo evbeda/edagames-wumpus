@@ -212,27 +212,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(diamonds_after_move, 1)
         self.assertEqual(CORRECT_MOVE, result)
 
-    def test_generate_data(self):
-        game = patched_game()
-        game.current_player = game.player_1
-        game_id = "1234-5678-9012-3456-7890"
-        game.game_id = game_id
-        self.maxDiff = None
-        expected_response = {
-            "player_2": NAME_USER_2,
-            "player_1": NAME_USER_1,
-            "score_1": 0,
-            "score_2": 0,
-            "arrows_1": INITIAL_ARROWS,
-            "arrows_2": INITIAL_ARROWS,
-            "board": SCENARIO_STR_PLAYER_1,
-            "game_active": True,
-            "remaining_turns": 200,
-            "game_id": game_id,
-            "side": PLAYER_1,
-        }
-        self.assertEqual(game.generate_data(), expected_response)
-
     @parameterized.expand([
         (10000, 8000, {
             'GAME_OVER': {
@@ -302,24 +281,6 @@ class TestGame(unittest.TestCase):
     def test_board_game_is_class(self):
         game = patched_game()
         self.assertIsInstance(game._board, Board)
-
-    @parameterized.expand([  # test generate response
-        ("p1", RESPONSE_1),
-        (None, RESPONSE_2),
-        ("p2", RESPONSE_3)
-    ])
-    def test_generate_response(self, noChars, response):
-        game = WumpusGame([NAME_USER_1, NAME_USER_2])
-        self.maxDiff = None
-        game_id = "1234-5678-9012-3456-7890"
-        game.game_id = game_id
-        if (noChars == "p1"):
-            game.player_1.characters = []
-            game.player_1.score = -100
-        elif (noChars == "p2"):
-            game.player_2.characters = []
-            game.player_2.score = -100
-        self.assertEqual(game.generate_response(), response)
 
     @parameterized.expand([
         ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 16_100, 110_000, 4, "     "),

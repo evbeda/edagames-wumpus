@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch , PropertyMock
 from edagames_grpc.game_start import GameStart
 from edagames_grpc.game_state import GameState
 from game.game import WumpusGame
@@ -276,25 +276,25 @@ class TestManager(unittest.TestCase):
     def test_penalize_with_game_over(self, mok_game_set):
         manag = Manager()
         users_names = [NAME_USER_1, NAME_USER_2]
-        game = WumpusGame(users_names)
-        game_id = "123asd"
-        game.game_id = game_id
-        game.game_is_active = False
-        manag.games[game_id] = game
-        manag.penalize(game_id)
-        mok_game_set.assert_called_once_with(game, GAMEOVER_STATE)
+        manag.create_game(users_names)
+        key_manag = ""
+        for key in manag.games:
+            key_manag = key
+        with patch('game.manager.Manager.check_game_over', return_value=True):
+            manag.penalize(key_manag)
+            mok_game_set.assert_called_once_with(manag.games[key_manag], GAMEOVER_STATE)
 
     @patch('game.manager.Manager.get_game_state')
     def test_penalize_without_game_over(self, mok_game_set):
         manag = Manager()
         users_names = [NAME_USER_1, NAME_USER_2]
-        game = WumpusGame(users_names)
-        game_id = "123asd"
-        game.game_id = game_id
-        manag.games[game_id] = game
-        manag.penalize(game_id)
+        manag.create_game(users_names)
+        key_manag = ""
+        for key in manag.games:
+            key_manag = key
+        manag.penalize(key_manag)
         self.assertEqual(manag.action_data, INVALID_PENALIZE)
-        mok_game_set.assert_called_once_with(game, TIMEOUT)
+        mok_game_set.assert_called_once_with(manag.games[key_manag], TIMEOUT)
 
     @patch.object(Manager, 'find_game')
     @patch.object(Manager, 'get_game_state')

@@ -58,7 +58,6 @@ from constans.scenarios import (
     TEST_PLAYERS_CHARACTER_1,
     TEST_PLAYERS_CHARACTER_2,
     SCENARIO_STR_PLAYER_1,
-    board_player_1_scenario,
     generate_board_for_move_action_test,
     generate_board_for_shoot_action_test,
 )
@@ -215,25 +214,22 @@ class TestGame(unittest.TestCase):
 
     def test_generate_data(self):
         game = patched_game()
-        game._board._board = board_player_1_scenario()
         game.current_player = game.player_1
+        game_id = "1234-5678-9012-3456-7890"
+        game.game_id = game_id
         self.maxDiff = None
         expected_response = {
+            "player_2": NAME_USER_2,
+            "player_1": NAME_USER_1,
+            "score_1": 0,
+            "score_2": 0,
+            "arrows_1": INITIAL_ARROWS,
+            "arrows_2": INITIAL_ARROWS,
             "board": SCENARIO_STR_PLAYER_1,
             "game_active": True,
             "remaining_turns": 200,
-            "side": "B",
-            "your_player": {
-                "score": INITIAL_SCORE,
-                "arrows": INITIAL_ARROWS,
-                "owner": 'matias'
-            },
-            "enemy_player": {
-                "name": PLAYER_2,  # Will be "B" or "P"
-                "score": INITIAL_SCORE,
-                "arrows": INITIAL_ARROWS,
-                "owner": 'guille'
-            },
+            "game_id": game_id,
+            "side": PLAYER_1,
         }
         self.assertEqual(game.generate_data(), expected_response)
 
@@ -315,6 +311,8 @@ class TestGame(unittest.TestCase):
     def test_generate_response(self, noChars, response):
         game = WumpusGame([NAME_USER_1, NAME_USER_2])
         self.maxDiff = None
+        game_id = "1234-5678-9012-3456-7890"
+        game.game_id = game_id
         if (noChars == "p1"):
             game.player_1.characters = []
             game.player_1.score = -100

@@ -227,10 +227,11 @@ class TestManager(unittest.TestCase):
         self.assertTrue(manag.check_game_over(game))
 
     def test_create_game(self):
-        with patch('game.manager.Manager.get_game_start', return_value=True):
-            manager = Manager()
-            players_names = ['bot1', 'bot2']
-            self.assertTrue(manager.create_game(players_names))
+        manager = Manager()
+        players_names = ['bot1', 'bot2']
+        response_manager = manager.create_game(players_names)
+        self.assertIsInstance(response_manager, GameStart)
+        self.assertNotEqual({},manager.games)
 
     def test_create_game_error(
         self,

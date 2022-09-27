@@ -866,3 +866,41 @@ def board_friendly_fire_player_2():
     FRIENDLY_FIRE_BOARD_P2[0][15].character = character2
     FRIENDLY_FIRE_BOARD_P2[8][16].character = character3
     return FRIENDLY_FIRE_BOARD_P2
+
+
+def board_kill_opp_player():
+    KILL_OP_BOARD_1 = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+    player_1 = Player(PLAYER_1, NAME_USER_1)
+    character1_p1 = Character(player_1)
+    character2_p1 = Character(player_1)
+    character3_p1 = Character(player_1)
+
+    character3_p1.treasures.append(Diamond())
+    character3_p1.treasures.append(Gold())
+    character3_p1.treasures.append(Gold())
+
+    player_1.characters.append(character1_p1)
+    player_1.characters.append(character2_p1)
+    player_1.characters.append(character3_p1)
+
+    player_2 = Player(PLAYER_2, NAME_USER_2)
+    character1_p2 = Character(player_2)
+    character2_p2 = Character(player_2)
+    character3_p2 = Character(player_2)
+
+    player_2.characters.append(character1_p2)
+    player_2.characters.append(character2_p2)
+    player_2.characters.append(character3_p2)
+
+    character1_p2.treasures.append(Gold())
+    character1_p2.treasures.append(Gold())
+
+    KILL_OP_BOARD_1[0][15].character = character1_p1
+    KILL_OP_BOARD_1[16][0].character = character2_p1
+    KILL_OP_BOARD_1[8][14].character = character3_p1
+    KILL_OP_BOARD_1[0][16].character = character1_p2
+    KILL_OP_BOARD_1[16][16].character = character2_p2
+    KILL_OP_BOARD_1[8][15].character = character3_p2
+    return KILL_OP_BOARD_1

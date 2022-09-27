@@ -35,8 +35,7 @@ class ShootArrow(Action):
             current_player.arrows -= 1
             raise friendlyFireException()
 
-        else:
-            if self.get_next_action():
-                return self.get_next_action().execute(row, col, direction, current_player, board)
+        elif self.get_next_action():
+            return self.get_next_action().execute(row, col, direction, current_player, board)
 
-            raise invalidMoveException("No available shoots")
+        raise invalidMoveException("No available shoots")

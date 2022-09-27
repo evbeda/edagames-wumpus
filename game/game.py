@@ -170,12 +170,12 @@ class WumpusGame():
 
     def generate_data(self) -> dict:
         return {
-            "player_2": self.inactive_player.user_name,
-            "player_1": self.get_current_player_name(),
-            "score_1": self.current_player.score,
-            "score_2": self.current_player.score,
-            "arrows_1": self.current_player.arrows,
-            "arrows_2": self.inactive_player.arrows,
+            "player_2": self.player_2.user_name,
+            "player_1": self.player_1.user_name,
+            "score_1": self.player_1.score,
+            "score_2": self.player_2.score,
+            "arrows_1": self.player_1.arrows,
+            "arrows_2": self.player_2.arrows,
             "board": self.board,
             "game_active": self.game_is_active,
             "remaining_turns": self.remaining_moves,

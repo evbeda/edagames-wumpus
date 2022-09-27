@@ -39,16 +39,21 @@ class Manager():
             message = {}
             for key in data_keys:
                 value = data[key]
-                if value in POSIBLE_DIRECTIONS:
-                    message[key] = value
-                elif key != DIRECTION_MESSAGE and type(value) != bool:
-                    message[key] = int(value)
-                else:
-                    raise InvalidData()
+                message[key] = self.get_correct_value(key, value)
             return message
         except KeyError:
             raise InvalidKey()
         except ValueError:
+            raise InvalidData()
+
+    def get_correct_value(self, key, value):
+        if key == DIRECTION_MESSAGE and value in POSIBLE_DIRECTIONS:
+            return value
+        elif type(value) == bool:
+            raise InvalidData()
+        elif key == ROW or key == COL:
+            return int(value)
+        else:
             raise InvalidData()
 
     def execute_action_manager(self, game: WumpusGame, api_data: dict()):
@@ -136,9 +141,10 @@ class Manager():
             raise InvalidData()
 
     def process_request(self, game_id: str, api_data: dict) -> GameState:
-        current_game = self.find_game(game_id)
+
         state = INVALID_STATE
         try:
+            current_game = self.find_game(game_id)
             self.execute_action_manager(current_game, api_data)
         except InvalidData:
             current_game.penalize_player()

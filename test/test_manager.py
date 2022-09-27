@@ -397,3 +397,22 @@ class TestManager(unittest.TestCase):
             with patch('game.manager.Manager.check_game_over', return_value=True):
                 manag.process_request(game_id, manag.action_data)
                 get_game_mock.assert_called_once_with(game, GAMEOVER_STATE)
+
+    @parameterized.expand([
+        (1.0, 2.0, 1, 2),
+        ('1', 1, 1, 1),
+    ])
+    def test_convertion_index_when_are_no_tints(self, from_row, from_col, expeted_row, expected_col):
+        manager = Manager()
+        data_message = {
+            'from_row': from_row,
+            'from_col': from_col,
+            'direction': WEST
+        }
+        expected_result = {
+            'from_row': expeted_row,
+            'from_col': expected_col,
+            'direction': WEST
+        }
+        result = manager.get_correct_data(data_message, MESSAGE_DATA_KEYS)
+        self.assertEqual(result, expected_result)

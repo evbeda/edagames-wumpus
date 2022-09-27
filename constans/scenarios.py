@@ -845,6 +845,7 @@ def cells_for_move_action_board(moving_player, opponent_player) -> list:
 def board_friendly_fire_player_1():
     FRIENDLY_FIRE_BOARD = [
         [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
     player_1 = Player(PLAYER_1, NAME_USER_1)
     character1 = Character(player_1)
     character2 = Character(player_1)
@@ -906,10 +907,42 @@ def board_kill_opp_player():
     return KILL_OP_BOARD_1
 
 
+def shoot_arrow_board():
+    SHOOT_ARROW = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+    player_1 = Player(PLAYER_1, NAME_USER_1)
+    character1 = Character(player_1)
+    character2 = Character(player_1)
+    character3 = Character(player_1)
+
+    player_1.characters.append(character1)
+    player_1.characters.append(character2)
+    player_1.characters.append(character3)
+
+    player_2 = Player(PLAYER_2, NAME_USER_2)
+    character1_p2 = Character(player_2)
+    character2_p2 = Character(player_2)
+    character3_p2 = Character(player_2)
+
+    player_2.characters.append(character1_p2)
+    player_2.characters.append(character2_p2)
+    player_2.characters.append(character3_p2)
+
+    SHOOT_ARROW[0][4].character = character1
+    SHOOT_ARROW[8][10].character = character2
+    SHOOT_ARROW[15][5].character = character3
+    SHOOT_ARROW[0][5].has_hole = True
+    SHOOT_ARROW[0][16].character = character1_p2
+    SHOOT_ARROW[5][6].character = character2_p2
+    SHOOT_ARROW[15][6].character = character3_p2
+
+    return SHOOT_ARROW
+
+
 # shoot to hole
 def board_shoot_hole_player_1():
-    SHOOT_H0LE_BOARD_1 = [
-        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    SHOOT_H0LE_BOARD_1 = [[Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
 
     player_1 = Player(PLAYER_1, NAME_USER_1)
     character1 = Character(player_1)
@@ -950,3 +983,23 @@ def board_shoot_hole_player_2():
     SHOOT_H0LE_BOARD_2[13][1].has_hole = True
 
     return SHOOT_H0LE_BOARD_2
+
+
+def board_empty_cell():
+    SHOOT_EMPTY_CELL = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+    player_1 = Player(PLAYER_1, NAME_USER_1)
+    character1 = Character(player_1)
+    character2 = Character(player_1)
+    character3 = Character(player_1)
+
+    player_1.characters.append(character1)
+    player_1.characters.append(character2)
+    player_1.characters.append(character3)
+
+    SHOOT_EMPTY_CELL[0][4].character = character1
+    SHOOT_EMPTY_CELL[7][10].character = character2
+    SHOOT_EMPTY_CELL[13][5].character = character3
+
+    return SHOOT_EMPTY_CELL

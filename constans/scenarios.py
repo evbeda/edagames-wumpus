@@ -840,3 +840,29 @@ def cells_for_move_action_board(moving_player, opponent_player) -> list:
             cell_move_3_4, cell_move_5_4, cell_move_8_8,
             cell_move_8_7, cell_move_8_9, cell_move_7_8,
             cell_move_9_8, cell_move_0_0]
+
+
+def board_friendly_fire_player_1():
+    FRIENDLY_FIRE_BOARD = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    player_1 = Player(PLAYER_1, NAME_USER_1)
+    character1 = Character(player_1)
+    character2 = Character(player_1)
+    character3 = Character(player_1)
+    FRIENDLY_FIRE_BOARD[0][0].character = character1
+    FRIENDLY_FIRE_BOARD[0][1].character = character2
+    FRIENDLY_FIRE_BOARD[0][8].character = character3
+    return FRIENDLY_FIRE_BOARD
+
+
+def board_friendly_fire_player_2():
+    FRIENDLY_FIRE_BOARD_P2 = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+    player_2 = Player(PLAYER_2, NAME_USER_2)
+    character1 = Character(player_2)
+    character2 = Character(player_2)
+    character3 = Character(player_2)
+    FRIENDLY_FIRE_BOARD_P2[0][16].character = character1
+    FRIENDLY_FIRE_BOARD_P2[0][15].character = character2
+    FRIENDLY_FIRE_BOARD_P2[8][16].character = character3
+    return FRIENDLY_FIRE_BOARD_P2

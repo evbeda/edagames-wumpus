@@ -1,5 +1,4 @@
 from constans.constans import (
-    DATA,
     JOIN_ROW_BOARD,
     MAXIMUM_INVALID_MOVES,
     MOVE,
@@ -30,6 +29,8 @@ from constans.constants_messages import (
     GAME_OVER_MESSAGE_3,
     GAME_OVER_MESSAGE_4,
     GAME_OVER_MESSAGE_5,
+    GAME_OVER_MESSAGE_6,
+    GAME_OVER_MESSAGE_7,
     GAME_OVER_NOT_MET,
 )
 
@@ -189,26 +190,35 @@ class WumpusGame():
         else:
             final_message = self.game_over_final_message()['GAME_OVER']
             response = {
-                "event": "GAME_OVER",
-                DATA: {
-                    "status": game_over_data[1],
-                    'SCORE': final_message['SCORE'],
-                    'RESULT': final_message['RESULT'],
-                },
+                "status": game_over_data[1],
+                "winner_side": self.get_winner_side(game_over_data[1]),
+                "score": final_message['SCORE'],
+                "result": final_message['RESULT'],
             }
             return response
 
+    def get_winner_side(self, game_over_message):
+        winner_dictionary = {
+            GAME_OVER_MESSAGE_1: self.player_2.name,
+            GAME_OVER_MESSAGE_2: self.player_1.name,
+            GAME_OVER_MESSAGE_3: "DRAW",
+            GAME_OVER_MESSAGE_4: self.player_2.name,
+            GAME_OVER_MESSAGE_5: self.player_1.name,
+            GAME_OVER_MESSAGE_6: self.player_1.name,
+            GAME_OVER_MESSAGE_7: self.player_2.name,
+        }
+        return winner_dictionary[game_over_message]
+
     def game_over_final_message(self):
-        #  Will need debug since outcome is determined only by player´s score
-        name_player_1, name_player_2 = self.player_1.name, self.player_2.name
+        name_player_1, name_player_2 = self.player_1.user_name, self.player_2.user_name
         score_player_1 = self.player_1.score
         score_player_2 = self.player_2.score
-        if score_player_1 == score_player_2:
+        if score_player_1 == score_player_2 and self.player_1.score == self.player_2.score:
             return {
                 'GAME_OVER': {
                     'SCORE': {
-                        name_player_1: score_player_1,
-                        name_player_2: score_player_2,
+                        "player_1": score_player_1,
+                        "player_2": score_player_2,
                     },
                     'RESULT': 'DRAW',
                 },
@@ -216,8 +226,8 @@ class WumpusGame():
         return {
             'GAME_OVER': {
                 'SCORE': {
-                    name_player_1: score_player_1,
-                    name_player_2: score_player_2,
+                    "player_1": score_player_1,
+                    "player_2": score_player_2,
                 },
                 'RESULT': {
                     'WINNER': (name_player_1 if score_player_1 > score_player_2
@@ -241,9 +251,14 @@ class WumpusGame():
         game_over_conditions = {
             GAME_OVER_MESSAGE_4: len(self.player_1.characters) == 0,
             GAME_OVER_MESSAGE_5: len(self.player_2.characters) == 0,
-            GAME_OVER_MESSAGE_3: (self.remaining_moves == 0),
+            GAME_OVER_MESSAGE_3: (self.remaining_moves == 0 and
+                                  self.player_1.score == self.player_2.score),
             GAME_OVER_MESSAGE_1: (self.player_1.invalid_moves_count) >= 5,
             GAME_OVER_MESSAGE_2: (self.player_2.invalid_moves_count) >= 5,
+            GAME_OVER_MESSAGE_6: (self.remaining_moves == 0 and
+                                  self.player_1.score > self.player_2.score),
+            GAME_OVER_MESSAGE_7: (self.remaining_moves == 0 and
+                                  self.player_1.score < self.player_2.score),
         }
         return game_over_conditions
 

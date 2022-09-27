@@ -50,6 +50,9 @@ from constans.constants_messages import (
     RESPONSE_1,
     RESPONSE_2,
     RESPONSE_3,
+    RESPONSE_4,
+    RESPONSE_6,
+    RESPONSE_7,
 )
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
@@ -237,35 +240,35 @@ class TestGame(unittest.TestCase):
         (10000, 8000, {
             'GAME_OVER': {
                 'SCORE': {
-                    PLAYER_1: 10000,
-                    PLAYER_2: 8000,
+                    "player_1": 10000,
+                    "player_2": 8000,
                 },
                 'RESULT': {
-                    'WINNER': PLAYER_1,
-                    'LOSER': PLAYER_2,
+                    'WINNER': NAME_USER_1,
+                    'LOSER': NAME_USER_2,
                 }
             }
         }),
         (8000, 10000, {
             'GAME_OVER': {
                 'SCORE': {
-                    PLAYER_1: 8000,
-                    PLAYER_2: 10000,
+                    "player_1": 8000,
+                    "player_2": 10000,
                 },
                 'RESULT': {
-                    'WINNER': PLAYER_2,
-                    'LOSER': PLAYER_1,
+                    'WINNER': NAME_USER_2,
+                    'LOSER': NAME_USER_1,
                 }
             }
         }),
         (10000, 10000, {
             'GAME_OVER': {
                 'SCORE': {
-                    PLAYER_1: 10000,
-                    PLAYER_2: 10000,
+                    "player_1": 10000,
+                    "player_2": 10000,
                 },
                 'RESULT': 'DRAW',
-            },
+            }
         }),
     ])
     def test_game_over_final_message(
@@ -304,21 +307,25 @@ class TestGame(unittest.TestCase):
         self.assertIsInstance(game._board, Board)
 
     @parameterized.expand([  # test generate response
-        ("p1", RESPONSE_1),
-        (None, RESPONSE_2),
-        ("p2", RESPONSE_3)
+        ("p1", -100, 0, 50, RESPONSE_1),
+        (None, 0, 0, 200, RESPONSE_2),
+        ("p2", 0, -100, 30,  RESPONSE_3),
+        (None, 0, 0, 0, RESPONSE_4),
+        (None, 5000, 1000, 0, RESPONSE_6),
+        (None, 1000, 5000, 0, RESPONSE_7),
     ])
-    def test_generate_response(self, noChars, response):
+    def test_generate_response(self, noChars, p1_score, p2_score, rem, response):
         game = WumpusGame([NAME_USER_1, NAME_USER_2])
         self.maxDiff = None
         game_id = "1234-5678-9012-3456-7890"
         game.game_id = game_id
+        game.player_1.score = p1_score
+        game.player_2.score = p2_score
+        game.remaining_moves = rem
         if (noChars == "p1"):
             game.player_1.characters = []
-            game.player_1.score = -100
         elif (noChars == "p2"):
             game.player_2.characters = []
-            game.player_2.score = -100
         self.assertEqual(game.generate_response(), response)
 
     @parameterized.expand([

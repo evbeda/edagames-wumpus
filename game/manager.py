@@ -110,6 +110,7 @@ class Manager():
     def create_game(self, users_names: List[str]) -> GameStart:
         if len(users_names) in [2, 4]:
             new_game = WumpusGame(users_names)
+            self.add_game(new_game)
             return self.get_game_start(new_game)
         else:
             raise InvalidQuantityPlayers()
@@ -154,3 +155,6 @@ class Manager():
             current_game,
             state,
         )
+
+    def add_game(self, game: WumpusGame) -> None:
+        self.games[game.game_id] = game

@@ -8,16 +8,17 @@ from game.player import Player
 def is_a_player_character(row, col, current_player: Player, board: Board) -> bool:
     cell = board.get_cell(row, col)
     character: Character = cell.character
-    return character.player.user_name == current_player.user_name if character else False
+    if character:
+        return character.player.user_name == current_player.user_name
+    return False
 
 
 def is_frendly_fire(row, col, direction, current_player: Player, board: Board) -> bool:
     target_row, target_col = target_position_within_bounds(row, col, direction)
     target_cell = board.get_cell(target_row, target_col)
-    return (
-        target_cell.character is not None and
-        target_cell.character.player.name == current_player.name
-    )
+    if target_cell.character:
+        return target_cell.character.player.name == current_player.name
+    return False
 
 
 def there_are_arrows_available(current_player: Player) -> bool:

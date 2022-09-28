@@ -62,9 +62,9 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.arrows, expected_result)
 
     @parameterized.expand([
-        (MOVE, 0, 0, WEST, -100, 1),
-        (SHOOT, 16, 0, SOUTH, -100, 1),
-        (SHOOT, 0, 0, NORTH, -100, 1)
+        (MOVE, 0, 0, WEST, -1000, 1),
+        (SHOOT, 16, 0, SOUTH, -1000, 1),
+        (SHOOT, 0, 0, NORTH, -1000, 1)
     ])
     def test_invalid_moves_count_player_1(
             self,
@@ -89,9 +89,9 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(invalid_moves_count, expected_count)
 
     @parameterized.expand([
-        (MOVE, 0, 16, EAST, -100, 1),
-        (SHOOT, 16, 16, EAST, -100, 1),
-        (SHOOT, 16, 16, SOUTH, -100, 1)
+        (MOVE, 0, 16, EAST, -1000, 1),
+        (SHOOT, 16, 16, EAST, -1000, 1),
+        (SHOOT, 16, 16, SOUTH, -1000, 1)
     ])
     def test_invalid_moves_count_player_2(
             self,

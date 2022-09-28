@@ -1,8 +1,11 @@
 
 
+
+
 [run]
 source =
     game
+    application
 
 omit =
     env/*

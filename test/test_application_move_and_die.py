@@ -1,14 +1,16 @@
-import unittest
-from parameterized import parameterized
-from constans.constans import SOUTH, NORTH
+from application.move_and_die import MoveAndDie
+from application.move import Move
+from constans.constans import SOUTH, NORTH, WEST
 from constans.constants_scores import CORRECT_MOVE
+from parameterized import parameterized
 from game.board import Board
 from game.cell import Cell
 from constans.scenarios import generate_board_for_move_action_test
-from application.move_and_die import MoveAndDie
 from game.gold import Gold
 from game.diamond import Diamond
 from exceptions.personal_exceptions import invalidMoveException
+from unittest.mock import patch
+import unittest
 
 
 class TestMoveAndDie(unittest.TestCase):
@@ -110,3 +112,28 @@ class TestMoveAndDie(unittest.TestCase):
                 self.moving_player,
                 self.board
                 )
+
+    @parameterized.expand([
+        ('NEXT_ACTION', 'get_next_action', 4, 4, WEST)
+    ])
+    def test_execute_valid_move_to_hole_continue_the_chain_of_responsability(
+        self,
+        name_of_the_test_case,
+        get_next_action_pathced,
+        row,
+        col,
+        direction,
+
+    ):
+        move = Move()
+        self.move_n_die.set_next(move)
+        self.board._board = self.scenarios
+        with patch.object(MoveAndDie, get_next_action_pathced) as patched_method:
+            self.move_n_die.execute(
+                row,
+                col,
+                direction,
+                self.moving_player,
+                self.board
+                )
+        patched_method.assert_called()

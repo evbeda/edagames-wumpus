@@ -34,9 +34,8 @@ class Move(Action):
         if is_frendly_fire(from_row, from_col, direction, current_player, board):
             raise moveToYourOwnCharPositionException()
 
-        else:
-            # continue the chain of responsability
-            if self.get_next_action():
-                return self.get_next_action().execute(from_row, from_col, direction, current_player, board)
+        # continue the chain of responsability
+        elif self.get_next_action():
+            return self.get_next_action().execute(from_row, from_col, direction, current_player, board)
 
-            raise invalidMoveException("Invalid move")
+        raise invalidMoveException("Invalid move")

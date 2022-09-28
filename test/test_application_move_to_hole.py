@@ -1,5 +1,6 @@
 from application.move_to_hole import MoveToHole
-from constans.constans import WEST
+from application.move import Move
+from constans.constans import EAST, WEST
 from constans.constants_scores import CORRECT_MOVE
 from constans.scenarios import generate_board_for_move_action_test
 from game.board import Board
@@ -8,6 +9,7 @@ from game.diamond import Diamond
 from game.gold import Gold
 from parameterized import parameterized
 from exceptions.personal_exceptions import invalidMoveException
+from unittest.mock import patch
 import unittest
 
 
@@ -87,3 +89,55 @@ class TestMoveToHole(unittest.TestCase):
 
         self.move_to_hole.execute(row, col, direction, self.moving_player, self.board)
         self.assertEqual(cell.is_discover[0], discover_final_status)
+
+    @parameterized.expand([
+        ('move_to_hole_to_next_action', 'get_next_action', 4, 4, EAST)
+    ])
+    def test_execute_valid_move_is_not_move_to_hole_continue_the_chain_of_responsability(
+        self,
+        name_of_the_test_case,
+        get_next_action_pathced,
+        row,
+        col,
+        direction,
+    ):
+        move = Move()
+        self.move_to_hole.set_next(move)
+        self.board._board = self.scenarios
+        with patch.object(MoveToHole, get_next_action_pathced) as patched_method:
+            self.move_to_hole.execute(
+                row,
+                col,
+                direction,
+                self.moving_player,
+                self.board
+                )
+        patched_method.assert_called()
+
+    @parameterized.expand([
+        (4, 4, EAST, invalidMoveException)
+    ])
+    def test_execute_invalid_move_to_hole_raise_exception(
+        self,
+        row,
+        col,
+        direction,
+        exception_raised,
+    ):
+        self.board._board = self.scenarios
+        with self.assertRaises(exception_raised):
+            self.move_to_hole.execute(
+                row,
+                col,
+                direction,
+                self.moving_player,
+                self.board
+                )
+
+    @parameterized.expand([
+        (4, 4, WEST, CORRECT_MOVE),
+    ])
+    def test_execute_move_to_hole_return_correct_move(self, row, col, direction, expected_result):
+        self.board._board = self.scenarios
+        result = self.move_to_hole.execute(row, col, direction, self.moving_player, self.board)
+        self.assertEqual(result, expected_result)

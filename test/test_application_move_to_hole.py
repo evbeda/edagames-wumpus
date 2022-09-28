@@ -1,0 +1,89 @@
+from application.move_to_hole import MoveToHole
+from constans.constans import WEST
+from constans.constants_scores import CORRECT_MOVE
+from constans.scenarios import generate_board_for_move_action_test
+from game.board import Board
+from game.cell import Cell
+from game.diamond import Diamond
+from game.gold import Gold
+from parameterized import parameterized
+from exceptions.personal_exceptions import invalidMoveException
+import unittest
+
+
+class TestMoveToHole(unittest.TestCase):
+
+    def setUp(self):
+        self.scenarios, self.moving_player, self.opponent_player = generate_board_for_move_action_test()
+        self.move_to_hole = MoveToHole()
+        self.board = Board()
+
+    @parameterized.expand([
+        (4, 4, WEST, 0, 0, [Gold()], 1, 0),
+        (4, 4, WEST, 0, 0, [Diamond()], 0, 1),
+        (4, 4, WEST, 0, 0, [Gold(), Diamond(), Gold(), Diamond()], 2, 2),
+        (8, 8, WEST, 1, 0, [], 1, 0),  # this character has already a treasure
+    ])
+    def test_move_to_hole_transfer_trasure_from_char_to_origin_cell(
+        self,
+        row,
+        col,
+        direction,
+        expected_init_gold,
+        expected_init_diamond,
+        treasure_to_add_to_the_character,
+        expected_final_gold,
+        expected_final_diamond,
+    ):
+        self.board._board = self.scenarios
+        cell: Cell = self.board.get_cell(row, col)
+
+        # before the character dies treasures in cell includes character
+        self.assertEqual(cell.gold, expected_init_gold)
+        self.assertEqual(cell.diamond, expected_init_diamond)
+
+        cell.character.treasures.extend(treasure_to_add_to_the_character)
+        self.move_to_hole.execute(row, col, direction, self.moving_player, self.board)
+
+        # after the character dies treasures in cell
+        self.assertEqual(cell.gold, expected_final_gold)
+        self.assertEqual(cell.diamond, expected_final_diamond)
+
+    @parameterized.expand([
+        (4, 4, WEST, None)
+
+    ])
+    def test_move_to_hole_and_remove_character(
+        self,
+        row,
+        col,
+        direction,
+        expected_character_in_origin_cell
+    ):
+        self.board._board = self.scenarios
+        cell: Cell = self.board.get_cell(row, col)
+        self.move_to_hole.execute(row, col, direction, self.moving_player, self.board)
+        self.assertEqual(cell.character, expected_character_in_origin_cell)
+
+    @parameterized.expand([
+        (4, 4, WEST, 4, 3, False, True),
+        (8, 8, WEST, 8, 7, False, True),
+    ])
+    def test_execute_move_to_hole_and_discover_the_cell(
+        self,
+        row,
+        col,
+        direction,
+        to_row,
+        to_col,
+        discover_init_status,
+        discover_final_status,
+    ):
+        self.board._board = self.scenarios
+        cell: Cell = self.board.get_cell(to_row, to_col)
+
+        # forced to be undiscovered
+        cell.is_discover[0] = discover_init_status
+
+        self.move_to_hole.execute(row, col, direction, self.moving_player, self.board)
+        self.assertEqual(cell.is_discover[0], discover_final_status)

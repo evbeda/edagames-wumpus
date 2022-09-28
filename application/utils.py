@@ -9,7 +9,7 @@ def is_a_player_character(row, col, current_player: Player, board: Board) -> boo
     cell = board.get_cell(row, col)
     character: Character = cell.character
     if character:
-        return character.player.user_name == current_player.user_name
+        return character.player.name == current_player.name
     return False
 
 

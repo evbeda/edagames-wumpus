@@ -26,7 +26,6 @@ class TestMoveAndDie(unittest.TestCase):
         result = self.move_n_die.execute(row, col, direction, self.moving_player, self.board)
         self.assertEqual(result, expected_result)
         self.assertEqual(self.board._board[row][col].character, None)
-        # self.assertEqual(self.board._board[to_row][to_col].character.player.name, self.moving_player.name)
 
     @parameterized.expand([
         (4, 4, NORTH, 0, 0, [Gold()], 1, 0),

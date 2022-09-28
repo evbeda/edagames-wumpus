@@ -30,7 +30,6 @@ class Move(Action):
         if coordinates is False:
             raise noPossibleMoveException()
 
-        # to_row, to_col = coordinates
         # reutilize the friendly fire method for moving to a same player character
         if is_frendly_fire(from_row, from_col, direction, current_player, board):
             raise moveToYourOwnCharPositionException()

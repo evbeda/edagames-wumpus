@@ -15,7 +15,7 @@ from exceptions.personal_exceptions import (
 from game.board import Board
 from parameterized import parameterized
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 
 class TestMove(unittest.TestCase):
@@ -51,20 +51,21 @@ class TestMove(unittest.TestCase):
                 )
 
     @parameterized.expand([
-        ('NEXT_ACTION', 'execute', 4, 4, WEST)
+        ('next_action_move_and_die', 'get_next_action', 4, 4, WEST)
     ])
     def test_execute_valid_move_continue__the_chain_of_responsability(
         self,
         name_of_the_test_case,
-        execute_pathced,
+        get_next_action_pathced,
         row,
         col,
         direction,
 
     ):
-        self.move.get_next_action = MagicMock(return_value=MoveAndDie)
+        move_n_die = MoveAndDie()
+        self.move.set_next(move_n_die)
         self.board._board = self.scenarios
-        with patch.object(Move, execute_pathced, return_value='_') as patched_method_execute:
+        with patch.object(Move, get_next_action_pathced) as patched_method:
             self.move.execute(
                 row,
                 col,
@@ -72,4 +73,4 @@ class TestMove(unittest.TestCase):
                 self.moving_player,
                 self.board
                 )
-        patched_method_execute.assert_called_once()
+        patched_method.assert_called()

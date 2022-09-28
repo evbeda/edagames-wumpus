@@ -18,7 +18,7 @@ class MoveAndDie(Action):
         character_origin_cell: Character = origin_cell.character
 
         # check if there is an opponent character
-        if character_target_cell.player is not None and character_target_cell.player is not current_player:
+        if character_target_cell is not None and character_target_cell.player is not current_player:
             character_origin_cell.transfer_tresaure(origin_cell)
             origin_cell.remove_character()
             board.discover_cell(to_row, to_col, current_player)

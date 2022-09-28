@@ -114,9 +114,9 @@ class TestMoveAndDie(unittest.TestCase):
                 )
 
     @parameterized.expand([
-        ('NEXT_ACTION', 'get_next_action', 4, 4, WEST)
+        ('move_and_die_to_next_action', 'get_next_action', 4, 4, WEST)
     ])
-    def test_execute_valid_move_to_hole_continue_the_chain_of_responsability(
+    def test_execute_valid_move_and_die_continue_the_chain_of_responsability(
         self,
         name_of_the_test_case,
         get_next_action_pathced,

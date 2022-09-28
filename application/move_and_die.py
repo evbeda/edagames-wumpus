@@ -25,8 +25,7 @@ class MoveAndDie(Action):
             return CORRECT_MOVE
 
         # continue the chain of responsability
-        else:
-            if self.get_next_action():
-                return self.get_next_action().execute(from_row, from_col, direction, current_player, board)
+        elif self.get_next_action():
+            return self.get_next_action().execute(from_row, from_col, direction, current_player, board)
 
-            raise invalidMoveException("Invalid move")
+        raise invalidMoveException("Invalid move")

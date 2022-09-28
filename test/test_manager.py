@@ -416,3 +416,45 @@ class TestManager(unittest.TestCase):
         }
         result = manager.get_correct_data(data_message, MESSAGE_DATA_KEYS)
         self.assertEqual(result, expected_result)
+
+    @parameterized.expand([
+        (0.0, 4.0),
+        ('0', '4'),
+    ])
+    @patch('game.game.WumpusGame.execute_action')
+    def test_execute_action_is_coverting_index(self, from_row, from_col, mock_execute_action):
+        manager = Manager()
+        game = patched_game()
+        api_data = dict(
+            {
+                ACTION: MOVE,
+                DATA: {
+                    ROW: from_row,
+                    COL: from_col,
+                    DIRECTION_MESSAGE: NORTH
+                }
+            }
+        )
+        manager.execute_action_manager(game, api_data)
+        mock_execute_action.assert_called_once_with(
+            MOVE,
+            0,
+            4,
+            NORTH
+        )
+
+    def test_execute_action_raise_an_error_of_convertion(self):
+        manager = Manager()
+        game = patched_game()
+        api_data = dict(
+            {
+                ACTION: MOVE,
+                DATA: {
+                    ROW: 'a',
+                    COL: 'b',
+                    DIRECTION_MESSAGE: NORTH
+                }
+            }
+        )
+        with self.assertRaises(InvalidData):
+            manager.execute_action_manager(game, api_data)

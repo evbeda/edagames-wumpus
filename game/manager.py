@@ -62,6 +62,7 @@ class Manager():
                 api_data[DATA],
                 MESSAGE_DATA_KEYS
             )
+            api_data[DATA].update(self.action_data)
             game.execute_action(
                 api_data[ACTION],
                 api_data[DATA][ROW],

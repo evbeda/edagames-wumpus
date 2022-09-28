@@ -14,13 +14,10 @@ def is_a_player_character(row, col, current_player: Player, board: Board) -> boo
 def is_frendly_fire(row, col, direction, current_player: Player, board: Board) -> bool:
     target_row, target_col = target_position_within_bounds(row, col, direction)
     target_cell = board.get_cell(target_row, target_col)
-    if (
+    return (
         target_cell.character is not None and
         target_cell.character.player.name == current_player.name
-    ):
-        return True
-    else:
-        return False
+    )
 
 
 def there_are_arrows_available(current_player: Player) -> bool:

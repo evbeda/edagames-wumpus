@@ -176,7 +176,6 @@ class WumpusGame():
             "arrows_1": self.player_1.arrows,
             "arrows_2": self.player_2.arrows,
             "board": self.board,
-            "game_active": self.game_is_active,
             "remaining_turns": self.remaining_moves,
             "game_id": self.game_id,
             "side": self.current_player.side,
@@ -187,55 +186,32 @@ class WumpusGame():
         if not game_over_data[0]:
             return self.generate_data()
         else:
-            final_message = self.game_over_final_message()['GAME_OVER']
-            response = {
-                "status": game_over_data[1],
-                "winner_side": self.get_winner_side(game_over_data[1]),
-                "score": final_message['SCORE'],
-                "result": final_message['RESULT'],
-            }
-            return response
-
-    def get_winner_side(self, game_over_message):
-        winner_dictionary = {
-            GAME_OVER_MESSAGE_1: self.player_2.side,
-            GAME_OVER_MESSAGE_2: self.player_1.side,
-            GAME_OVER_MESSAGE_3: "DRAW",
-            GAME_OVER_MESSAGE_4: self.player_2.side,
-            GAME_OVER_MESSAGE_5: self.player_1.side,
-            GAME_OVER_MESSAGE_6: self.player_1.side,
-            GAME_OVER_MESSAGE_7: self.player_2.side,
-        }
-        return winner_dictionary[game_over_message]
+            final_message = self.game_over_final_message()
+            return final_message
 
     def game_over_final_message(self):
         name_player_1, name_player_2 = self.player_1.user_name, self.player_2.user_name
         score_player_1 = self.player_1.score
         score_player_2 = self.player_2.score
+        message = self.generate_data()
+
         if score_player_1 == score_player_2 and self.player_1.score == self.player_2.score:
-            return {
-                'GAME_OVER': {
-                    'SCORE': {
-                        "player_1": score_player_1,
-                        "player_2": score_player_2,
-                    },
-                    'RESULT': 'DRAW',
-                },
+            result = {
+                "result": "DRAW"
             }
-        return {
-            'GAME_OVER': {
-                'SCORE': {
-                    "player_1": score_player_1,
-                    "player_2": score_player_2,
-                },
-                'RESULT': {
+            message.update(result)
+
+        else:
+            result = {
+                "result": {
                     'WINNER': (name_player_1 if score_player_1 > score_player_2
                                else name_player_2),
                     'LOSER': (name_player_2 if score_player_2 < score_player_1
                               else name_player_1),
-                }
+                    }
             }
-        }
+            message.update(result)
+        return message
 
     def check_the_limit_of_invalid(self) -> None:
         if self.current_player.invalid_moves_count >= MAXIMUM_INVALID_MOVES:

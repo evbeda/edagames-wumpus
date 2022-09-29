@@ -35,7 +35,6 @@ RESPONSE_2 = {
     "arrows_1": INITIAL_ARROWS,
     "arrows_2": INITIAL_ARROWS,
     "board": SCENARIO_STR_PLAYER_1,
-    "game_active": True,
     "remaining_turns": 200,
     "game_id": "1234-5678-9012-3456-7890",
     "side": "B",  # Will be "B" or "P"

@@ -48,12 +48,6 @@ from constans.constants_messages import (
     GAME_OVER_MESSAGE_4,
     GAME_OVER_MESSAGE_5,
     GAME_OVER_NOT_MET,
-    RESPONSE_1,
-    RESPONSE_2,
-    RESPONSE_3,
-    RESPONSE_4,
-    RESPONSE_6,
-    RESPONSE_7,
 )
 from constans.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
@@ -228,7 +222,6 @@ class TestGame(unittest.TestCase):
             "arrows_1": INITIAL_ARROWS,
             "arrows_2": INITIAL_ARROWS,
             "board": SCENARIO_STR_PLAYER_1,
-            "game_active": True,
             "remaining_turns": 200,
             "game_id": game_id,
             "side": PLAYER_1,
@@ -236,51 +229,39 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.generate_data(), expected_response)
 
     @parameterized.expand([
-        (10000, 8000, {
-            'GAME_OVER': {
-                'SCORE': {
-                    "player_1": 10000,
-                    "player_2": 8000,
-                },
-                'RESULT': {
-                    'WINNER': NAME_USER_1,
-                    'LOSER': NAME_USER_2,
-                }
-            }
-        }),
-        (8000, 10000, {
-            'GAME_OVER': {
-                'SCORE': {
-                    "player_1": 8000,
-                    "player_2": 10000,
-                },
-                'RESULT': {
-                    'WINNER': NAME_USER_2,
-                    'LOSER': NAME_USER_1,
-                }
-            }
-        }),
-        (10000, 10000, {
-            'GAME_OVER': {
-                'SCORE': {
-                    "player_1": 10000,
-                    "player_2": 10000,
-                },
-                'RESULT': 'DRAW',
-            }
-        }),
+        (10000, 8000, Player(PLAYER_1, NAME_USER_1), Player(PLAYER_2, NAME_USER_2)),
+        (8000, 10000, Player(PLAYER_1, NAME_USER_1), Player(PLAYER_2, NAME_USER_2)),
+        (10000, 10000, Player(PLAYER_1, NAME_USER_1), Player(PLAYER_2, NAME_USER_2)),
     ])
     def test_game_over_final_message(
         self,
         score_p1,
         score_p2,
-        expected_result
+        player_1,
+        player_2
     ):
         game = patched_game()
         game.player_1._score = score_p1
         game.player_2._score = score_p2
+
+        expected = {
+            "player_2": game.player_2.user_name,
+            "player_1": game.player_1.user_name,
+            "score_1": game.player_1.score,
+            "score_2": game.player_2.score,
+            "arrows_1": game.player_1.arrows,
+            "arrows_2": game.player_2.arrows,
+            "board": game.board,
+            "remaining_turns": game.remaining_moves,
+            "game_id": game.game_id,
+            "side": game.current_player.side,
+            "result": "DRAW" if score_p1 == score_p2 else {
+                "WINNER": game.player_1.user_name if score_p2 < score_p1 else game.player_2.user_name,
+                "LOSER": game.player_2.user_name if score_p2 < score_p1 else game.player_1.user_name
+            }
+        }
         result = game.game_over_final_message()
-        self.assertEqual(result, expected_result)
+        self.assertEqual(result, expected)
 
     @parameterized.expand([
         (TEST_PLAYERS_CHARACTER_0, 5, INVALID_MOVES_SCORE, False),
@@ -306,26 +287,57 @@ class TestGame(unittest.TestCase):
         self.assertIsInstance(game._board, Board)
 
     @parameterized.expand([  # test generate response
-        ("p1", -100, 0, 50, RESPONSE_1),
-        (None, 0, 0, 200, RESPONSE_2),
-        ("p2", 0, -100, 30,  RESPONSE_3),
-        (None, 0, 0, 0, RESPONSE_4),
-        (None, 5000, 1000, 0, RESPONSE_6),
-        (None, 1000, 5000, 0, RESPONSE_7),
+        ("p1", -100, 0, 50),
+        (None, 0, 0, 200),
+        ("p2", 0, -100, 30,),
+        (None, 0, 0, 0),
+        (None, 5000, 1000, 0),
+        (None, 1000, 5000, 0),
     ])
-    def test_generate_response(self, noChars, p1_score, p2_score, rem, response):
+    def test_generate_response(self, noChars, p1_score, p2_score, remining_moves):
         game = WumpusGame([NAME_USER_1, NAME_USER_2])
         self.maxDiff = None
         game_id = "1234-5678-9012-3456-7890"
         game.game_id = game_id
         game.player_1.score = p1_score
         game.player_2.score = p2_score
-        game.remaining_moves = rem
+        game.remaining_moves = remining_moves
         if (noChars == "p1"):
             game.player_1.characters = []
         elif (noChars == "p2"):
             game.player_2.characters = []
-        self.assertEqual(game.generate_response(), response)
+
+        if game.get_current_player_name() == '':
+            expected = {
+                "player_2": game.player_2.user_name,
+                "player_1": game.player_1.user_name,
+                "score_1": game.player_1.score,
+                "score_2": game.player_2.score,
+                "arrows_1": game.player_1.arrows,
+                "arrows_2": game.player_2.arrows,
+                "board": game.board,
+                "remaining_turns": game.remaining_moves,
+                "game_id": game.game_id,
+                "side": game.current_player.side,
+                "result": "DRAW" if p1_score == p2_score else {
+                    "WINNER": game.player_1.user_name if p2_score < p1_score else game.player_2.user_name,
+                    "LOSER": game.player_2.user_name if p2_score < p1_score else game.player_1.user_name
+                }
+            }
+        else:
+            expected = {
+                "player_2": game.player_2.user_name,
+                "player_1": game.player_1.user_name,
+                "score_1": game.player_1.score,
+                "score_2": game.player_2.score,
+                "arrows_1": game.player_1.arrows,
+                "arrows_2": game.player_2.arrows,
+                "board": game.board,
+                "remaining_turns": game.remaining_moves,
+                "game_id": game.game_id,
+                "side": game.current_player.side,
+            }
+        self.assertEqual(game.generate_response(), expected)
 
     @parameterized.expand([
         ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 16_100, 110_000, 4, "     "),

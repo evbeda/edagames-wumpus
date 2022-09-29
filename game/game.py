@@ -1,8 +1,8 @@
+from application.action import Action
+from application.initialize_chain_responsibility import initialize_chain_responsibility
 from constans.constans import (
     JOIN_ROW_BOARD,
     MAXIMUM_INVALID_MOVES,
-    MOVE,
-    SHOOT,
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
@@ -38,7 +38,7 @@ from constans.constants_messages import (
 import uuid
 from game.board import Board
 from game.player import Player
-from game.utils import posibles_positions, translate_position
+from game.utils import posibles_positions
 from exceptions.personal_exceptions import (
     invalidMoveException,
 )
@@ -147,16 +147,16 @@ class WumpusGame():
 
         return JOIN_ROW_BOARD.join(user_board)
 
-    def execute_action(self, action, from_row, from_col, direction):
-        to_row, to_col = translate_position(from_row, from_col, direction)
+    def execute_action(self, action: str, from_row: int, from_col: int, direction: str):
         try:
-            if action == MOVE:
-                valid_message = self._board.is_valid_move(from_row, from_col,
-                                                          to_row, to_col,
-                                                          self.current_player)
-            elif action == SHOOT:
-                valid_message = self._board.shoot_arrow(from_row, from_col, direction,
-                                                        self.current_player)
+            action: Action = initialize_chain_responsibility(action)
+            valid_message = action.execute(
+                from_row,
+                from_col,
+                direction,
+                self.current_player,
+                self._board
+            )
             self.current_player.invalid_moves_count = 0
             self.modify_score(valid_message)
         except invalidMoveException:

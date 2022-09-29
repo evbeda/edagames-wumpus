@@ -2,6 +2,7 @@ from copy import deepcopy
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
+from application.initialize_chain_responsibility import initialize_chain_responsibility
 from game.diamond import Diamond
 from game.board import Board
 from game.game import WumpusGame
@@ -195,17 +196,15 @@ class TestGame(unittest.TestCase):
         character = Character(game.player_1)
         game.player_1.characters.append(character)
         game._board._board[4][5].character = character
-        dict_move = {
-            "from_col": 5,
-            "from_row": 4,
-            "to_col": 5,
-            "to_row": 5,
-            "player": game.current_player
-        }
+        from_col = 5
+        from_row = 4
+        direction = SOUTH
+        player = game.current_player
+
         gold_before_move = character.gold
         diamonds_before_move = character.diamond
-
-        result = game._board.make_move(dict_move)
+        action = initialize_chain_responsibility(MOVE)
+        result = action.execute(from_row, from_col, direction, player, game._board)
 
         golds_after_move = character.gold
         diamonds_after_move = character.diamond

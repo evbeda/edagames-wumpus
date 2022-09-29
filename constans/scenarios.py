@@ -904,3 +904,49 @@ def board_kill_opp_player():
     KILL_OP_BOARD_1[16][16].character = character2_p2
     KILL_OP_BOARD_1[8][15].character = character3_p2
     return KILL_OP_BOARD_1
+
+
+# shoot to hole
+def board_shoot_hole_player_1():
+    SHOOT_H0LE_BOARD_1 = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+    player_1 = Player(PLAYER_1, NAME_USER_1)
+    character1 = Character(player_1)
+    character2 = Character(player_1)
+    character3 = Character(player_1)
+
+    player_1.characters.append(character1)
+    player_1.characters.append(character2)
+    player_1.characters.append(character3)
+
+    SHOOT_H0LE_BOARD_1[0][7].character = character1
+    SHOOT_H0LE_BOARD_1[7][10].character = character2
+    SHOOT_H0LE_BOARD_1[15][14].character = character3
+    SHOOT_H0LE_BOARD_1[6][10].has_hole = True
+    SHOOT_H0LE_BOARD_1[16][14].has_hole = True
+
+    return SHOOT_H0LE_BOARD_1
+
+
+# shoot to hole
+def board_shoot_hole_player_2():
+    SHOOT_H0LE_BOARD_2 = [
+        [Cell(i, j) for j in range(LARGE)] for i in range(LARGE)]
+
+    player_2 = Player(PLAYER_2, NAME_USER_2)
+    character1 = Character(player_2)
+    character2 = Character(player_2)
+    character3 = Character(player_2)
+
+    player_2.characters.append(character1)
+    player_2.characters.append(character2)
+    player_2.characters.append(character3)
+
+    SHOOT_H0LE_BOARD_2[0][16].character = character1
+    SHOOT_H0LE_BOARD_2[5][6].character = character2
+    SHOOT_H0LE_BOARD_2[13][2].character = character3
+    SHOOT_H0LE_BOARD_2[5][7].has_hole = True
+    SHOOT_H0LE_BOARD_2[13][1].has_hole = True
+
+    return SHOOT_H0LE_BOARD_2

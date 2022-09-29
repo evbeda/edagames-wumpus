@@ -9,7 +9,7 @@ from constans.constans import (
     SOUTH,
     WEST,
 )
-from constans.scenarios import board_friendly_fire_player_1, board_friendly_fire_player_2
+from constans.scenarios_shoot import board_friendly_fire_player_1, board_friendly_fire_player_2
 from application.utils import (
     is_a_player_character,
     is_frendly_fire,

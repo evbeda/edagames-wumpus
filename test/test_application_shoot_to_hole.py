@@ -13,7 +13,7 @@ from constans.constans import (
     WEST,
 )
 from constans.constants_scores import CORRECT_MOVE
-from constans.scenarios import (
+from constans.scenarios_shoot import (
     board_shoot_hole_player_1,
     board_shoot_hole_player_2,
 

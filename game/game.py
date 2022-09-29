@@ -160,8 +160,7 @@ class WumpusGame():
             self.current_player.invalid_moves_count = 0
             self.modify_score(valid_message)
         except invalidMoveException:
-            self.current_player.invalid_moves_count += 1
-            self.modify_score(INVALID_MOVE)
+            self.penalize_player()
 
     def penalize_player(self) -> None:
         self.current_player.penalize()
@@ -277,5 +276,10 @@ class WumpusGame():
         return (False, GAME_OVER_NOT_MET)
 
     def get_current_player_name(self) -> str:
-        if self.remaining_moves > 0:
+        if self.remaining_moves > 0 and self.game_is_active and self.all_player_have_characters():
             return self.current_player.user_name
+        else:
+            return ''
+
+    def all_player_have_characters(self):
+        return self.player_1.characters and self.player_2.characters

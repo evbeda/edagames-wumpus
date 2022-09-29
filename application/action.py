@@ -1,6 +1,8 @@
 from abc import abstractmethod
 
 from application.handler import Handler
+from game.board import Board
+from game.player import Player
 
 
 class Action(Handler):
@@ -15,5 +17,5 @@ class Action(Handler):
         return self._next_handler
 
     @abstractmethod
-    def execute(row, col, direction, current_player, board):
+    def execute(row: int, col: int, direction: str, current_player: Player, board: Board):
         pass

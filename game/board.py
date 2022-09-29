@@ -1,12 +1,8 @@
 from dataclasses import dataclass
 import random
 from constans.constans import (
-    EAST,
     FORBIDDEN_HOLE_CELLS,
     INITIAL_POSITIONS,
-    NORTH,
-    SOUTH,
-    WEST,
 )
 from constans.constants_game import (
     GOLD,
@@ -22,19 +18,6 @@ from game.diamond import Diamond
 from game.gold import Gold
 from game.utils import posibles_positions
 from constans.constans import PLAYER_1
-from constans.constants_scores import (
-    ARROW_MISS,
-    CORRECT_MOVE,
-    KILL,
-)
-from exceptions.personal_exceptions import (
-    friendlyFireException,
-    moveToYourOwnCharPositionException,
-    noArrowsAvailableException,
-    noPossibleMoveException,
-    notYourCharacterException,
-    shootOutOfBoundsException,
-)
 from game.player import Player
 
 
@@ -208,94 +191,6 @@ class Board():
             return ((destination_row - (row + 0.1)) ** 2 + (destination_col - col) ** 2) ** (0.5)
         return sorted(positions, key=sorted_key)
 
-    def shoot_arrow(
-        self,
-        row: int,
-        col: int,
-        direction: str,
-        current_player: Player,
-    ) -> str:
-        """
-        Takes a coordenate, a direction and a current player.
-        Returns the string with the result of the actions.
-        In case the shoot kills an enemy returns "KILL".
-        In case the shoot miss an opponent character returns "ARROW_MISS".
-        In case the shoot hit a hole returns "CORRECT_MOVE".
-        In case of an invalid move, raises an "invalidMoveException".
-        """
-        self.there_are_arrows_available(current_player)
-
-        target_row, target_col = self.target_position(row, col, direction)
-        target_cell = self._board[target_row][target_col]
-
-        self.is_not_frendly_fire(target_cell, current_player)
-
-        if (target_cell.character is not None and
-           target_cell.character.player.name != current_player.name):
-            result = self.kill_opp(target_row, target_col, current_player)
-
-        elif target_cell.has_hole:
-            result = self.shoot_hole(target_row, target_col, current_player)
-
-        elif target_cell.character is None:
-            result = self.shoot_miss(target_row, target_col, current_player)
-
-        return result
-
-    def there_are_arrows_available(
-        self,
-        current_player: Player,
-    ) -> None:
-        if current_player.arrows < 1:
-            raise noArrowsAvailableException()
-
-    def is_not_frendly_fire(
-        self,
-        target_cell: Cell,
-        current_player: Player,
-    ) -> None:
-        if (
-            target_cell.character is not None and
-            target_cell.character.player.name == current_player.name
-        ):
-            current_player.arrows -= 1
-            raise friendlyFireException()
-
-    def kill_opp(
-        self,
-        row: int,
-        col: int,
-        current_player: Player,
-    ) -> str:
-        current_player.arrows -= 1
-        cell = self._board[row][col]
-        character_to_kill = cell.character
-        character_to_kill.transfer_tresaure(cell)
-        cell.remove_character()
-        self.discover_cell(row, col, current_player)
-        return KILL
-
-    def shoot_miss(
-        self,
-        row: int,
-        col: int,
-        current_player: Player,
-    ) -> str:
-        # self.discover_cell(row, col, current_player)
-        current_player.arrows -= 1
-        self._board[row][col].arrow += 1
-        return ARROW_MISS
-
-    def shoot_hole(
-        self,
-        row: int,
-        col: int,
-        current_player: Player,
-    ) -> str:
-        self.discover_cell(row, col, current_player)
-        current_player.arrows -= 1
-        return CORRECT_MOVE
-
     def discover_cell(
         self,
         row: int,
@@ -307,91 +202,6 @@ class Board():
             cell.is_discover[0] = True
         else:
             cell.is_discover[1] = True
-
-    def target_position(
-        self,
-        row: int,
-        col: int,
-        direction: str,
-    ) -> "tuple[int, int]":
-        directions = {
-            EAST: (0, 1),
-            SOUTH: (1, 0),
-            WEST: (0, -1),
-            NORTH: (-1, 0)
-        }
-        target_row = row + directions[direction][0]
-        target_col = col + directions[direction][1]
-        if (target_row < 0 or target_row > LARGE - 1
-           or target_col < 0 or target_col > LARGE - 1):
-            raise shootOutOfBoundsException()
-        return (target_row, target_col)
-
-    def move_to_own_character_position(self, current_player, row_to, col_to):
-        ch = self._board[row_to][col_to].character
-        if ch and ch.player == current_player:
-            raise moveToYourOwnCharPositionException()
-
-    def is_a_player_character(self, row, col, current_player):
-        character = self._board[row][col].character
-        return character.player.name == current_player.name if character else False
-
-    def is_valid_move(
-        self,
-        from_row,
-        from_col,
-        to_row,
-        to_col,
-        current_player: Player
-    ):
-        coordinates = (to_row, to_col)
-        if not self.is_a_player_character(from_row, from_col, current_player):
-            raise notYourCharacterException()
-        if (coordinates not in posibles_positions(from_row, from_col)):
-            raise noPossibleMoveException()
-        self.move_to_own_character_position(current_player, to_row, to_col)
-        dictionary = {
-            "from_row": from_row,
-            "from_col": from_col,
-            "to_row": to_row,
-            "to_col": to_col,
-            "player": current_player,
-        }
-        return self.filter_move(dictionary)
-
-    def make_move(self, dictionary):
-        from_row = dictionary["from_row"]
-        from_col = dictionary["from_col"]
-        to_row = dictionary["to_row"]
-        to_col = dictionary["to_col"]
-        current_player = dictionary["player"]
-        new_cell: Cell = self._board[to_row][to_col]
-        old_cel = self._board[from_row][from_col]
-        character: Character = self._board[from_row][from_col].character
-        character.player.arrows += new_cell.arrow
-        new_cell.transfer_tresaure(character)
-        new_cell.arrow = 0
-        new_cell.character = character
-        old_cel.character = None
-        self.discover_cell(to_row, to_col, current_player)
-        return CORRECT_MOVE
-
-    def filter_move(self, dictionary):
-        cell_to = self._board[dictionary["to_row"]][dictionary["to_col"]]
-        current_player = dictionary["player"]
-        character_cel = cell_to.character
-
-        if cell_to.has_hole or self.has_opponent_player(character_cel, current_player):
-            row, col = dictionary["from_row"], dictionary["from_col"]
-            cell = self._board[row][col]
-            char = cell.character
-            self.discover_cell(dictionary["to_row"], dictionary["to_col"], current_player)
-            char.transfer_tresaure(cell)
-            cell.remove_character()
-
-            return CORRECT_MOVE
-        else:
-            return self.make_move(dictionary)
 
     def item_quantity(self, item):
         item_quantity = 0

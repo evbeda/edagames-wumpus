@@ -1,6 +1,6 @@
 from application.action import Action
-from constans.constants_scores import CORRECT_MOVE
 from application.utils import target_position_within_bounds
+from constans.constants_scores import CORRECT_MOVE
 from exceptions.personal_exceptions import invalidMoveException
 from game.board import Board
 from game.cell import Cell

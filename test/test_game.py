@@ -332,7 +332,7 @@ class TestGame(unittest.TestCase):
         ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 16_100, 110_000, 4, "     "),
         ('shoot covered empty cell', 5, 1000, 8, 8, EAST, 8, 9, 1_100, 110_000, 4, "##F##"),
         ('shoot hole', 5, 1000, 8, 8, NORTH, 7, 8, 1100, 110_000, 4, "  O  "),
-        ('shoot own char', 5, 1000, 8, 8, SOUTH, 9, 8, 900, 110_000, 4, "  B  "),
+        ('shoot own char', 5, 1000, 8, 8, SOUTH, 9, 8, 0, 110_000, 4, "  B  "),
         ('shoot covered opponent', 4, 1000, 4, 4, WEST, 4, 3, 16_100, 110_000, 3, "     "),
         ('shoot discovered empty cell', 3, 1000, 4, 4, EAST, 4, 5, 1100, 110_000, 2, "  F  "),
         ('shoot covered opponent with treasures', 2, 1000, 4, 4, NORTH, 3, 4, 16_100, 30_000, 1, " 2 D "),
@@ -377,7 +377,7 @@ class TestGame(unittest.TestCase):
         ('cell with opponent char',
          4, 4, NORTH, 1000, 3, 4, 11_100, 3, EMPTY_CELL, '  P  ', 5),
         ('cell with own char',
-         4, 4, SOUTH, 1000, 5, 4, 10_900, 4, '  B  ', '  B  ', 5),
+         4, 4, SOUTH, 1000, 5, 4, 10_000, 4, '  B  ', '  B  ', 5),
 
         ('discovered cell with hole carrying treasure',
          8, 8, WEST, 1000, 8, 7, 1_100, 3, ' 1   ', '  O  ', 5),
@@ -487,11 +487,11 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.is_game_over(), message)
 
     @parameterized.expand([
-        ('try to move outside the board to west', 1, MOVE, WEST, 1, -100),
-        ('try to move outside the board north', 1, MOVE, NORTH, 1, -100),
-        ('try to shoot outside the board west', 1, SHOOT, WEST, 1, -100),
-        ('try to shoot outside the board north', 1, SHOOT, NORTH, 1, -100),
-        ('try to shoot without arrows', 0, SHOOT, EAST, 1, -100),
+        ('try to move outside the board to west', 1, MOVE, WEST, 1, -1000),
+        ('try to move outside the board north', 1, MOVE, NORTH, 1, -1000),
+        ('try to shoot outside the board west', 1, SHOOT, WEST, 1, -1000),
+        ('try to shoot outside the board north', 1, SHOOT, NORTH, 1, -1000),
+        ('try to shoot without arrows', 0, SHOOT, EAST, 1, -1000),
     ])
     def test_execute_action_invalid(self, name,
                                     initial_arrows, action, direction,
@@ -512,6 +512,16 @@ class TestGame(unittest.TestCase):
 
         self.assertEqual(current_invalid_moves, expected_invalid_moves)
         self.assertEqual(current_score, expected_score)
+
+    def test_get_current_player_name_else_remaining_moves(self):
+        game = WumpusGame([NAME_USER_1, NAME_USER_2])
+        game.remaining_moves = 0
+        self.assertEqual(game.get_current_player_name(), '')
+
+    def test_get_current_player_name_game_is_active(self):
+        game = WumpusGame([NAME_USER_1, NAME_USER_2])
+        game.game_is_active = False
+        self.assertEqual(game.get_current_player_name(), '')
 
 
 if __name__ == '__main__':

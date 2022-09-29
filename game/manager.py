@@ -76,7 +76,11 @@ class Manager():
         del self.games[game_id]
 
     def check_game_over(self, current_game):
-        if current_game.remaining_moves <= 0 or not current_game.game_is_active:
+        if (
+            current_game.remaining_moves <= 0 or
+            not current_game.game_is_active or
+            not current_game.all_player_have_characters()
+        ):
             self.delete_game_from_manager(current_game.game_id)
             return True
         else:
@@ -104,7 +108,7 @@ class Manager():
             play_data = game.game_over_final_message()
         else:
             play_data = game.generate_response()
-        play_data.update(self.action_data)
+            play_data.update(self.action_data)
         play_data[STATE] = state
         return GameState(
             game.game_id,
@@ -142,7 +146,6 @@ class Manager():
             raise InvalidData()
 
     def process_request(self, game_id: str, api_data: dict) -> GameState:
-
         state = INVALID_STATE
         try:
             current_game = self.find_game(game_id)

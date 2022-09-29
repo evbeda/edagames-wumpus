@@ -17,7 +17,7 @@ class TestCharacter(unittest.TestCase):
         char = Character(Player(player_name, name_user))
         self.assertEqual(char.gold, 0)
         self.assertEqual(char.gold, 0)
-        self.assertEqual(char.player.name, player_name)
+        self.assertEqual(char.player.side, player_name)
 
 
 if __name__ == "__main__":

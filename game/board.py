@@ -198,7 +198,7 @@ class Board():
         current_player: Player,
     ) -> None:
         cell = self._board[row][col]
-        if current_player.name == PLAYER_1:
+        if current_player.side == PLAYER_1:
             cell.is_discover[0] = True
         else:
             cell.is_discover[1] = True
@@ -211,4 +211,4 @@ class Board():
         return item_quantity
 
     def has_opponent_player(self, character: Character, current_player: Player) -> bool:
-        return character.player.name != current_player.name if character else False
+        return character.player.side != current_player.side if character else False

@@ -29,7 +29,7 @@ class Cell(TreasureHolder):
 
     @property
     def has_player(self):
-        return self.character.player.name if (
+        return self.character.player.side if (
             self.character is not None
             ) else None
 
@@ -54,7 +54,7 @@ class Cell(TreasureHolder):
 
     def _middle_char(self, representation: list):
         if self.character:
-            representation[2] = self.character.player.name
+            representation[2] = self.character.player.side
 
         elif self.has_hole:
             representation[2] = HOLE

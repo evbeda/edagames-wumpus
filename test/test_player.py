@@ -37,7 +37,7 @@ class TestPlayer(unittest.TestCase):
         self.player = Player(name, NAME_USER_1)
         self.assertEqual(self.player.arrows, expected_arrows)
         self.assertEqual(self.player.score, expected_score)
-        self.assertEqual(self.player.name, name)
+        self.assertEqual(self.player.side, name)
 
     @parameterized.expand([
         (PLAYER_1, 0, -10000, -10000),

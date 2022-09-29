@@ -9,7 +9,7 @@ def is_a_player_character(row, col, current_player: Player, board: Board) -> boo
     cell = board.get_cell(row, col)
     character: Character = cell.character
     if character:
-        return character.player.name == current_player.name
+        return character.player.side == current_player.side
     return False
 
 
@@ -17,7 +17,7 @@ def is_frendly_fire(row, col, direction, current_player: Player, board: Board) -
     target_row, target_col = target_position_within_bounds(row, col, direction)
     target_cell = board.get_cell(target_row, target_col)
     if target_cell.character:
-        return target_cell.character.player.name == current_player.name
+        return target_cell.character.player.side == current_player.side
     return False
 
 

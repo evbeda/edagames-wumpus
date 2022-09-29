@@ -83,8 +83,8 @@ class TestGame(unittest.TestCase):
         self.assertIsNotNone(game._board)
         self.assertIsNotNone(game._board._board[0][0])
         self.assertIsInstance(game._board._board[0][0], Cell)
-        self.assertEqual(game.player_1.name, PLAYER_1)
-        self.assertEqual(game.player_2.name, PLAYER_2)
+        self.assertEqual(game.player_1.side, PLAYER_1)
+        self.assertEqual(game.player_2.side, PLAYER_2)
         self.assertTrue(game)
 
     @parameterized.expand([
@@ -439,7 +439,7 @@ class TestGame(unittest.TestCase):
         actual_player = game.current_player
         actual_remaining_moves = game.remaining_moves
 
-        self.assertEqual(actual_player.name, expected_player)
+        self.assertEqual(actual_player.side, expected_player)
         self.assertEqual(actual_remaining_moves, expected_remainig_moves)
 
     def test_when_a_penalize_is_called_invalid_moves_count_increase(self):

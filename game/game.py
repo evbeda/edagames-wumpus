@@ -81,7 +81,7 @@ class WumpusGame():
             player_name = self._board._board[p_row][p_col].has_player
             if (
                 player_name is not None
-                and player_name != self.current_player.name
+                and player_name != self.current_player.side
             ):
                 parsed_cell[-1] = "+"
 
@@ -129,7 +129,7 @@ class WumpusGame():
 
     def _parse_cell(self, row: int, col: int) -> str:
         parsed_cell = self._board._board[row][col].to_str(
-            self.current_player.name
+            self.current_player.side
         )
         if '#' not in parsed_cell:
             parsed_cell = self.put_danger_signal(parsed_cell, row, col)
@@ -179,7 +179,7 @@ class WumpusGame():
             "game_active": self.game_is_active,
             "remaining_turns": self.remaining_moves,
             "game_id": self.game_id,
-            "side": self.current_player.name,
+            "side": self.current_player.side,
         }
 
     def generate_response(self):
@@ -198,13 +198,13 @@ class WumpusGame():
 
     def get_winner_side(self, game_over_message):
         winner_dictionary = {
-            GAME_OVER_MESSAGE_1: self.player_2.name,
-            GAME_OVER_MESSAGE_2: self.player_1.name,
+            GAME_OVER_MESSAGE_1: self.player_2.side,
+            GAME_OVER_MESSAGE_2: self.player_1.side,
             GAME_OVER_MESSAGE_3: "DRAW",
-            GAME_OVER_MESSAGE_4: self.player_2.name,
-            GAME_OVER_MESSAGE_5: self.player_1.name,
-            GAME_OVER_MESSAGE_6: self.player_1.name,
-            GAME_OVER_MESSAGE_7: self.player_2.name,
+            GAME_OVER_MESSAGE_4: self.player_2.side,
+            GAME_OVER_MESSAGE_5: self.player_1.side,
+            GAME_OVER_MESSAGE_6: self.player_1.side,
+            GAME_OVER_MESSAGE_7: self.player_2.side,
         }
         return winner_dictionary[game_over_message]
 

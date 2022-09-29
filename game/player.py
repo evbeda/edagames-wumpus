@@ -11,9 +11,9 @@ from game.character import Character
 
 class Player():
 
-    def __init__(self, name, user_name):
+    def __init__(self, side, user_name):
         self.user_name = user_name
-        self.name = name
+        self.side = side
         self._score = INITIAL_SCORE
         self.arrows = INITIAL_ARROWS
         self.characters = []

@@ -117,8 +117,8 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(invalid_moves_count, expected_count)
 
     @parameterized.expand([
-        (MOVE, 0, 0, EAST, 100, 0),
-        (MOVE, 16, 0, NORTH, 100, 0),
+        (MOVE, 0, 0, EAST, 1000, 0),
+        (MOVE, 16, 0, NORTH, 1000, 0),
         (SHOOT, 8, 0, EAST, 100, 0)
     ])
     def test_valid_move_score_player_1(

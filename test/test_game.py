@@ -138,7 +138,6 @@ class TestGame(unittest.TestCase):
         ("TIMEOUT", SCORES[TIMEOUT]),
     ])
     def test_modify_score(self, event, expected):
-
         game = patched_game()
         game.modify_score(event)
         self.assertEqual(game.current_player.score, expected)
@@ -340,15 +339,15 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.generate_response(), expected)
 
     @parameterized.expand([
-        ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 16_100, 110_000, 4, "     "),
+        ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 17_000, 110_000, 4, "     "),
         ('shoot covered empty cell', 5, 1000, 8, 8, EAST, 8, 9, 1_100, 110_000, 4, "##F##"),
-        ('shoot hole', 5, 1000, 8, 8, NORTH, 7, 8, 1100, 110_000, 4, "  O  "),
+        ('shoot hole', 5, 1000, 8, 8, NORTH, 7, 8, 2000, 110_000, 4, "  O  "),
         ('shoot own char', 5, 1000, 8, 8, SOUTH, 9, 8, 0, 110_000, 4, "  B  "),
-        ('shoot covered opponent', 4, 1000, 4, 4, WEST, 4, 3, 16_100, 110_000, 3, "     "),
+        ('shoot covered opponent', 4, 1000, 4, 4, WEST, 4, 3, 17_000, 110_000, 3, "     "),
         ('shoot discovered empty cell', 3, 1000, 4, 4, EAST, 4, 5, 1100, 110_000, 2, "  F  "),
-        ('shoot covered opponent with treasures', 2, 1000, 4, 4, NORTH, 3, 4, 16_100, 30_000, 1, " 2 D "),
+        ('shoot covered opponent with treasures', 2, 1000, 4, 4, NORTH, 3, 4, 17_000, 30_000, 1, " 2 D "),
         ('shoot covered cell with treasures', 1, 1000, 4, 4, SOUTH, 5, 4, 1_100, 110_000, 0, "##F##"),
-        ('shoot discovered opponent with treasures', 5, 1000, 0, 0, EAST, 0, 1, 16_100, 80_000, 4, " 3   "),
+        ('shoot discovered opponent with treasures', 5, 1000, 0, 0, EAST, 0, 1, 17_000, 80_000, 4, " 3   "),
         ('shoot discovered cell with treasures', 5, 1000, 0, 0, SOUTH, 1, 0, 1_100, 110_000, 4, " 1F  ")
     ])
     def test_execute_action_shoot(self, name,
@@ -382,22 +381,22 @@ class TestGame(unittest.TestCase):
 
     @parameterized.expand([
         ('cell with hole',
-         4, 4, WEST, 1000, 4, 3, 11_100, 3, EMPTY_CELL, '  O  ', 5),
+         4, 4, WEST, 1000, 4, 3, 12_000, 3, EMPTY_CELL, '  O  ', 5),
         ('cell empty',
-         4, 4, EAST, 1000, 4, 5, 11_100, 4, EMPTY_CELL, '  B  ', 5),
+         4, 4, EAST, 1000, 4, 5, 12_000, 4, EMPTY_CELL, '  B  ', 5),
         ('cell with opponent char',
-         4, 4, NORTH, 1000, 3, 4, 11_100, 3, EMPTY_CELL, '  P  ', 5),
+         4, 4, NORTH, 1000, 3, 4, 12_000, 3, EMPTY_CELL, '  P  ', 5),
         ('cell with own char',
          4, 4, SOUTH, 1000, 5, 4, 10_000, 4, '  B  ', '  B  ', 5),
 
         ('discovered cell with hole carrying treasure',
-         8, 8, WEST, 1000, 8, 7, 1_100, 3, ' 1   ', '  O  ', 5),
+         8, 8, WEST, 1000, 8, 7, 2_000, 3, ' 1   ', '  O  ', 5),
         ('covered cell with treasures carrying treasure',
-         8, 8, EAST, 1000, 8, 9, 91_100, 4, '     ', ' 3BD ', 5),
+         8, 8, EAST, 1000, 8, 9, 92_000, 4, '     ', ' 3BD ', 5),
         ('covered cell with arrow',
-         8, 8, NORTH, 1000, 7, 8, 11_100, 4, '     ', ' 1B  ', 6),
+         8, 8, NORTH, 1000, 7, 8, 12_000, 4, '     ', ' 1B  ', 6),
         ('covered cell with opponent charatcer carrying treasures',
-         8, 8, SOUTH, 1000, 9, 8, 1100, 3, ' 1   ', '  P  ', 5),
+         8, 8, SOUTH, 1000, 9, 8, 2000, 3, ' 1   ', '  P  ', 5),
 
     ])
     def test_execute_action_move(self, name,

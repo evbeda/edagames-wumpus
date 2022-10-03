@@ -1,4 +1,4 @@
-from constants.scenarios import SCENARIO_STR_PLAYER_1
+from constants.scenarios import scenario_str_player_1
 from constants.constants import (
     INITIAL_ARROWS,
     NAME_USER_1,
@@ -30,7 +30,7 @@ RESPONSE_2 = {
     "score_2": 0,
     "arrows_1": INITIAL_ARROWS,
     "arrows_2": INITIAL_ARROWS,
-    "board": SCENARIO_STR_PLAYER_1,
+    "board": scenario_str_player_1(),
     "remaining_turns": 200,
     "game_id": "1234-5678-9012-3456-7890",
     "side": "L",  # Will be "L" or "R"

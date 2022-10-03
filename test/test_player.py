@@ -2,9 +2,9 @@ from copy import deepcopy
 import unittest
 from parameterized import parameterized
 from constants.scenarios import (
-    TEST_PLAYERS_CHARACTER_0,
-    TEST_PLAYERS_CHARACTER_1,
-    TEST_PLAYERS_CHARACTER_2,
+    test_players_character_0,
+    test_players_character_1,
+    test_players_character_2,
 )
 from game.player import Player
 from constants.constants import (
@@ -43,8 +43,10 @@ class TestPlayer(unittest.TestCase):
         (PLAYER_1, 0, -10000, -10000),
         (PLAYER_2, 5000, 10000, 15000),
     ])
-    def test_update_score(self, player_name,
-                          actual_score, score_mod, expected_result):
+    def test_update_score(
+        self, player_name,
+        actual_score, score_mod, expected_result
+    ):
         self.player = Player(player_name, NAME_USER_1)
         self.player.score = actual_score
         self.player.update_score(score_mod)
@@ -54,8 +56,10 @@ class TestPlayer(unittest.TestCase):
         (PLAYER_1, 4, -1, 3),
         (PLAYER_2, 0, 1, 1),
     ])
-    def test_update_arrows(self, player_name,
-                           actual_arrows, arrows_mod, expected_result):
+    def test_update_arrows(
+        self, player_name,
+        actual_arrows, arrows_mod, expected_result
+    ):
         self.player = Player(player_name, NAME_USER_1)
         self.player.arrows = actual_arrows
         self.player.update_arrows(arrows_mod)
@@ -144,9 +148,9 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(invalid_moves_count, expected_count)
 
     @parameterized.expand([
-        (TEST_PLAYERS_CHARACTER_0,),
-        (TEST_PLAYERS_CHARACTER_1,),
-        (TEST_PLAYERS_CHARACTER_2,),
+        (test_players_character_0(),),
+        (test_players_character_1(),),
+        (test_players_character_2(),),
     ])
     def test_drop_caracters_treseaures(self, player: Player):
         player = deepcopy(player)

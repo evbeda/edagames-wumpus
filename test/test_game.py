@@ -48,12 +48,12 @@ from constants.constants import (
     GAME_OVER_NOT_MET,
 )
 from constants.scenarios import (
-    BOARD_FOR_MOVE_AND_MODIFY_SCORE,
-    DANGER_SIGNAL_SCENARIO,
-    TEST_PLAYERS_CHARACTER_0,
-    TEST_PLAYERS_CHARACTER_1,
-    TEST_PLAYERS_CHARACTER_2,
-    SCENARIO_STR_PLAYER_1,
+    board_for_move_and_modify_score,
+    danger_signal_scenario,
+    test_players_character_0,
+    test_players_character_1,
+    test_players_character_2,
+    scenario_str_player_1,
     generate_board_for_move_action_test,
     generate_board_for_shoot_action_test,
 )
@@ -140,27 +140,28 @@ class TestGame(unittest.TestCase):
         game.modify_score(event)
         self.assertEqual(game.current_player.score, expected)
 
-    @parameterized.expand([(PLAYER_1, 4, 3, EMPTY_CELL, '~    ', ),
-                           (PLAYER_1, 4, 5, EMPTY_CELL, '~    ', ),
-                           (PLAYER_1, 5, 4, EMPTY_CELL, '~    ', ),
-                           (PLAYER_1, 9, 9, EMPTY_CELL, EMPTY_CELL, ),
-                           (PLAYER_1, 2, 2, EMPTY_CELL, EMPTY_CELL, ),
-                           (PLAYER_1, 2, 3, EMPTY_CELL, '    +', ),
-                           (PLAYER_1, 2, 5, EMPTY_CELL, '    +', ),
-                           (PLAYER_1, 1, 4, EMPTY_CELL, '    +', ),
-                           (PLAYER_1, 3, 4, EMPTY_CELL, '~   +', ),
-                           (PLAYER_1, 2, 4, EMPTY_CELL, EMPTY_CELL, ),
-                           (PLAYER_2, 7, 0, EMPTY_CELL, EMPTY_CELL, ),
-                           (PLAYER_2, 7, 1, EMPTY_CELL, '    +', ),
-                           (PLAYER_2, 7, 3, EMPTY_CELL, '    +', ),
-                           (PLAYER_2, 6, 2, EMPTY_CELL, '    +', ),
-                           (PLAYER_2, 8, 2, EMPTY_CELL, '    +', ),
-                           ])
+    @parameterized.expand([
+        (PLAYER_1, 4, 3, EMPTY_CELL, '~    ', ),
+        (PLAYER_1, 4, 5, EMPTY_CELL, '~    ', ),
+        (PLAYER_1, 5, 4, EMPTY_CELL, '~    ', ),
+        (PLAYER_1, 9, 9, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_1, 2, 2, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_1, 2, 3, EMPTY_CELL, '    +', ),
+        (PLAYER_1, 2, 5, EMPTY_CELL, '    +', ),
+        (PLAYER_1, 1, 4, EMPTY_CELL, '    +', ),
+        (PLAYER_1, 3, 4, EMPTY_CELL, '~   +', ),
+        (PLAYER_1, 2, 4, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_2, 7, 0, EMPTY_CELL, EMPTY_CELL, ),
+        (PLAYER_2, 7, 1, EMPTY_CELL, '    +', ),
+        (PLAYER_2, 7, 3, EMPTY_CELL, '    +', ),
+        (PLAYER_2, 6, 2, EMPTY_CELL, '    +', ),
+        (PLAYER_2, 8, 2, EMPTY_CELL, '    +', ),
+    ])
     def test_danger_signals(self, current_player, row, col,
                             parsed_cell, expected):
 
         game = patched_game()
-        game._board._board = deepcopy(DANGER_SIGNAL_SCENARIO)
+        game._board._board = deepcopy(danger_signal_scenario())
         game._board._board[2][2].character = Character(game.player_1)
         game._board._board[2][3].character = Character(game.player_1)
         game._board._board[2][4].character = Character(game.player_2)
@@ -182,9 +183,7 @@ class TestGame(unittest.TestCase):
 
     def test_make_move_and_modify_score(self):
         game = patched_game()
-        game._board._board = BOARD_FOR_MOVE_AND_MODIFY_SCORE
-
-        character = Character(game.player_1)
+        game._board._board, character = board_for_move_and_modify_score()
         game.player_1.characters.append(character)
         game._board._board[4][5].character = character
         from_col = 5
@@ -218,7 +217,7 @@ class TestGame(unittest.TestCase):
             "score_2": 0,
             "arrows_1": INITIAL_ARROWS,
             "arrows_2": INITIAL_ARROWS,
-            "board": SCENARIO_STR_PLAYER_1,
+            "board": scenario_str_player_1(),
             "remaining_turns": 200,
             "game_id": game_id,
             "side": PLAYER_1,
@@ -261,12 +260,12 @@ class TestGame(unittest.TestCase):
         self.assertEqual(result, expected)
 
     @parameterized.expand([
-        (TEST_PLAYERS_CHARACTER_0, 5, INVALID_MOVES_SCORE, False),
-        (TEST_PLAYERS_CHARACTER_0, 4, 80_000, True),
-        (TEST_PLAYERS_CHARACTER_1, 5, INVALID_MOVES_SCORE, False),
-        (TEST_PLAYERS_CHARACTER_1, 2, 130_000, True),
-        (TEST_PLAYERS_CHARACTER_2, 5, INVALID_MOVES_SCORE, False),
-        (TEST_PLAYERS_CHARACTER_2, 2, 1_000, True),
+        (test_players_character_0(), 5, INVALID_MOVES_SCORE, False),
+        (test_players_character_0(), 4, 80_000, True),
+        (test_players_character_1(), 5, INVALID_MOVES_SCORE, False),
+        (test_players_character_1(), 2, 130_000, True),
+        (test_players_character_2(), 5, INVALID_MOVES_SCORE, False),
+        (test_players_character_2(), 2, 1_000, True),
     ])
     def test_penalization_after_invalid_moves(
         self, current_player: Player, invalid_moves: int,
@@ -348,12 +347,14 @@ class TestGame(unittest.TestCase):
         ('shoot discovered opponent with treasures', 5, 1000, 0, 0, EAST, 0, 1, 17_000, 80_000, 4, " 3   "),
         ('shoot discovered cell with treasures', 5, 1000, 0, 0, SOUTH, 1, 0, 2000, 110_000, 4, " 1F  ")
     ])
-    def test_execute_action_shoot(self, name,
-                                  initial_arrows, initial_score,
-                                  from_row, from_col, direction,
-                                  destination_row, destination_col,
-                                  expected_own_score, expected_opponent_score,
-                                  expected_arrows, expected_destination_cell):
+    def test_execute_action_shoot(
+        self, name,
+        initial_arrows, initial_score,
+        from_row, from_col, direction,
+        destination_row, destination_col,
+        expected_own_score, expected_opponent_score,
+        expected_arrows, expected_destination_cell
+    ):
         game = patched_game()
 
         board, shooter_player, shotted_player = generate_board_for_shoot_action_test()
@@ -378,31 +379,40 @@ class TestGame(unittest.TestCase):
         self.assertEqual(destination_cell.to_str(PLAYER_1), expected_destination_cell)
 
     @parameterized.expand([
-        ('cell with hole',
-         4, 4, WEST, 1000, 4, 3, 12_000, 3, EMPTY_CELL, '  O  ', 5),
-        ('cell empty',
-         4, 4, EAST, 1000, 4, 5, 12_000, 4, EMPTY_CELL, '  L  ', 5),
-        ('cell with opponent char',
-         4, 4, NORTH, 1000, 3, 4, 12_000, 3, EMPTY_CELL, '  R  ', 5),
-        ('cell with own char',
-         4, 4, SOUTH, 1000, 5, 4, 10_000, 4, '  L  ', '  L  ', 5),
-
-        ('discovered cell with hole carrying treasure',
-         8, 8, WEST, 1000, 8, 7, 2_000, 3, ' 1   ', '  O  ', 5),
-        ('covered cell with treasures carrying treasure',
-         8, 8, EAST, 1000, 8, 9, 92_000, 4, '     ', ' 3LD ', 5),
-        ('covered cell with arrow',
-         8, 8, NORTH, 1000, 7, 8, 12_000, 4, '     ', ' 1L  ', 6),
-        ('covered cell with opponent charatcer carrying treasures',
-         8, 8, SOUTH, 1000, 9, 8, 2000, 3, ' 1   ', '  R  ', 5),
+        (
+            'cell with hole',
+            4, 4, WEST, 1000, 4, 3, 12_000, 3, EMPTY_CELL, '  O  ', 5),
+        (
+            'cell empty',
+            4, 4, EAST, 1000, 4, 5, 12_000, 4, EMPTY_CELL, '  L  ', 5),
+        (
+            'cell with opponent char',
+            4, 4, NORTH, 1000, 3, 4, 12_000, 3, EMPTY_CELL, '  R  ', 5),
+        (
+            'cell with own char',
+            4, 4, SOUTH, 1000, 5, 4, 10_000, 4, '  L  ', '  L  ', 5),
+        (
+            'discovered cell with hole carrying treasure',
+            8, 8, WEST, 1000, 8, 7, 2_000, 3, ' 1   ', '  O  ', 5),
+        (
+            'covered cell with treasures carrying treasure',
+            8, 8, EAST, 1000, 8, 9, 92_000, 4, '     ', ' 3LD ', 5),
+        (
+            'covered cell with arrow',
+            8, 8, NORTH, 1000, 7, 8, 12_000, 4, '     ', ' 1L  ', 6),
+        (
+            'covered cell with opponent charatcer carrying treasures',
+            8, 8, SOUTH, 1000, 9, 8, 2000, 3, ' 1   ', '  R  ', 5),
 
     ])
-    def test_execute_action_move(self, name,
-                                 from_row, from_col, direction, initial_socre,
-                                 destination_row, destination_col,
-                                 expected_score, expected_remaining_characters,
-                                 expected_initial_cell, expected_destination_cell,
-                                 expected_arrows):
+    def test_execute_action_move(
+        self, name,
+        from_row, from_col, direction, initial_socre,
+        destination_row, destination_col,
+        expected_score, expected_remaining_characters,
+        expected_initial_cell, expected_destination_cell,
+        expected_arrows
+    ):
         game = patched_game()
         board, player_1, player_2 = generate_board_for_move_action_test()
         game.player_1 = player_1
@@ -431,8 +441,10 @@ class TestGame(unittest.TestCase):
         (PLAYER_2, 10, PLAYER_1, 9),
         (PLAYER_2, 15, PLAYER_1, 14),
     ])
-    def test_next_turn(self, initial_player, initial_remaining_moves,
-                       expected_player, expected_remainig_moves):
+    def test_next_turn(
+        self, initial_player, initial_remaining_moves,
+        expected_player, expected_remainig_moves
+    ):
 
         game = patched_game()
 

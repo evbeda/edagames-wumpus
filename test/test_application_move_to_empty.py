@@ -1,8 +1,8 @@
 from application.move_to_empty import MoveToEmpty
 from application.move import Move
 from application.utils import target_position_within_bounds
-from constans.constans import EAST, NORTH
-from constans.scenarios import generate_board_for_move_action_test
+from constants.constants import EAST, NORTH
+from constants.scenarios import generate_board_for_move_action_test
 from game.board import Board
 from game.cell import Cell
 from game.character import Character

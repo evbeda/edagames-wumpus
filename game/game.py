@@ -1,29 +1,21 @@
 from application.action import Action
 from application.initialize_chain_responsibility import initialize_chain_responsibility
-from constans.constans import (
+from constants.constants import (
     JOIN_ROW_BOARD,
     MAXIMUM_INVALID_MOVES,
     PLAYER_1,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
     PLAYER_2,
-)
-from constans.constants_game import (
+    SCORES,
+    KILL,
+    CORRECT_MOVE,
+    GET_ITEMS,
+    TIMEOUT_SC,
+    DEATH,
     DIAMOND,
     GOLD,
     LARGE,
-)
-from constans.constants_scores import (
-    SCORES,
-    KILL,
-    INVALID_MOVE,
-    CORRECT_MOVE,
-    ARROW_MISS,
-    GET_ITEMS,
-    TIMEOUT,
-    DEATH,
-)
-from constans.constants_messages import (
     GAME_OVER_MESSAGE_1,
     GAME_OVER_MESSAGE_2,
     GAME_OVER_MESSAGE_3,
@@ -33,8 +25,6 @@ from constans.constants_messages import (
     GAME_OVER_MESSAGE_7,
     GAME_OVER_NOT_MET,
 )
-
-
 import uuid
 from game.board import Board
 from game.player import Player
@@ -103,7 +93,8 @@ class WumpusGame():
         where the character is getting into.
         For KILL, Payload is not needed, BUT, remember to call modify_score()
         with a DEATH event later, for the killed character.
-        For CORRECT_MOVE or INVALID_MOVE or TIMEOUT, no payload is needed.
+        For CORRECT_MOVE or INVALID_MOVE or TIMEOUT, or ARROW_MISS
+        no payload is needed.
         '''
         if event == GET_ITEMS:
             cell = payload["cell"]
@@ -118,14 +109,8 @@ class WumpusGame():
             char.player.update_score(score)
         elif event == KILL:
             self.current_player.update_score(SCORES[CORRECT_MOVE] + SCORES[KILL])
-        elif event == CORRECT_MOVE:
-            self.current_player.update_score(SCORES[CORRECT_MOVE])
-        elif event == INVALID_MOVE:
-            self.current_player.update_score(SCORES[INVALID_MOVE])
-        elif event == TIMEOUT:
-            self.current_player.update_score(SCORES[TIMEOUT])
-        elif event == ARROW_MISS:
-            self.current_player.update_score(SCORES[ARROW_MISS])
+        else:
+            self.current_player.update_score(SCORES[event])
 
     def _parse_cell(self, row: int, col: int) -> str:
         parsed_cell = self._board._board[row][col].to_str(
@@ -164,7 +149,7 @@ class WumpusGame():
 
     def penalize_player(self) -> None:
         self.current_player.penalize()
-        self.modify_score(TIMEOUT)
+        self.modify_score(TIMEOUT_SC)
         self.check_the_limit_of_invalid()
 
     def generate_data(self) -> dict:

@@ -1,5 +1,5 @@
 from application.action import Action
-from constans.constants_scores import ARROW_MISS
+from constants.constants import ARROW_MISS
 from application.utils import target_position_within_bounds
 from exceptions.personal_exceptions import invalidMoveException
 from game.board import Board

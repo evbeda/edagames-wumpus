@@ -1,5 +1,5 @@
 from game.game import WumpusGame
-from constans.constans import (
+from constants.constants import (
     ABORT,
     ACTION,
     COL,

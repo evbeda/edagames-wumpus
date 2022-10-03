@@ -1,5 +1,5 @@
 from application.action import Action
-from constans.constants_scores import KILL
+from constants.constants import KILL
 from application.utils import target_position_within_bounds
 from exceptions.personal_exceptions import invalidMoveException
 from game.board import Board

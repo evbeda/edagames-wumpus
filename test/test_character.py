@@ -1,6 +1,6 @@
 import unittest
 from parameterized import parameterized
-from constans.constans import PLAYER_1, PLAYER_2, NAME_USER_1, NAME_USER_2
+from constants.constants import PLAYER_1, PLAYER_2, NAME_USER_1, NAME_USER_2
 from game.character import Character
 from game.player import Player
 

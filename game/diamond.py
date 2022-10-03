@@ -1,4 +1,4 @@
-from constans.constants_scores import SCORES
+from constants.constants import SCORES
 from game.treasure import Treasure
 
 

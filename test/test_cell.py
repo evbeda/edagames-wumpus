@@ -1,5 +1,5 @@
 import unittest
-from constans.scenarios import (
+from constants.scenarios import (
     TESTED_CELL_1, TESTED_CELL_10, TESTED_CELL_2,
     TESTED_CELL_3, TESTED_CELL_4, TESTED_CELL_5,
     TESTED_CELL_6, TESTED_CELL_7, TESTED_CELL_8, TESTED_CELL_9
@@ -11,7 +11,7 @@ from parameterized import parameterized
 from game.cell import Cell
 from game.character import Character
 from game.player import Player
-from constans.constans import EMPTY_CELL, HIDDEN_CELL, PLAYER_1, PLAYER_2, NAME_USER_1, NAME_USER_2
+from constants.constants import EMPTY_CELL, HIDDEN_CELL, PLAYER_1, PLAYER_2, NAME_USER_1, NAME_USER_2
 
 
 class TestCell(unittest.TestCase):

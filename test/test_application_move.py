@@ -1,7 +1,7 @@
 from application.move import Move
 from application.move_and_die import MoveAndDie
-from constans.constans import NORTH, SOUTH, WEST
-from constans.scenarios import (
+from constants.constants import NORTH, SOUTH, WEST
+from constants.scenarios import (
     generate_board_for_move_action_test,
 )
 

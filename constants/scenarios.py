@@ -1,13 +1,13 @@
 
 from copy import deepcopy
-from constans.constants_game import LARGE
-from constans.constans import (
+from constants.constants import (
     HIDDEN_CELL,
     JOIN_ROW_BOARD,
     PLAYER_1,
     PLAYER_2,
     NAME_USER_1,
     NAME_USER_2,
+    LARGE,
 )
 from game.cell import Cell
 from game.character import Character

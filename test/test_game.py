@@ -6,7 +6,7 @@ from application.initialize_chain_responsibility import initialize_chain_respons
 from game.diamond import Diamond
 from game.board import Board
 from game.game import WumpusGame
-from constans.constans import (
+from constants.constants import (
     EAST,
     EMPTY_CELL,
     MAXIMUM_INVALID_MOVES,
@@ -22,8 +22,6 @@ from constans.constans import (
     WEST,
     NAME_USER_1,
     NAME_USER_2,
-)
-from constans.constants_game import (
     DIAMOND,
     GOLD,
 )
@@ -31,7 +29,7 @@ from game.cell import Cell
 from game.character import Character
 from game.gold import Gold
 from game.player import Player
-from constans.constants_scores import (
+from constants.constants import (
     ARROW_MISS,
     CORRECT_MOVE,
     DEATH,
@@ -39,9 +37,9 @@ from constans.constants_scores import (
     INVALID_MOVE,
     KILL,
     SCORES,
-    TIMEOUT,
+    TIMEOUT_SC,
 )
-from constans.constants_messages import (
+from constants.constants import (
     GAME_OVER_MESSAGE_1,
     GAME_OVER_MESSAGE_2,
     GAME_OVER_MESSAGE_3,
@@ -49,7 +47,7 @@ from constans.constants_messages import (
     GAME_OVER_MESSAGE_5,
     GAME_OVER_NOT_MET,
 )
-from constans.scenarios import (
+from constants.scenarios import (
     BOARD_FOR_MOVE_AND_MODIFY_SCORE,
     DANGER_SIGNAL_SCENARIO,
     TEST_PLAYERS_CHARACTER_0,
@@ -135,7 +133,7 @@ class TestGame(unittest.TestCase):
         ("CORRECT_MOVE", SCORES[CORRECT_MOVE]),
         ("INVALID_MOVE", SCORES[INVALID_MOVE]),
         ("ARROW_MISS", SCORES[ARROW_MISS]),
-        ("TIMEOUT", SCORES[TIMEOUT]),
+        ("TIMEOUT", SCORES[TIMEOUT_SC]),
     ])
     def test_modify_score(self, event, expected):
         game = patched_game()
@@ -340,15 +338,15 @@ class TestGame(unittest.TestCase):
 
     @parameterized.expand([
         ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 17_000, 110_000, 4, "     "),
-        ('shoot covered empty cell', 5, 1000, 8, 8, EAST, 8, 9, 1_100, 110_000, 4, "##F##"),
+        ('shoot covered empty cell', 5, 1000, 8, 8, EAST, 8, 9, 2000, 110_000, 4, "##F##"),
         ('shoot hole', 5, 1000, 8, 8, NORTH, 7, 8, 2000, 110_000, 4, "  O  "),
         ('shoot own char', 5, 1000, 8, 8, SOUTH, 9, 8, 0, 110_000, 4, "  L  "),
         ('shoot covered opponent', 4, 1000, 4, 4, WEST, 4, 3, 17_000, 110_000, 3, "     "),
-        ('shoot discovered empty cell', 3, 1000, 4, 4, EAST, 4, 5, 1100, 110_000, 2, "  F  "),
+        ('shoot discovered empty cell', 3, 1000, 4, 4, EAST, 4, 5, 2000, 110_000, 2, "  F  "),
         ('shoot covered opponent with treasures', 2, 1000, 4, 4, NORTH, 3, 4, 17_000, 30_000, 1, " 2 D "),
-        ('shoot covered cell with treasures', 1, 1000, 4, 4, SOUTH, 5, 4, 1_100, 110_000, 0, "##F##"),
+        ('shoot covered cell with treasures', 1, 1000, 4, 4, SOUTH, 5, 4, 2000, 110_000, 0, "##F##"),
         ('shoot discovered opponent with treasures', 5, 1000, 0, 0, EAST, 0, 1, 17_000, 80_000, 4, " 3   "),
-        ('shoot discovered cell with treasures', 5, 1000, 0, 0, SOUTH, 1, 0, 1_100, 110_000, 4, " 1F  ")
+        ('shoot discovered cell with treasures', 5, 1000, 0, 0, SOUTH, 1, 0, 2000, 110_000, 4, " 1F  ")
     ])
     def test_execute_action_shoot(self, name,
                                   initial_arrows, initial_score,
@@ -467,7 +465,7 @@ class TestGame(unittest.TestCase):
         player._score = INITIAL_SCORE
         game.penalize_player()
 
-        self.assertEqual(player._score, INITIAL_SCORE + SCORES[TIMEOUT])
+        self.assertEqual(player._score, INITIAL_SCORE + SCORES[TIMEOUT_SC])
 
     def test_when_a_penalize_is_called_and_player_reaches_limit_invalids_games_end(self):
         game = patched_game()

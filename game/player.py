@@ -1,11 +1,12 @@
-from constans.constans import (
+from constants.constants import (
     INITIAL_ARROWS,
     INITIAL_SCORE,
     CHARACTER_AMOUNT_PER_PLAYER,
     INVALID_MOVES_SCORE,
+    DIAMOND,
+    GOLD,
+    SCORES,
 )
-from constans.constants_game import DIAMOND, GOLD
-from constans.constants_scores import SCORES
 from game.character import Character
 
 

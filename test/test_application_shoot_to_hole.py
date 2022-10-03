@@ -1,7 +1,7 @@
 from application.shoot_arrow import ShootArrow
 from application.shoot_to_hole import ShootToHole
 from application.utils import target_position_within_bounds
-from constans.constans import (
+from constants.constants import (
     EAST,
     INITIAL_ARROWS,
     NAME_USER_1,
@@ -11,9 +11,9 @@ from constans.constans import (
     PLAYER_2,
     SOUTH,
     WEST,
+    CORRECT_MOVE,
 )
-from constans.constants_scores import CORRECT_MOVE
-from constans.scenarios_shoot import (
+from constants.scenarios_shoot import (
     board_shoot_hole_player_1,
     board_shoot_hole_player_2,
 

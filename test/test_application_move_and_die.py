@@ -1,11 +1,11 @@
 from application.move_and_die import MoveAndDie
 from application.move import Move
-from constans.constans import SOUTH, NORTH, WEST
-from constans.constants_scores import CORRECT_MOVE
+from constants.constants import SOUTH, NORTH, WEST
+from constants.constants import CORRECT_MOVE
 from parameterized import parameterized
 from game.board import Board
 from game.cell import Cell
-from constans.scenarios import generate_board_for_move_action_test
+from constants.scenarios import generate_board_for_move_action_test
 from game.gold import Gold
 from game.diamond import Diamond
 from exceptions.personal_exceptions import invalidMoveException

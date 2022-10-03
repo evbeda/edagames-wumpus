@@ -14,7 +14,9 @@ from constants.constants import (
     DIRECTION_MESSAGE,
     EAST,
     GAMEOVER_STATE,
+    INVALID_ACTION,
     INVALID_PENALIZE,
+    INVALID_STATE,
     NORTH,
     MESSAGE_DATA_KEYS,
     MOVE,
@@ -22,6 +24,7 @@ from constants.constants import (
     SOUTH,
     STATE,
     TIMEOUT,
+    VALID_ACTION,
     WEST,
     NAME_USER_1,
     NAME_USER_2,
@@ -379,7 +382,7 @@ class TestManager(unittest.TestCase):
         game.game_id = game_id
         manag.games[game_id] = game
         manag.action_data = {"test": "test"}
-        with patch('game.manager.Manager.execute_action_manager', return_value=True):
+        with patch('game.manager.Manager.execute_action_manager', return_value=VALID_ACTION):
             with patch('game.manager.Manager.check_game_over', return_value=False):
                 manag.process_request(game_id, manag.action_data)
                 get_game_mock.assert_called_once_with(game, VALID_STATE)
@@ -393,10 +396,24 @@ class TestManager(unittest.TestCase):
         game.game_id = game_id
         manag.games[game_id] = game
         manag.action_data = {"test": "test"}
-        with patch('game.manager.Manager.execute_action_manager', return_value=True):
+        with patch('game.manager.Manager.execute_action_manager', return_value=VALID_ACTION):
             with patch('game.manager.Manager.check_game_over', return_value=True):
                 manag.process_request(game_id, manag.action_data)
                 get_game_mock.assert_called_once_with(game, GAMEOVER_STATE)
+
+    @patch('game.manager.Manager.get_game_state')
+    def test_process_request_with_invalid_action(self, get_game_mock):
+        manag = Manager()
+        users_names = [NAME_USER_1, NAME_USER_2]
+        game = WumpusGame(users_names)
+        game_id = "123asd"
+        game.game_id = game_id
+        manag.games[game_id] = game
+        manag.action_data = {"test": "test"}
+        with patch('game.manager.Manager.execute_action_manager', return_value=INVALID_ACTION):
+            with patch('game.manager.Manager.check_game_over', return_value=False):
+                manag.process_request(game_id, manag.action_data)
+                get_game_mock.assert_called_once_with(game, INVALID_STATE)
 
     @parameterized.expand([
         (1.0, 2.0, 1, 2),
@@ -458,3 +475,7 @@ class TestManager(unittest.TestCase):
         )
         with self.assertRaises(InvalidData):
             manager.execute_action_manager(game, api_data)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -22,8 +22,6 @@ from constans.constans import (
     WEST,
     NAME_USER_1,
     NAME_USER_2,
-)
-from constans.constants_game import (
     DIAMOND,
     GOLD,
 )
@@ -31,7 +29,7 @@ from game.cell import Cell
 from game.character import Character
 from game.gold import Gold
 from game.player import Player
-from constans.constants_scores import (
+from constans.constans import (
     ARROW_MISS,
     CORRECT_MOVE,
     DEATH,
@@ -39,9 +37,9 @@ from constans.constants_scores import (
     INVALID_MOVE,
     KILL,
     SCORES,
-    TIMEOUT,
+    TIMEOUT_SC,
 )
-from constans.constants_messages import (
+from constans.constans import (
     GAME_OVER_MESSAGE_1,
     GAME_OVER_MESSAGE_2,
     GAME_OVER_MESSAGE_3,
@@ -135,7 +133,7 @@ class TestGame(unittest.TestCase):
         ("CORRECT_MOVE", SCORES[CORRECT_MOVE]),
         ("INVALID_MOVE", SCORES[INVALID_MOVE]),
         ("ARROW_MISS", SCORES[ARROW_MISS]),
-        ("TIMEOUT", SCORES[TIMEOUT]),
+        ("TIMEOUT", SCORES[TIMEOUT_SC]),
     ])
     def test_modify_score(self, event, expected):
         game = patched_game()
@@ -467,7 +465,7 @@ class TestGame(unittest.TestCase):
         player._score = INITIAL_SCORE
         game.penalize_player()
 
-        self.assertEqual(player._score, INITIAL_SCORE + SCORES[TIMEOUT])
+        self.assertEqual(player._score, INITIAL_SCORE + SCORES[TIMEOUT_SC])
 
     def test_when_a_penalize_is_called_and_player_reaches_limit_invalids_games_end(self):
         game = patched_game()

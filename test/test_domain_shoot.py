@@ -12,9 +12,9 @@ from constans.constans import (
     PLAYER_2,
     SOUTH,
     WEST,
+    KILL,
 )
 from constans.scenarios_shoot import board_friendly_fire_player_1, board_friendly_fire_player_2, board_kill_opp_player
-from constans.constants_scores import KILL
 from exceptions.personal_exceptions import (
     friendlyFireException,
     invalidMoveException,

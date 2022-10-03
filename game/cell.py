@@ -1,5 +1,4 @@
-from constans.constans import PLAYER_1
-from constans.constants_game import HOLE
+from constans.constans import PLAYER_1, HOLE
 from game.TresaureHolder import TreasureHolder
 
 

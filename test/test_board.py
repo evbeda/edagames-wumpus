@@ -10,9 +10,7 @@ from constans.constans import (
     PLAYER_1,
     PLAYER_2,
     NAME_USER_1,
-    NAME_USER_2
-)
-from constans.constants_game import (
+    NAME_USER_2,
     GOLD,
     GOLD_QUANTITY,
     HOLE,

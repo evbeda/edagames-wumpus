@@ -3,8 +3,6 @@ import random
 from constans.constans import (
     FORBIDDEN_HOLE_CELLS,
     INITIAL_POSITIONS,
-)
-from constans.constants_game import (
     GOLD,
     GOLD_QUANTITY,
     HOLE,

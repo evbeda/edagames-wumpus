@@ -1,7 +1,7 @@
 from application.move_and_die import MoveAndDie
 from application.move import Move
 from constans.constans import SOUTH, NORTH, WEST
-from constans.constants_scores import CORRECT_MOVE
+from constans.constans import CORRECT_MOVE
 from parameterized import parameterized
 from game.board import Board
 from game.cell import Cell

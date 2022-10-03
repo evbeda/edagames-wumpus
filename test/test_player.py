@@ -21,8 +21,8 @@ from constans.constans import (
     INITIAL_SCORE,
     WEST,
     NAME_USER_1,
+    LARGE,
 )
-from constans.constants_game import LARGE
 from game.cell import Cell
 from test.test_game import patched_game
 

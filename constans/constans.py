@@ -61,3 +61,42 @@ INVALID_PENALIZE = {'from_row': 'invalid', 'from_col': 'invalid', 'direction': '
 # Users
 NAME_USER_1 = 'name1'
 NAME_USER_2 = 'name2'
+
+# constants_scores
+CORRECT_MOVE = "CORRECT_MOVE"
+INVALID_MOVE = "INVALID_MOVE"
+KILL = "KILL"
+ARROW_MISS = "ARROW_MISS"
+GET_ITEMS = "GET_ITEMS"
+TIMEOUT_SC = "TIMEOUT"
+DEATH = "DEATH"
+
+SCORES = {
+    CORRECT_MOVE: 1000,
+    INVALID_MOVE: -100,
+    "GOLD": 10000,
+    "DIAMOND": 60000,
+    KILL: 15000,
+    ARROW_MISS: 100,
+    TIMEOUT_SC: -1000
+}
+
+# constants_game
+LARGE = 17
+MIDDLE = 8
+GOLD_QUANTITY = 16
+GOLD = 'GOLD'
+DIAMOND = 'DIAMOND'
+HOLE = 'O'
+HOLE_QUANTITY = 16
+EMPTY_STRING = ''
+
+# constants_messages
+GAME_OVER_MESSAGE_1 = "GAME OVER - Player 1 reached 5 invalid moves in a row"
+GAME_OVER_MESSAGE_2 = "GAME OVER - Player 2 reached 5 invalid moves in a row"
+GAME_OVER_MESSAGE_3 = "GAME OVER - DRAW. No turns left and scores are the same."
+GAME_OVER_MESSAGE_4 = "GAME OVER - Player 1 has no living Characters..."
+GAME_OVER_MESSAGE_5 = "GAME OVER - Player 2 has no living Characters..."
+GAME_OVER_MESSAGE_6 = "GAME OVER - No turns left - Player 1 wins by score difference"
+GAME_OVER_MESSAGE_7 = "GAME OVER - No turns left - Player 2 wins by score difference"
+GAME_OVER_NOT_MET = "Game comtinues..."

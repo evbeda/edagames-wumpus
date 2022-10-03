@@ -1,7 +1,7 @@
 import unittest
 from game.treasure import Treasure
 from parameterized import parameterized
-from constans.constants_scores import SCORES
+from constans.constans import SCORES
 from game.gold import Gold
 from game.diamond import Diamond
 

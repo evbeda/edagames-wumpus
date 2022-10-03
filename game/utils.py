@@ -1,4 +1,4 @@
-from constans.constants_game import LARGE
+from constans.constans import LARGE
 
 
 def posibles_positions(row, col):

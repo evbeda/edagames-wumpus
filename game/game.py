@@ -1,6 +1,6 @@
 from application.action import Action
 from application.initialize_chain_responsibility import initialize_chain_responsibility
-from constans.constans import (
+from constants.constants import (
     JOIN_ROW_BOARD,
     MAXIMUM_INVALID_MOVES,
     PLAYER_1,
@@ -9,9 +9,7 @@ from constans.constans import (
     PLAYER_2,
     SCORES,
     KILL,
-    INVALID_MOVE,
     CORRECT_MOVE,
-    ARROW_MISS,
     GET_ITEMS,
     TIMEOUT_SC,
     DEATH,
@@ -95,7 +93,8 @@ class WumpusGame():
         where the character is getting into.
         For KILL, Payload is not needed, BUT, remember to call modify_score()
         with a DEATH event later, for the killed character.
-        For CORRECT_MOVE or INVALID_MOVE or TIMEOUT, no payload is needed.
+        For CORRECT_MOVE or INVALID_MOVE or TIMEOUT, or ARROW_MISS
+        no payload is needed.
         '''
         if event == GET_ITEMS:
             cell = payload["cell"]
@@ -110,14 +109,8 @@ class WumpusGame():
             char.player.update_score(score)
         elif event == KILL:
             self.current_player.update_score(SCORES[CORRECT_MOVE] + SCORES[KILL])
-        elif event == CORRECT_MOVE:
-            self.current_player.update_score(SCORES[CORRECT_MOVE])
-        elif event == INVALID_MOVE:
-            self.current_player.update_score(SCORES[INVALID_MOVE])
-        elif event == TIMEOUT_SC:
-            self.current_player.update_score(SCORES[TIMEOUT_SC])
-        elif event == ARROW_MISS:
-            self.current_player.update_score(SCORES[ARROW_MISS])
+        else:
+            self.current_player.update_score(SCORES[event])
 
     def _parse_cell(self, row: int, col: int) -> str:
         parsed_cell = self._board._board[row][col].to_str(

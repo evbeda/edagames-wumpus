@@ -1,4 +1,4 @@
-from constans.constans import (
+from constants.constants import (
     PLAYER_1,
     PLAYER_2,
     NAME_USER_1,

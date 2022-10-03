@@ -1,13 +1,13 @@
 from copy import deepcopy
 import unittest
 from parameterized import parameterized
-from constans.scenarios import (
+from constants.scenarios import (
     TEST_PLAYERS_CHARACTER_0,
     TEST_PLAYERS_CHARACTER_1,
     TEST_PLAYERS_CHARACTER_2,
 )
 from game.player import Player
-from constans.constans import (
+from constants.constants import (
     EAST,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
@@ -119,7 +119,7 @@ class TestPlayer(unittest.TestCase):
     @parameterized.expand([
         (MOVE, 0, 0, EAST, 1000, 0),
         (MOVE, 16, 0, NORTH, 1000, 0),
-        (SHOOT, 8, 0, EAST, 100, 0)
+        (SHOOT, 8, 0, EAST, 1000, 0)
     ])
     def test_valid_move_score_player_1(
             self,

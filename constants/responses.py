@@ -1,5 +1,5 @@
-from constans.scenarios import SCENARIO_STR_PLAYER_1
-from constans.constans import (
+from constants.scenarios import SCENARIO_STR_PLAYER_1
+from constants.constants import (
     INITIAL_ARROWS,
     NAME_USER_1,
     NAME_USER_2,

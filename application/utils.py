@@ -1,4 +1,4 @@
-from constans.constans import EAST, NORTH, SOUTH, WEST, LARGE
+from constants.constants import EAST, NORTH, SOUTH, WEST, LARGE
 from game.board import Board
 from game.character import Character
 from game.player import Player

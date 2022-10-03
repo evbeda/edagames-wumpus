@@ -1,4 +1,4 @@
-from constans.constans import LARGE
+from constants.constants import LARGE
 
 
 def posibles_positions(row, col):

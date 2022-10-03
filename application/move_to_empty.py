@@ -1,4 +1,4 @@
-from constans.constans import CORRECT_MOVE
+from constants.constants import CORRECT_MOVE
 from application.action import Action
 from application.utils import target_position_within_bounds
 from exceptions.personal_exceptions import invalidMoveException

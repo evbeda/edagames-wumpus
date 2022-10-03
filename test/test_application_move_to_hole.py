@@ -1,7 +1,7 @@
 from application.move_to_hole import MoveToHole
 from application.move import Move
-from constans.constans import EAST, WEST, CORRECT_MOVE
-from constans.scenarios import generate_board_for_move_action_test
+from constants.constants import EAST, WEST, CORRECT_MOVE
+from constants.scenarios import generate_board_for_move_action_test
 from game.board import Board
 from game.cell import Cell
 from game.diamond import Diamond

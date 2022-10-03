@@ -1,5 +1,5 @@
 import unittest
-from constans.constans import (
+from constants.constants import (
     EAST,
     NAME_USER_1,
     NAME_USER_2,
@@ -9,7 +9,7 @@ from constans.constans import (
     SOUTH,
     WEST,
 )
-from constans.scenarios_shoot import board_friendly_fire_player_1, board_friendly_fire_player_2
+from constants.scenarios_shoot import board_friendly_fire_player_1, board_friendly_fire_player_2
 from application.utils import (
     is_a_player_character,
     is_frendly_fire,

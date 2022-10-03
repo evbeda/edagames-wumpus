@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import random
-from constans.constans import (
+from constants.constants import (
     FORBIDDEN_HOLE_CELLS,
     INITIAL_POSITIONS,
     GOLD,
@@ -15,7 +15,7 @@ from game.character import Character
 from game.diamond import Diamond
 from game.gold import Gold
 from game.utils import posibles_positions
-from constans.constans import PLAYER_1
+from constants.constants import PLAYER_1
 from game.player import Player
 
 

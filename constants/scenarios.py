@@ -1,6 +1,6 @@
 
 from copy import deepcopy
-from constans.constans import (
+from constants.constants import (
     HIDDEN_CELL,
     JOIN_ROW_BOARD,
     PLAYER_1,

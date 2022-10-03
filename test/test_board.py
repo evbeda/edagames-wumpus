@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 from parameterized import parameterized
 
-from constans.constans import (
+from constants.constants import (
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
     PLAYER_1,
@@ -18,7 +18,7 @@ from constans.constans import (
     MIDDLE,
     LARGE,
 )
-from constans.scenarios import (
+from constants.scenarios import (
     CLOSED_GOLD_BOARD,
     DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT,
     DUPLICATE_FIRST_COOR_FOR_HOLES_PLACEMENT,

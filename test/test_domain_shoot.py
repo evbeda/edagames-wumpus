@@ -1,7 +1,7 @@
 from application.shoot_and_kill import ShootAndKill
 from application.shoot_arrow import ShootArrow
 from application.utils import target_position_within_bounds
-from constans.constans import (
+from constants.constants import (
     EAST,
     INITIAL_ARROWS,
     INITIAL_POSITION_PLAYER_1,
@@ -14,7 +14,7 @@ from constans.constans import (
     WEST,
     KILL,
 )
-from constans.scenarios_shoot import board_friendly_fire_player_1, board_friendly_fire_player_2, board_kill_opp_player
+from constants.scenarios_shoot import board_friendly_fire_player_1, board_friendly_fire_player_2, board_kill_opp_player
 from exceptions.personal_exceptions import (
     friendlyFireException,
     invalidMoveException,

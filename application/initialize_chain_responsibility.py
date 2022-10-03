@@ -7,7 +7,7 @@ from application.shoot_arrow import ShootArrow
 from application.shoot_and_kill import ShootAndKill
 from application.shoot_to_hole import ShootToHole
 from application.shoot_to_empty_cell import ShootEmptyCell
-from constans.constans import MOVE, SHOOT
+from constants.constants import MOVE, SHOOT
 
 
 def initialize_chain_responsibility(action: str) -> Action:

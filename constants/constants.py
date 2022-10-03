@@ -62,6 +62,16 @@ INVALID_PENALIZE = {'from_row': 'invalid', 'from_col': 'invalid', 'direction': '
 NAME_USER_1 = 'name1'
 NAME_USER_2 = 'name2'
 
+# constants_game
+LARGE = 17
+MIDDLE = 8
+GOLD_QUANTITY = 16
+GOLD = 'GOLD'
+DIAMOND = 'DIAMOND'
+HOLE = 'O'
+HOLE_QUANTITY = 16
+EMPTY_STRING = ''
+
 # constants_scores
 CORRECT_MOVE = "CORRECT_MOVE"
 INVALID_MOVE = "INVALID_MOVE"
@@ -73,23 +83,13 @@ DEATH = "DEATH"
 
 SCORES = {
     CORRECT_MOVE: 1000,
-    INVALID_MOVE: -100,
-    "GOLD": 10000,
-    "DIAMOND": 60000,
+    INVALID_MOVE: -1000,
+    GOLD: 10000,
+    DIAMOND: 60000,
     KILL: 15000,
-    ARROW_MISS: 100,
+    ARROW_MISS: 1000,
     TIMEOUT_SC: -1000
 }
-
-# constants_game
-LARGE = 17
-MIDDLE = 8
-GOLD_QUANTITY = 16
-GOLD = 'GOLD'
-DIAMOND = 'DIAMOND'
-HOLE = 'O'
-HOLE_QUANTITY = 16
-EMPTY_STRING = ''
 
 # constants_messages
 GAME_OVER_MESSAGE_1 = "GAME OVER - Player 1 reached 5 invalid moves in a row"

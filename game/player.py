@@ -1,4 +1,4 @@
-from constans.constans import (
+from constants.constants import (
     INITIAL_ARROWS,
     INITIAL_SCORE,
     CHARACTER_AMOUNT_PER_PLAYER,

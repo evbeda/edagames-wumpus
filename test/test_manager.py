@@ -6,7 +6,7 @@ from game.game import WumpusGame
 from test.test_game import patched_game
 from game.manager import Manager
 from parameterized import parameterized
-from constans.constans import (
+from constants.constants import (
     ABORT,
     ACTION,
     COL,

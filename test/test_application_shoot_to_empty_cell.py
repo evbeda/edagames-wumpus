@@ -1,5 +1,5 @@
 import unittest
-from constans.constans import (
+from constants.constants import (
     EAST,
     INITIAL_ARROWS,
     NAME_USER_1,
@@ -13,7 +13,7 @@ from constans.constans import (
     CORRECT_MOVE,
     KILL
 )
-from constans.scenarios_shoot import (
+from constants.scenarios_shoot import (
     board_empty_cell,
     board_kill_opp_player,
     board_shoot_hole_player_1,

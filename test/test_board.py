@@ -19,22 +19,21 @@ from constants.constants import (
     LARGE,
 )
 from constants.scenarios import (
-    CLOSED_GOLD_BOARD,
-    DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT,
-    DUPLICATE_FIRST_COOR_FOR_HOLES_PLACEMENT,
-    EMPTY_BOARD,
-    FIND_GOLD_POS_1,
-    FIND_GOLD_POS_2,
-    FIND_GOLD_POS_3,
-    FIND_GOLD_POS_4,
-    INITIAL_BIG_FAIL_BOARD,
-    RECURSIVE,
-    RECURSIVE_SIDE,
-    RECURSIVE_SIDE_CORNER,
-    VALID_HOLE_SCENARIO,
-    WAY_GOLD_TWO_PLAYERS,
-    LEFT_HALF_COORDS,
-    RIGHT_HALF_COORDS,
+    closed_gold_board,
+    duplicate_first_coor_for_golds_placement,
+    duplicate_first_coor_for_holes_placement,
+    empty_board,
+    find_gold_pos_1,
+    find_gold_pos_2,
+    find_gold_pos_3,
+    initial_big_fail_board,
+    recursive,
+    recursive_side,
+    recursive_side_corner,
+    valid_hole_scenario,
+    way_gold_two_players,
+    left_half_coords,
+    right_half_coords,
 )
 from game.board import Board
 from game.cell import Cell
@@ -176,15 +175,15 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(sorted(holes_positions), sorted(holes))
 
     @parameterized.expand([
-        ((0, 0), (0, 1), RECURSIVE, True),
-        ((0, 0), (4, 4), CLOSED_GOLD_BOARD, False),
-        ((0, 0), (7, 7), INITIAL_BIG_FAIL_BOARD, False),
-        ((0, 0), (2, 16), RECURSIVE_SIDE, False),
-        ((0, 0), (16, 0), RECURSIVE_SIDE_CORNER, False),
-        ((16, 0), (7, 7), WAY_GOLD_TWO_PLAYERS, False),
-        ((0, 0), (7, 7), WAY_GOLD_TWO_PLAYERS, True),
-        ((16, 16), (7, 7), WAY_GOLD_TWO_PLAYERS, True),
-        ((16, 16), (16, 0), WAY_GOLD_TWO_PLAYERS, False),
+        ((0, 0), (0, 1), recursive(), True),
+        ((0, 0), (4, 4), closed_gold_board(), False),
+        ((0, 0), (7, 7), initial_big_fail_board(), False),
+        ((0, 0), (2, 16), recursive_side(), False),
+        ((0, 0), (16, 0), recursive_side_corner(), False),
+        ((16, 0), (7, 7), way_gold_two_players(), False),
+        ((0, 0), (7, 7), way_gold_two_players(), True),
+        ((16, 16), (7, 7), way_gold_two_players(), True),
+        ((16, 16), (16, 0), way_gold_two_players(), False),
     ])
     def test_can_find_gold(
         self,
@@ -200,14 +199,14 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(result, expected)
 
     @parameterized.expand([
-        (FIND_GOLD_POS_1, [
+        (find_gold_pos_1(), [
                             (5, 7), (2, 7), (1, 7), (7, 4),
                             (7, 1), (3, 6), (2, 9), (10, 7),
                             (9, 7), ]),
 
-        (FIND_GOLD_POS_2, [(4, 2), (2, 5), (3, 7), (7, 4), ]),
-        (FIND_GOLD_POS_3, [(4, 2), ]),
-        (FIND_GOLD_POS_4, []),
+        (find_gold_pos_2(), [(4, 2), (2, 5), (3, 7), (7, 4), ]),
+        (find_gold_pos_3(), [(4, 2), ]),
+        (empty_board(), []),
     ])
     def test_gold_positions(self, board, expected):
         game = patched_board()
@@ -226,12 +225,12 @@ class TestBoard(unittest.TestCase):
     ])
     def test_valid_hole(self, row, col, expected):
         board = patched_board()
-        board._board = deepcopy(VALID_HOLE_SCENARIO)
+        board._board = deepcopy(valid_hole_scenario())
         self.assertEqual(board._valid_hole(row, col), expected)
 
     def test_initial_diamond_position(self, row_random=4, expected_result=1):
         board = Board()
-        board._board = EMPTY_BOARD
+        board._board = empty_board()
         mid_col = LARGE//2
         with patch('random.randint', return_value=row_random):
             board.initial_diamond_position()
@@ -275,10 +274,10 @@ class TestBoard(unittest.TestCase):
     @parameterized.expand(
         [
             (
-                "GOLD", GOLD, GOLD_QUANTITY, DUPLICATE_FIRST_COOR_FOR_GOLDS_PLACEMENT,
+                "GOLD", GOLD, GOLD_QUANTITY, duplicate_first_coor_for_golds_placement(),
             ),
             (
-                "HOLE", HOLE, HOLE_QUANTITY, DUPLICATE_FIRST_COOR_FOR_HOLES_PLACEMENT,
+                "HOLE", HOLE, HOLE_QUANTITY, duplicate_first_coor_for_holes_placement(),
             ),
         ]
     )
@@ -309,8 +308,8 @@ class TestBoard(unittest.TestCase):
         board._free_cells_left_half = []
         board._free_cells_right_half = []
         board.initialize_free_cells()
-        self.assertEqual(board._free_cells_left_half, LEFT_HALF_COORDS)
-        self.assertEqual(board._free_cells_right_half, RIGHT_HALF_COORDS)
+        self.assertEqual(board._free_cells_left_half, left_half_coords())
+        self.assertEqual(board._free_cells_right_half, right_half_coords())
 
     @parameterized.expand([
         ('from (0, 0) to (3, 3)', 3, 3, [(1, 0), (0, 1), ], [(0, 1), (1, 0), ]),
@@ -324,12 +323,15 @@ class TestBoard(unittest.TestCase):
         ('from (1, 0) to (2, 0)', 2, 0, [(0, 0), (1, 1), (2, 0)], [(2, 0), (1, 1), (0, 0), ]),
 
     ])
-    def test_sort_possibles_position(self, name,
-                                     destination_row, destination_col,
-                                     positions, expeted_sorted_possitions):
+    def test_sort_possibles_position(
+        self, name,
+        destination_row, destination_col,
+        positions, expeted_sorted_possitions
+    ):
         board = patched_board()
-        sorted_possitions = board.sort_possibles_position(positions,
-                                                          destination_row, destination_col,)
+        sorted_possitions = board.sort_possibles_position(
+            positions,
+            destination_row, destination_col,)
         self.assertEqual(sorted_possitions, expeted_sorted_possitions)
 
     def test_has_opponent_player(self):

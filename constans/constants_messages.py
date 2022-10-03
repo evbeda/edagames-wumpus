@@ -16,7 +16,7 @@ GAME_OVER_NOT_MET = "Game comtinues..."
 
 RESPONSE_1 = {
     "status": GAME_OVER_MESSAGE_4,
-    "winner_side": "P",
+    "winner_side": "R",
     'score': {
         'player_1': -100,
         'player_2': 0,
@@ -37,12 +37,12 @@ RESPONSE_2 = {
     "board": SCENARIO_STR_PLAYER_1,
     "remaining_turns": 200,
     "game_id": "1234-5678-9012-3456-7890",
-    "side": "B",  # Will be "B" or "P"
+    "side": "L",  # Will be "L" or "R"
 }
 
 RESPONSE_3 = {
     "status": GAME_OVER_MESSAGE_5,
-    "winner_side": "B",
+    "winner_side": "L",
     'score': {
         'player_1': 0,
         'player_2': -100,
@@ -65,7 +65,7 @@ RESPONSE_4 = {
 
 RESPONSE_6 = {
     "status": GAME_OVER_MESSAGE_6,
-    "winner_side": "B",
+    "winner_side": "L",
     'score': {
         'player_1': 5000,
         'player_2': 1000,
@@ -78,7 +78,7 @@ RESPONSE_6 = {
 
 RESPONSE_7 = {
     "status": GAME_OVER_MESSAGE_7,
-    "winner_side": "P",
+    "winner_side": "R",
     'score': {
         'player_1': 1000,
         'player_2': 5000,

@@ -206,7 +206,10 @@ class TestGame(unittest.TestCase):
         self.assertEqual(CORRECT_MOVE, result)
 
     def test_generate_data(self):
-        game = patched_game()
+        game = WumpusGame([NAME_USER_1, NAME_USER_2])
+        game.player_1 = Player(PLAYER_1, NAME_USER_1)
+        game.player_2 = Player(PLAYER_2, NAME_USER_2)
+
         game.current_player = game.player_1
         game_id = "1234-5678-9012-3456-7890"
         game.game_id = game_id

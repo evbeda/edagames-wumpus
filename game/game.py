@@ -32,12 +32,14 @@ from game.utils import posibles_positions
 from exceptions.personal_exceptions import (
     invalidMoveException,
 )
+import random
 
 
 class WumpusGame():
 
     def __init__(self, users_names) -> None:
         self.game_id = str(uuid.uuid1())
+        random.shuffle(users_names)
         self.player_1 = Player(PLAYER_1, users_names[0])
         self.player_2 = Player(PLAYER_2, users_names[1])
         self._board = Board()

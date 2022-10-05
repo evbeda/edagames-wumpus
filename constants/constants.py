@@ -100,3 +100,7 @@ GAME_OVER_MESSAGE_5 = "GAME OVER - Player 2 has no living Characters..."
 GAME_OVER_MESSAGE_6 = "GAME OVER - No turns left - Player 1 wins by score difference"
 GAME_OVER_MESSAGE_7 = "GAME OVER - No turns left - Player 2 wins by score difference"
 GAME_OVER_NOT_MET = "Game comtinues..."
+
+# Actions
+VALID_ACTION = "valid action"
+INVALID_ACTION = "invalid action"

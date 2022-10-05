@@ -9,6 +9,7 @@ from game.game import WumpusGame
 from constants.constants import (
     EAST,
     EMPTY_CELL,
+    INVALID_ACTION,
     MAXIMUM_INVALID_MOVES,
     MOVE,
     NORTH,
@@ -19,6 +20,7 @@ from constants.constants import (
     INVALID_MOVES_SCORE,
     SHOOT,
     SOUTH,
+    VALID_ACTION,
     WEST,
     NAME_USER_1,
     NAME_USER_2,
@@ -336,25 +338,25 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.generate_response(), expected)
 
     @parameterized.expand([
-        ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 17_000, 110_000, 4, "     "),
-        ('shoot covered empty cell', 5, 1000, 8, 8, EAST, 8, 9, 2000, 110_000, 4, "##F##"),
-        ('shoot hole', 5, 1000, 8, 8, NORTH, 7, 8, 2000, 110_000, 4, "  O  "),
-        ('shoot own char', 5, 1000, 8, 8, SOUTH, 9, 8, 0, 110_000, 4, "  L  "),
-        ('shoot covered opponent', 4, 1000, 4, 4, WEST, 4, 3, 17_000, 110_000, 3, "     "),
-        ('shoot discovered empty cell', 3, 1000, 4, 4, EAST, 4, 5, 2000, 110_000, 2, "  F  "),
-        ('shoot covered opponent with treasures', 2, 1000, 4, 4, NORTH, 3, 4, 17_000, 30_000, 1, " 2 D "),
-        ('shoot covered cell with treasures', 1, 1000, 4, 4, SOUTH, 5, 4, 2000, 110_000, 0, "##F##"),
-        ('shoot discovered opponent with treasures', 5, 1000, 0, 0, EAST, 0, 1, 17_000, 80_000, 4, " 3   "),
-        ('shoot discovered cell with treasures', 5, 1000, 0, 0, SOUTH, 1, 0, 2000, 110_000, 4, " 1F  ")
+        ('shoot discovered opponent', 5, 1000, 8, 8, WEST, 8, 7, 17_000, 110_000, 4, "     ", VALID_ACTION),
+        ('shoot covered empty cell', 5, 1000, 8, 8, EAST, 8, 9, 2000, 110_000, 4, "##F##", VALID_ACTION),
+        ('shoot hole', 5, 1000, 8, 8, NORTH, 7, 8, 2000, 110_000, 4, "  O  ", VALID_ACTION),
+        ('shoot own char', 5, 1000, 8, 8, SOUTH, 9, 8, 0, 110_000, 4, "  L  ", INVALID_ACTION),
+        ('shoot covered opponent', 4, 1000, 4, 4, WEST, 4, 3, 17_000, 110_000, 3, "     ", VALID_ACTION),
+        ('shoot discovered empty cell', 3, 1000, 4, 4, EAST, 4, 5, 2000, 110_000, 2, "  F  ", VALID_ACTION),
+        ('shoot covered opp with treasures', 2, 1000, 4, 4, NORTH, 3, 4, 17_000, 30_000, 1, " 2 D ", VALID_ACTION),
+        ('shoot covered cell with treasures', 1, 1000, 4, 4, SOUTH, 5, 4, 2000, 110_000, 0, "##F##", VALID_ACTION),
+        ('shoot discovered opp with treasures', 5, 1000, 0, 0, EAST, 0, 1, 17_000, 80_000, 4, " 3   ", VALID_ACTION),
+        ('shoot discovered cell with treasures', 5, 1000, 0, 0, SOUTH, 1, 0, 2000, 110_000, 4, " 1F  ", VALID_ACTION),
+        ('shoot without arrows', 0, 1000, 4, 4, NORTH, 3, 4, 0, 110_000, 0, "#####", INVALID_ACTION),
     ])
-    def test_execute_action_shoot(
-        self, name,
-        initial_arrows, initial_score,
-        from_row, from_col, direction,
-        destination_row, destination_col,
-        expected_own_score, expected_opponent_score,
-        expected_arrows, expected_destination_cell
-    ):
+    def test_execute_action_shoot(self, name,
+                                  initial_arrows, initial_score,
+                                  from_row, from_col, direction,
+                                  destination_row, destination_col,
+                                  expected_own_score, expected_opponent_score,
+                                  expected_arrows, expected_destination_cell,
+                                  expected):
         game = patched_game()
 
         board, shooter_player, shotted_player = generate_board_for_shoot_action_test()
@@ -366,7 +368,7 @@ class TestGame(unittest.TestCase):
         game.current_player.score = initial_score
         game.current_player.arrows = initial_arrows
 
-        game.execute_action(SHOOT, from_row, from_col, direction)
+        result = game.execute_action(SHOOT, from_row, from_col, direction)
 
         current_own_score = game.current_player.score
         current_opponent_score = game.player_2.score
@@ -377,42 +379,34 @@ class TestGame(unittest.TestCase):
         self.assertEqual(current_opponent_score, expected_opponent_score)
         self.assertEqual(current_arrows, expected_arrows)
         self.assertEqual(destination_cell.to_str(PLAYER_1), expected_destination_cell)
+        self.assertEqual(result, expected)
 
     @parameterized.expand([
-        (
-            'cell with hole',
-            4, 4, WEST, 1000, 4, 3, 12_000, 3, EMPTY_CELL, '  O  ', 5),
-        (
-            'cell empty',
-            4, 4, EAST, 1000, 4, 5, 12_000, 4, EMPTY_CELL, '  L  ', 5),
-        (
-            'cell with opponent char',
-            4, 4, NORTH, 1000, 3, 4, 12_000, 3, EMPTY_CELL, '  R  ', 5),
-        (
-            'cell with own char',
-            4, 4, SOUTH, 1000, 5, 4, 10_000, 4, '  L  ', '  L  ', 5),
-        (
-            'discovered cell with hole carrying treasure',
-            8, 8, WEST, 1000, 8, 7, 2_000, 3, ' 1   ', '  O  ', 5),
-        (
-            'covered cell with treasures carrying treasure',
-            8, 8, EAST, 1000, 8, 9, 92_000, 4, '     ', ' 3LD ', 5),
-        (
-            'covered cell with arrow',
-            8, 8, NORTH, 1000, 7, 8, 12_000, 4, '     ', ' 1L  ', 6),
-        (
-            'covered cell with opponent charatcer carrying treasures',
-            8, 8, SOUTH, 1000, 9, 8, 2000, 3, ' 1   ', '  R  ', 5),
+        ('cell with hole',
+         4, 4, WEST, 1000, 4, 3, 12_000, 3, EMPTY_CELL, '  O  ', 5, VALID_ACTION),
+        ('cell empty',
+         4, 4, EAST, 1000, 4, 5, 12_000, 4, EMPTY_CELL, '  L  ', 5, VALID_ACTION),
+        ('cell with opponent char',
+         4, 4, NORTH, 1000, 3, 4, 12_000, 3, EMPTY_CELL, '  R  ', 5, VALID_ACTION),
+        ('cell with own char',
+         4, 4, SOUTH, 1000, 5, 4, 10_000, 4, '  L  ', '  L  ', 5, INVALID_ACTION),
+
+        ('discovered cell with hole carrying treasure',
+         8, 8, WEST, 1000, 8, 7, 2_000, 3, ' 1   ', '  O  ', 5, VALID_ACTION),
+        ('covered cell with treasures carrying treasure',
+         8, 8, EAST, 1000, 8, 9, 92_000, 4, '     ', ' 3LD ', 5, VALID_ACTION),
+        ('covered cell with arrow',
+         8, 8, NORTH, 1000, 7, 8, 12_000, 4, '     ', ' 1L  ', 6, VALID_ACTION),
+        ('covered cell with opponent charatcer carrying treasures',
+         8, 8, SOUTH, 1000, 9, 8, 2000, 3, ' 1   ', '  R  ', 5, VALID_ACTION),
 
     ])
-    def test_execute_action_move(
-        self, name,
-        from_row, from_col, direction, initial_socre,
-        destination_row, destination_col,
-        expected_score, expected_remaining_characters,
-        expected_initial_cell, expected_destination_cell,
-        expected_arrows
-    ):
+    def test_execute_action_move(self, name,
+                                 from_row, from_col, direction, initial_socre,
+                                 destination_row, destination_col,
+                                 expected_score, expected_remaining_characters,
+                                 expected_initial_cell, expected_destination_cell,
+                                 expected_arrows, expected):
         game = patched_game()
         board, player_1, player_2 = generate_board_for_move_action_test()
         game.player_1 = player_1
@@ -421,7 +415,7 @@ class TestGame(unittest.TestCase):
         game._board._board = board
         game.current_player.score = initial_socre
 
-        game.execute_action(MOVE, from_row, from_col, direction)
+        result = game.execute_action(MOVE, from_row, from_col, direction)
 
         current_score = game.current_player.score
         current_remaining_characters = len(game.current_player.characters)
@@ -434,6 +428,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(destination_cell, expected_destination_cell)
         self.assertEqual(current_remaining_characters, expected_remaining_characters)
         self.assertTrue(current_arrows, expected_arrows)
+        self.assertEqual(result, expected)
 
     @parameterized.expand([
         (PLAYER_1, 10, PLAYER_2, 9),

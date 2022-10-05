@@ -76,8 +76,8 @@ class TestMoveAndDie(unittest.TestCase):
         self.assertEqual(cell.character, expected_character_in_origin_cell)
 
     @parameterized.expand([
-        (4, 4, NORTH, 3, 4, True),
-        (8, 8, SOUTH, 9, 8, True),
+        (4, 4, NORTH, 3, 4, False, True),
+        (8, 8, SOUTH, 9, 8, False, True),
     ])
     def test_execute_move_die_and_discover_the_cell(
         self,
@@ -86,10 +86,15 @@ class TestMoveAndDie(unittest.TestCase):
         direction,
         to_row,
         to_col,
+        discover_init_status,
         discover_final_status,
     ):
         self.board._board = self.scenarios
         cell: Cell = self.board.get_cell(to_row, to_col)
+
+        # force the target cell to be undiscovered for the moving player
+        cell.is_discover[0] = discover_init_status
+
         self.move_n_die.execute(row, col, direction, self.moving_player, self.board)
         self.assertEqual(cell.is_discover[0], discover_final_status)
 

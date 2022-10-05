@@ -1,9 +1,5 @@
 import unittest
-from constants.scenarios import (
-    TESTED_CELL_1, TESTED_CELL_10, TESTED_CELL_2,
-    TESTED_CELL_3, TESTED_CELL_4, TESTED_CELL_5,
-    TESTED_CELL_6, TESTED_CELL_7, TESTED_CELL_8, TESTED_CELL_9
-)
+from constants.scenarios import tested_cell
 from game.diamond import Diamond
 from game.gold import Gold
 from game.game import WumpusGame
@@ -56,10 +52,10 @@ class TestCell(unittest.TestCase):
         ([Diamond()], None, True, 0, False),
         ([Diamond()], None, False, 1, False),
     ])
-    def test_cell_is_empty(self, treasure,
-                           character, has_hole, arrow,
-                           expected):
-
+    def test_cell_is_empty(
+        self, treasure,
+        character, has_hole, arrow, expected
+    ):
         cell = Cell(0, 0)
         cell.treasures = treasure
         cell.character = character
@@ -72,9 +68,11 @@ class TestCell(unittest.TestCase):
         (0, 0, Player(PLAYER_1, NAME_USER_1), True),
         (0, 0, None, False),
     ])
-    def test_cell_there_arent_player(self, row, col,
-                                     player,
-                                     expected):
+    def test_cell_there_arent_player(
+        self, row, col,
+        player,
+        expected
+    ):
         cell = Cell(row, col)
         character_1 = player
         cell.character = character_1
@@ -94,19 +92,19 @@ class TestCell(unittest.TestCase):
         self.assertEqual(result, expected)
 
     @parameterized.expand([
-        (PLAYER_1, TESTED_CELL_1, HIDDEN_CELL),
-        (PLAYER_1, TESTED_CELL_2, EMPTY_CELL),
-        (PLAYER_2, TESTED_CELL_2, HIDDEN_CELL),
-        (PLAYER_1, TESTED_CELL_3, '  R  ',),
-        (PLAYER_2, TESTED_CELL_4, '  R  ',),
-        (PLAYER_2, TESTED_CELL_4, '  R  ',),
-        (PLAYER_2, TESTED_CELL_5, '  O  ',),
-        (PLAYER_2, TESTED_CELL_6, '  F  ',),
-        (PLAYER_2, TESTED_CELL_7, ' 2   ',),
-        (PLAYER_1, TESTED_CELL_8, '   D ',),
-        (PLAYER_1, TESTED_CELL_9, ' 1 D ',),
-        (PLAYER_1, TESTED_CELL_10, '##F##',),
-        (PLAYER_2, TESTED_CELL_10, '##F##',),
+        (PLAYER_1, tested_cell()[0], HIDDEN_CELL),
+        (PLAYER_1, tested_cell()[1], EMPTY_CELL),
+        (PLAYER_2, tested_cell()[1], HIDDEN_CELL),
+        (PLAYER_1, tested_cell()[2], '  R  ',),
+        (PLAYER_2, tested_cell()[3], '  R  ',),
+        (PLAYER_2, tested_cell()[3], '  R  ',),
+        (PLAYER_2, tested_cell()[4], '  O  ',),
+        (PLAYER_2, tested_cell()[5], '  F  ',),
+        (PLAYER_2, tested_cell()[6], ' 2   ',),
+        (PLAYER_1, tested_cell()[7], '   D ',),
+        (PLAYER_1, tested_cell()[8], ' 1 D ',),
+        (PLAYER_1, tested_cell()[9], '##F##',),
+        (PLAYER_2, tested_cell()[9], '##F##',),
     ])
     def test_cell_representation(self, player, cell: Cell, expected):
         self.assertEqual(cell.to_str(player), expected)

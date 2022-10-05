@@ -7,8 +7,8 @@ PLAYER_2 = 'R'
 INITIAL_POSITION_PLAYER_1 = [(0, 0), (8, 0), (16, 0)]
 INITIAL_POSITION_PLAYER_2 = [(0, 16), (8, 16), (16, 16)]
 INITIAL_POSITIONS = INITIAL_POSITION_PLAYER_1 + INITIAL_POSITION_PLAYER_2
-CLOSE_AREA_PLAYER_1 = [(1, 0), (0, 1), (7, 0), (9, 0), (8, 1),
-                       (15, 0), (16, 1)]
+CLOSE_AREA_PLAYER_1 = [
+    (1, 0), (0, 1), (7, 0), (9, 0), (8, 1), (15, 0), (16, 1)]
 CLOSE_AREA__PLAYER_2 = [(0, 15), (1, 16), (7, 16), (9, 16), (8, 15),
                         (15, 16), (16, 15)]
 
@@ -100,3 +100,7 @@ GAME_OVER_MESSAGE_5 = "GAME OVER - Player 2 has no living Characters..."
 GAME_OVER_MESSAGE_6 = "GAME OVER - No turns left - Player 1 wins by score difference"
 GAME_OVER_MESSAGE_7 = "GAME OVER - No turns left - Player 2 wins by score difference"
 GAME_OVER_NOT_MET = "Game comtinues..."
+
+# Actions
+VALID_ACTION = "valid action"
+INVALID_ACTION = "invalid action"

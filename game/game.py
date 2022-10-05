@@ -1,21 +1,11 @@
 from application.action import Action
 from application.initialize_chain_responsibility import initialize_chain_responsibility
+
 from constants.constants import (
-    JOIN_ROW_BOARD,
-    MAXIMUM_INVALID_MOVES,
-    PLAYER_1,
-    INITIAL_POSITION_PLAYER_1,
-    INITIAL_POSITION_PLAYER_2,
-    PLAYER_2,
-    SCORES,
-    KILL,
     CORRECT_MOVE,
-    GET_ITEMS,
-    TIMEOUT_SC,
     DEATH,
     DIAMOND,
-    GOLD,
-    LARGE,
+    GET_ITEMS,
     GAME_OVER_MESSAGE_1,
     GAME_OVER_MESSAGE_2,
     GAME_OVER_MESSAGE_3,
@@ -24,6 +14,19 @@ from constants.constants import (
     GAME_OVER_MESSAGE_6,
     GAME_OVER_MESSAGE_7,
     GAME_OVER_NOT_MET,
+    GOLD,
+    INITIAL_POSITION_PLAYER_1,
+    INITIAL_POSITION_PLAYER_2,
+    INVALID_ACTION,
+    JOIN_ROW_BOARD,
+    KILL,
+    LARGE,
+    MAXIMUM_INVALID_MOVES,
+    PLAYER_1,
+    PLAYER_2,
+    SCORES,
+    TIMEOUT_SC,
+    VALID_ACTION,
 )
 import uuid
 from game.board import Board
@@ -61,10 +64,10 @@ class WumpusGame():
     def change_current_player(self):
         self.current_player = self.player_2 if (
             self.current_player == self.player_1
-            ) else self.player_1
+        ) else self.player_1
         self.inactive_player = self.player_1 if (
             self.current_player == self.player_2
-            ) else self.player_2
+        ) else self.player_2
 
     def put_danger_signal(self, parsed_cell: str, row, col):
         parsed_cell = list(parsed_cell)
@@ -146,8 +149,10 @@ class WumpusGame():
             )
             self.current_player.invalid_moves_count = 0
             self.modify_score(valid_message)
+            return VALID_ACTION
         except invalidMoveException:
             self.penalize_player()
+            return INVALID_ACTION
 
     def penalize_player(self) -> None:
         self.current_player.penalize()
@@ -195,7 +200,7 @@ class WumpusGame():
                                else name_player_2),
                     'LOSER': (name_player_2 if score_player_2 < score_player_1
                               else name_player_1),
-                    }
+                }
             }
             message.update(result)
         return message

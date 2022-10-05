@@ -6,6 +6,7 @@ from constants.constants import (
     DATA,
     DIRECTION_MESSAGE,
     GAMEOVER_STATE,
+    INVALID_ACTION,
     INVALID_PENALIZE,
     INVALID_STATE,
     MESSAGE_DATA_KEYS,
@@ -14,6 +15,7 @@ from constants.constants import (
     ROW,
     STATE,
     TIMEOUT,
+    VALID_ACTION,
     VALID_STATE,
 )
 
@@ -21,7 +23,6 @@ from exceptions.personal_exceptions import (
     InvalidData,
     InvalidKey,
     InvalidQuantityPlayers,
-    NonPunishableError
 )
 
 from typing import List
@@ -63,7 +64,7 @@ class Manager():
                 MESSAGE_DATA_KEYS
             )
             api_data[DATA].update(self.action_data)
-            game.execute_action(
+            return game.execute_action(
                 api_data[ACTION],
                 api_data[DATA][ROW],
                 api_data[DATA][COL],
@@ -149,15 +150,15 @@ class Manager():
         state = INVALID_STATE
         try:
             current_game = self.find_game(game_id)
-            self.execute_action_manager(current_game, api_data)
+            result = self.execute_action_manager(current_game, api_data)
+            if result == VALID_ACTION:
+                state = VALID_STATE
+            elif result == INVALID_ACTION:
+                pass
         except InvalidData:
             current_game.penalize_player()
         except InvalidKey:
             current_game.penalize_player()
-        except NonPunishableError:
-            pass
-        else:
-            state = VALID_STATE
         current_game.next_turn()
         if self.check_game_over(current_game):
             state = GAMEOVER_STATE

@@ -3,9 +3,6 @@ from application.initialize_chain_responsibility import initialize_chain_respons
 
 from constants.constants import (
     CORRECT_MOVE,
-    DEATH,
-    DIAMOND,
-    GET_ITEMS,
     GAME_OVER_MESSAGE_1,
     GAME_OVER_MESSAGE_2,
     GAME_OVER_MESSAGE_3,
@@ -14,7 +11,6 @@ from constants.constants import (
     GAME_OVER_MESSAGE_6,
     GAME_OVER_MESSAGE_7,
     GAME_OVER_NOT_MET,
-    GOLD,
     INITIAL_POSITION_PLAYER_1,
     INITIAL_POSITION_PLAYER_2,
     INVALID_ACTION,
@@ -85,34 +81,14 @@ class WumpusGame():
 
         return "".join(parsed_cell)
 
-    def modify_score(self, event, payload={}):
+    def modify_score(self, event):
         '''
         Functions that modifies the score correspondingly, for players
         involved.
-        Events are DEATH, GET_ITEMS, KILL, CORRECT_MOVE, INVALID_MOVE,
-        TIMEOUT, ARROW_MISS. Payload is a dictionary,
-        which contents varies according to event.
-        For DEATH, Payload is {"character" = characterObject}, the character
-        that dies.
-        For GET_ITEMS, Payload is {"cell" = cellOject}, where cell is the cell
-        where the character is getting into.
-        For KILL, Payload is not needed, BUT, remember to call modify_score()
-        with a DEATH event later, for the killed character.
-        For CORRECT_MOVE or INVALID_MOVE or TIMEOUT, or ARROW_MISS
-        no payload is needed.
+        Events are KILL, CORRECT_MOVE, INVALID_MOVE, ARROW_MISS.
+        For KILL, remember to call modify_score()
         '''
-        if event == GET_ITEMS:
-            cell = payload["cell"]
-            score = cell.gold * SCORES[GOLD] + cell.diamond * SCORES[DIAMOND]
-            self.current_player.update_score(score)
-        elif event == DEATH:
-            # it has to be removed, because this
-            # functionally is done by treasure_treasure method
-            char = payload["character"]
-            score = (char.gold * SCORES[GOLD] +
-                     char.diamond * SCORES[DIAMOND]) * -1
-            char.player.update_score(score)
-        elif event == KILL:
+        if event == KILL:
             self.current_player.update_score(SCORES[CORRECT_MOVE] + SCORES[KILL])
         else:
             self.current_player.update_score(SCORES[event])

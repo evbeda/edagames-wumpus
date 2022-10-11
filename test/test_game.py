@@ -3,7 +3,6 @@ import unittest
 from unittest.mock import patch
 from parameterized import parameterized
 from application.initialize_chain_responsibility import initialize_chain_responsibility
-from game.diamond import Diamond
 from game.board import Board
 from game.game import WumpusGame
 from constants.constants import (
@@ -24,18 +23,13 @@ from constants.constants import (
     WEST,
     NAME_USER_1,
     NAME_USER_2,
-    DIAMOND,
-    GOLD,
 )
 from game.cell import Cell
 from game.character import Character
-from game.gold import Gold
 from game.player import Player
 from constants.constants import (
     ARROW_MISS,
     CORRECT_MOVE,
-    DEATH,
-    GET_ITEMS,
     INVALID_MOVE,
     KILL,
     SCORES,
@@ -106,36 +100,11 @@ class TestGame(unittest.TestCase):
         game.change_current_player()
         self.assertEqual(game.current_player, game.player_2)
 
-    def test_modify_score_get_items(self):  # testing "Get_Items" event
-        game = patched_game()
-        cell = Cell(2, 4)
-        cell.treasures.append(Gold())
-        cell.treasures.append(Gold())
-        cell.treasures.append(Gold())
-        cell.treasures.append(Diamond())
-        payload = {"cell": cell}
-        game.modify_score(GET_ITEMS, payload)
-        self.assertEqual(game.current_player.score,
-                         (SCORES[GOLD] * 3 + SCORES[DIAMOND] * 1))
-
-    def test_modify_score_death(self):  # testing "Death" event
-        game = patched_game()
-        char = Character(Player(PLAYER_2, NAME_USER_2))
-        game.current_player = char.player
-        char.treasures.append(Gold())
-        char.treasures.append(Gold())
-        char.treasures.append(Gold())
-        char.treasures.append(Gold())
-        payload = {"character": char}
-        game.modify_score(DEATH, payload)
-        self.assertEqual(char.player.score, (SCORES[GOLD] * 4) * -1)
-
     @parameterized.expand([  # test for modify_score() function
         ("KILL", SCORES[KILL] + SCORES[CORRECT_MOVE]),
         ("CORRECT_MOVE", SCORES[CORRECT_MOVE]),
         ("INVALID_MOVE", SCORES[INVALID_MOVE]),
         ("ARROW_MISS", SCORES[ARROW_MISS]),
-        ("TIMEOUT", SCORES[TIMEOUT_SC]),
     ])
     def test_modify_score(self, event, expected):
         game = patched_game()

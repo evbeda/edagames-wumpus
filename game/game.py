@@ -38,9 +38,10 @@ class WumpusGame():
 
     def __init__(self, users_names) -> None:
         self.game_id = str(uuid.uuid1())
-        random.shuffle(users_names)
-        self.player_1 = Player(PLAYER_1, users_names[0])
-        self.player_2 = Player(PLAYER_2, users_names[1])
+        self.list_of_users = users_names
+        random.shuffle(self.list_of_users)
+        self.player_1 = Player(PLAYER_1, self.list_of_users[0])
+        self.player_2 = Player(PLAYER_2, self.list_of_users[1])
         self._board = Board()
         self._board.place_character_initial_pos(self.player_1.characters,
                                                 INITIAL_POSITION_PLAYER_1,
